@@ -1,0 +1,15 @@
+---
+title: "Modeling code"
+output: github_document
+date: 2020-03-30
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(forcats)
+```
+
+## Initial Parameters
+
+## Setting up and populating my dataframe
