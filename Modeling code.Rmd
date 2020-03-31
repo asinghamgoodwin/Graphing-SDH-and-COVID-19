@@ -12,4 +12,56 @@ library(forcats)
 
 ## Initial Parameters
 
+```{r}
+initial_population_size = 20
+
+```
+
+## States
+
+```{r}
+INFECTED = "infected"
+SUCCEPTIBLE = "succeptible"
+RECOVERED = "recovered"
+DEAD = "dead"
+```
+
+## Change states on each timestep
+
+```{r}
+# placeholder function that just returns the same state
+change_state = function(prev_state){
+  prev_state
+}
+```
+
 ## Setting up and populating my dataframe
+
+```{r}
+# TODO: create the population according to demographic markers, and randomly assign the infected person.
+create_initial_population_with_one_infected = function(size){
+  one_infected = as.factor(c(INFECTED))
+  others_succeptible = rep(as.factor(c(SUCCEPTIBLE)), size - 1)
+  
+  fct_c(one_infected, others_succeptible)
+}
+
+# remove this later, printing just for debugging
+create_initial_population_with_one_infected(initial_population_size)
+```
+
+This is a table with each row representing one person in the population. The first few columns include demographic and other information about a person, and all of the columns labeled `day_n` represent that person's disease state at time n.
+```{r}
+# TODO: make a function to generate new day columns based on some initial parameter.
+population = tibble(
+  person_ids = 1:initial_population_size,
+  day_1 = create_initial_population_with_one_infected(initial_population_size)
+) %>% 
+  mutate(., day_2 = as.factor(map_chr(day_1, change_state)))
+
+# remove this later, printing just for debugging
+population
+```
+
+
+
