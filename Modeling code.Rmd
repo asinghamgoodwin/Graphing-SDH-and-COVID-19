@@ -13,15 +13,54 @@ library(forcats)
 ## Initial Parameters
 
 ```{r}
-initial_population_size = 20
+## BIG TODO: add citations for these numbers
+
+initial_population_size = 20 # TODO - choose bigger number later
+hospital_bed_capacity = 100 #TODO - fill in with real number later
+
+probability_symptomatic = 2/3
+probability_asymptomatic = 1 - probability_symptomatic
+
+# TODO: break this out into it's own code chunk with explanation? Weighted average, solved equations to get 
+basic_reproductive_number = 2.4
+symptomatic_reproductive_number = basic_reproductive_number*(6/5)
+asymptomatic_reproductive_number = basic_reproductive_number*(3/5)
+
+time_until_infectious = 4.5 # This is figured from the incubation period, and rounded down from 4.6 so I can do steps in half-days.
+
+# For the asymptomatic types
+asymptomatic_time_from_infectious_to_recovery = 4 # This is figured from the generation time (confusing). Should this be longer??
+
+# For the symptomatic types
+time_infectious_before_symptom_onset = 0.5
+time_from_symptom_onset_to_recovery = 3.5
+
+time_until_seeking_care = 5 # This is the number of days after symptom onset that people seek hospital care if they need it, on average
+time_in_hospital_bed = 10.5
+time_until_death_if_no_care = 10
 
 ```
 
 ## States
 
 ```{r}
-INFECTED = "infected"
 SUCCEPTIBLE = "succeptible"
+
+INFECTED_ASYMPTOMATIC = "infected_asymptomatic"
+INFECTIOUS_ASYMPTOMATIC = "infectious_asymptomatic"
+
+INFECTED_SYMPTOMATIC_PRE_SYMPTOMS = "infected_symptomatic_pre_symptoms"
+INFECTIOUS_SYMPTOMATIC_PRE_SYMPTOMS = "infectious_symptomatic_pre_symptoms"
+
+SYMPTOMATIC_NEED_HOSPITAL = "symptomatic_need_hospital"
+SYMPTOMATIC_DONT_NEED_HOSPITAL = "symptomatic_dont_need_hospital"
+
+NEED_HOSPITAL_SEEK_CARE = "need_hospital_seek_care"
+NEED_HOSPITAL_DONT_SEEK_CARE = "need_hospital_dont_seek_care"
+
+GET_HOSPITAL_CARE = "get_hospital_care"
+DONT_GET_NEEDED_CARE = "dont_get_needed_care"
+
 RECOVERED = "recovered"
 DEAD = "dead"
 ```
@@ -40,7 +79,7 @@ change_state = function(prev_state){
 ```{r}
 # TODO: create the population according to demographic markers, and randomly assign the infected person.
 create_initial_population_with_one_infected = function(size){
-  one_infected = as.factor(c(INFECTED))
+  one_infected = as.factor(c(INFECTED_SYMPTOMATIC_PRE_SYMPTOMS))
   others_succeptible = rep(as.factor(c(SUCCEPTIBLE)), size - 1)
   
   fct_c(one_infected, others_succeptible)
@@ -79,6 +118,11 @@ population_to_visualize =
   mutate(day = as.numeric(day)) %>% 
   group_by(day, state) %>% 
   summarize(count = n())
+
+## NOTE:
+## For transitory states like "infected", the count represents how many people are infected on that day.
+## However, for a state like "dead", the count represents how many people total have died up until that point (because once you reach the "dead" state, you stay at that state forever).
+
 
 # remove this later, printing just for debugging
 population_to_visualize
