@@ -22,7 +22,7 @@ DEAD = "dead"
 ``` r
 # placeholder function that just returns the same state
 change_state = function(prev_state){
-  prev_state
+  as.character(prev_state)
 }
 ```
 
@@ -66,25 +66,67 @@ population
 ```
 
     ## # A tibble: 20 x 3
-    ##    person_ids day_1       day_2
-    ##         <int> <fct>       <fct>
-    ##  1          1 infected    1    
-    ##  2          2 succeptible 2    
-    ##  3          3 succeptible 2    
-    ##  4          4 succeptible 2    
-    ##  5          5 succeptible 2    
-    ##  6          6 succeptible 2    
-    ##  7          7 succeptible 2    
-    ##  8          8 succeptible 2    
-    ##  9          9 succeptible 2    
-    ## 10         10 succeptible 2    
-    ## 11         11 succeptible 2    
-    ## 12         12 succeptible 2    
-    ## 13         13 succeptible 2    
-    ## 14         14 succeptible 2    
-    ## 15         15 succeptible 2    
-    ## 16         16 succeptible 2    
-    ## 17         17 succeptible 2    
-    ## 18         18 succeptible 2    
-    ## 19         19 succeptible 2    
-    ## 20         20 succeptible 2
+    ##    person_ids day_1       day_2      
+    ##         <int> <fct>       <fct>      
+    ##  1          1 infected    infected   
+    ##  2          2 succeptible succeptible
+    ##  3          3 succeptible succeptible
+    ##  4          4 succeptible succeptible
+    ##  5          5 succeptible succeptible
+    ##  6          6 succeptible succeptible
+    ##  7          7 succeptible succeptible
+    ##  8          8 succeptible succeptible
+    ##  9          9 succeptible succeptible
+    ## 10         10 succeptible succeptible
+    ## 11         11 succeptible succeptible
+    ## 12         12 succeptible succeptible
+    ## 13         13 succeptible succeptible
+    ## 14         14 succeptible succeptible
+    ## 15         15 succeptible succeptible
+    ## 16         16 succeptible succeptible
+    ## 17         17 succeptible succeptible
+    ## 18         18 succeptible succeptible
+    ## 19         19 succeptible succeptible
+    ## 20         20 succeptible succeptible
+
+## Visualization
+
+First, transform the table into a better shape for graphing, by getting
+the total state counts at each time step.
+
+``` r
+population_to_visualize =
+  pivot_longer(
+    population,
+    cols = starts_with("day_"),
+    names_to = "day",
+    values_to = "state",
+    names_prefix = "day_"
+  ) %>% 
+  mutate(day = as.numeric(day)) %>% 
+  group_by(day, state) %>% 
+  summarize(count = n())
+
+# remove this later, printing just for debugging
+population_to_visualize
+```
+
+    ## # A tibble: 4 x 3
+    ## # Groups:   day [2]
+    ##     day state       count
+    ##   <dbl> <fct>       <int>
+    ## 1     1 infected        1
+    ## 2     1 succeptible    19
+    ## 3     2 infected        1
+    ## 4     2 succeptible    19
+
+Graph the person-count of each state in a different color, with days on
+the x-axis.
+
+``` r
+ggplot(population_to_visualize, 
+       aes(x=day, y=count, color=state)) + 
+  geom_line()
+```
+
+![](Modeling-code_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->

@@ -31,7 +31,7 @@ DEAD = "dead"
 ```{r}
 # placeholder function that just returns the same state
 change_state = function(prev_state){
-  prev_state
+  as.character(prev_state)
 }
 ```
 
@@ -63,5 +63,32 @@ population = tibble(
 population
 ```
 
+
+## Visualization
+
+First, transform the table into a better shape for graphing, by getting the total state counts at each time step.
+```{r}
+population_to_visualize =
+  pivot_longer(
+    population,
+    cols = starts_with("day_"),
+    names_to = "day",
+    values_to = "state",
+    names_prefix = "day_"
+  ) %>% 
+  mutate(day = as.numeric(day)) %>% 
+  group_by(day, state) %>% 
+  summarize(count = n())
+
+# remove this later, printing just for debugging
+population_to_visualize
+```
+
+Graph the person-count of each state in a different color, with days on the x-axis.
+```{r}
+ggplot(population_to_visualize, 
+       aes(x=day, y=count, color=state)) + 
+  geom_line()
+```
 
 
