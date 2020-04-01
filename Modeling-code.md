@@ -4,11 +4,24 @@ Modeling code
 
 ## Initial Parameters
 
+I am arbitrarily choosing XX,XXX people for my simulation. I am also
+choosing a timeline similar to what we saw in NYC, with *ADD IN DATES
+AND INFORMATION*.
+
+``` r
+initial_population_size = 20 # TODO - choose bigger number later
+
+# TODO - fill these in with real numbers
+day_of_first_distancing_guideline = 10
+day_of_stronger_distancing_directive = 15
+length_of_distancing_directive = 90
+```
+
+These initial parameters come from my best efforts at parsing the
+literature, specificially ARTICLE A and ARTICLE B.
+
 ``` r
 ## BIG TODO: add citations for these numbers
-
-initial_population_size = 20 # TODO - choose bigger number later
-hospital_bed_capacity = 100 #TODO - fill in with real number later
 
 probability_symptomatic = 2/3
 probability_asymptomatic = 1 - probability_symptomatic
@@ -32,7 +45,43 @@ time_in_hospital_bed = 10.5
 time_until_death_if_no_care = 10
 ```
 
+These numbers come from NYC open data.
+
+``` r
+hospital_bed_capacity = 100 #TODO - fill in with real number later
+
+# TODO - fill in distributions of: age, health status/underlying conditions, "essential" jobs, poverty levels, incarcerated, homeless, detained immigrants, insurance coverage 
+```
+
+These numbers come from ARTICLE A, describing the distribution by age of
+who needs hospital care, and what their mortality rate is.
+
+``` r
+# TODO: fill in from article.
+```
+
+And finally, based on some other research and best guesses:
+
+``` r
+# TODO: flesh out this section
+
+probability_seek_care_insured = 1
+probability_seek_care_uninsured = 0.5
+
+# TODO: decide on cutoff poverty level for ignoring a stay-home directive
+```
+
 ## States
+
+The way I organized my thoughts for this project was to create a state
+diagram (essentially a flow chart) to lay out all of the different
+trajectories someone could take through this epidemic. Everyone starts
+as “succeptible”, and from there you have different probabilities of
+transitioning to other states, dependent on factors like random chance,
+demographic characteristics, as well as actions taken by others (like
+infecting you).
+
+*TODO: put in an image of my state diagram*
 
 ``` r
 SUCCEPTIBLE = "succeptible"
@@ -55,6 +104,11 @@ DONT_GET_NEEDED_CARE = "dont_get_needed_care"
 RECOVERED = "recovered"
 DEAD = "dead"
 ```
+
+I used another state diagram to map out who is staying at home, and who
+is still out and about.
+
+*TODO: put in an image of my 2nd state diagram*
 
 ## Change states on each timestep
 
@@ -179,4 +233,4 @@ ggplot(population_to_visualize,
   geom_line()
 ```
 
-![](Modeling-code_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](Modeling-code_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
