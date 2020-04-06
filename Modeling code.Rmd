@@ -7,7 +7,6 @@ date: 2020-03-30
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
-library(forcats)
 ```
 
 ## Initial Parameters
@@ -15,6 +14,7 @@ library(forcats)
 I am arbitrarily choosing XX,XXX people for my simulation. I am also choosing a timeline similar to what we saw in NYC, with *ADD IN DATES AND INFORMATION*.
 ```{r}
 initial_population_size = 20 # TODO - choose bigger number later
+total_days = 100
 
 # TODO - fill these in with real numbers
 day_of_first_distancing_guideline = 10
@@ -115,6 +115,7 @@ change_state = function(prev_state){
 }
 ```
 
+
 ## Setting up and populating my dataframe
 
 ```{r}
@@ -136,8 +137,16 @@ This is a table with each row representing one person in the population. The fir
 population = tibble(
   person_ids = 1:initial_population_size,
   day_1 = create_initial_population_with_one_infected(initial_population_size)
-) %>% 
-  mutate(., day_2 = as.factor(map_chr(day_1, change_state)))
+)
+
+for (i in 2:total_days) {
+  prev_day = population[[(str_c("day_", i - 1))]]
+  population =
+    add_column(
+      population,
+      !!str_c("day_", i) := as.factor(map_chr(prev_day, change_state))
+      )
+  }
 
 # remove this later, printing just for debugging
 population

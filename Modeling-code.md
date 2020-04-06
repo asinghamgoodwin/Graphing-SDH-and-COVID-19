@@ -10,6 +10,7 @@ AND INFORMATION*.
 
 ``` r
 initial_population_size = 20 # TODO - choose bigger number later
+total_days = 100
 
 # TODO - fill these in with real numbers
 day_of_first_distancing_guideline = 10
@@ -157,36 +158,63 @@ n.
 population = tibble(
   person_ids = 1:initial_population_size,
   day_1 = create_initial_population_with_one_infected(initial_population_size)
-) %>% 
-  mutate(., day_2 = as.factor(map_chr(day_1, change_state)))
+)
+
+for (i in 2:total_days) {
+  prev_day = population[[(str_c("day_", i - 1))]]
+  population =
+    add_column(
+      population,
+      !!str_c("day_", i) := as.factor(map_chr(prev_day, change_state))
+      )
+  }
 
 # remove this later, printing just for debugging
 population
 ```
 
-    ## # A tibble: 20 x 3
-    ##    person_ids day_1                             day_2                           
-    ##         <int> <fct>                             <fct>                           
-    ##  1          1 infected_symptomatic_pre_symptoms infected_symptomatic_pre_sympto…
-    ##  2          2 succeptible                       succeptible                     
-    ##  3          3 succeptible                       succeptible                     
-    ##  4          4 succeptible                       succeptible                     
-    ##  5          5 succeptible                       succeptible                     
-    ##  6          6 succeptible                       succeptible                     
-    ##  7          7 succeptible                       succeptible                     
-    ##  8          8 succeptible                       succeptible                     
-    ##  9          9 succeptible                       succeptible                     
-    ## 10         10 succeptible                       succeptible                     
-    ## 11         11 succeptible                       succeptible                     
-    ## 12         12 succeptible                       succeptible                     
-    ## 13         13 succeptible                       succeptible                     
-    ## 14         14 succeptible                       succeptible                     
-    ## 15         15 succeptible                       succeptible                     
-    ## 16         16 succeptible                       succeptible                     
-    ## 17         17 succeptible                       succeptible                     
-    ## 18         18 succeptible                       succeptible                     
-    ## 19         19 succeptible                       succeptible                     
-    ## 20         20 succeptible                       succeptible
+    ## # A tibble: 20 x 101
+    ##    person_ids day_1 day_2 day_3 day_4 day_5 day_6 day_7 day_8 day_9 day_10
+    ##         <int> <fct> <fct> <fct> <fct> <fct> <fct> <fct> <fct> <fct> <fct> 
+    ##  1          1 infe… infe… infe… infe… infe… infe… infe… infe… infe… infec…
+    ##  2          2 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
+    ##  3          3 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
+    ##  4          4 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
+    ##  5          5 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
+    ##  6          6 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
+    ##  7          7 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
+    ##  8          8 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
+    ##  9          9 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
+    ## 10         10 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
+    ## 11         11 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
+    ## 12         12 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
+    ## 13         13 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
+    ## 14         14 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
+    ## 15         15 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
+    ## 16         16 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
+    ## 17         17 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
+    ## 18         18 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
+    ## 19         19 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
+    ## 20         20 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
+    ## # … with 90 more variables: day_11 <fct>, day_12 <fct>, day_13 <fct>,
+    ## #   day_14 <fct>, day_15 <fct>, day_16 <fct>, day_17 <fct>, day_18 <fct>,
+    ## #   day_19 <fct>, day_20 <fct>, day_21 <fct>, day_22 <fct>, day_23 <fct>,
+    ## #   day_24 <fct>, day_25 <fct>, day_26 <fct>, day_27 <fct>, day_28 <fct>,
+    ## #   day_29 <fct>, day_30 <fct>, day_31 <fct>, day_32 <fct>, day_33 <fct>,
+    ## #   day_34 <fct>, day_35 <fct>, day_36 <fct>, day_37 <fct>, day_38 <fct>,
+    ## #   day_39 <fct>, day_40 <fct>, day_41 <fct>, day_42 <fct>, day_43 <fct>,
+    ## #   day_44 <fct>, day_45 <fct>, day_46 <fct>, day_47 <fct>, day_48 <fct>,
+    ## #   day_49 <fct>, day_50 <fct>, day_51 <fct>, day_52 <fct>, day_53 <fct>,
+    ## #   day_54 <fct>, day_55 <fct>, day_56 <fct>, day_57 <fct>, day_58 <fct>,
+    ## #   day_59 <fct>, day_60 <fct>, day_61 <fct>, day_62 <fct>, day_63 <fct>,
+    ## #   day_64 <fct>, day_65 <fct>, day_66 <fct>, day_67 <fct>, day_68 <fct>,
+    ## #   day_69 <fct>, day_70 <fct>, day_71 <fct>, day_72 <fct>, day_73 <fct>,
+    ## #   day_74 <fct>, day_75 <fct>, day_76 <fct>, day_77 <fct>, day_78 <fct>,
+    ## #   day_79 <fct>, day_80 <fct>, day_81 <fct>, day_82 <fct>, day_83 <fct>,
+    ## #   day_84 <fct>, day_85 <fct>, day_86 <fct>, day_87 <fct>, day_88 <fct>,
+    ## #   day_89 <fct>, day_90 <fct>, day_91 <fct>, day_92 <fct>, day_93 <fct>,
+    ## #   day_94 <fct>, day_95 <fct>, day_96 <fct>, day_97 <fct>, day_98 <fct>,
+    ## #   day_99 <fct>, day_100 <fct>
 
 ## Visualization
 
@@ -215,14 +243,21 @@ population_to_visualize =
 population_to_visualize
 ```
 
-    ## # A tibble: 4 x 3
-    ## # Groups:   day [2]
-    ##     day state                             count
-    ##   <dbl> <fct>                             <int>
-    ## 1     1 infected_symptomatic_pre_symptoms     1
-    ## 2     1 succeptible                          19
-    ## 3     2 infected_symptomatic_pre_symptoms     1
-    ## 4     2 succeptible                          19
+    ## # A tibble: 200 x 3
+    ## # Groups:   day [100]
+    ##      day state                             count
+    ##    <dbl> <fct>                             <int>
+    ##  1     1 infected_symptomatic_pre_symptoms     1
+    ##  2     1 succeptible                          19
+    ##  3     2 infected_symptomatic_pre_symptoms     1
+    ##  4     2 succeptible                          19
+    ##  5     3 infected_symptomatic_pre_symptoms     1
+    ##  6     3 succeptible                          19
+    ##  7     4 infected_symptomatic_pre_symptoms     1
+    ##  8     4 succeptible                          19
+    ##  9     5 infected_symptomatic_pre_symptoms     1
+    ## 10     5 succeptible                          19
+    ## # … with 190 more rows
 
 Graph the person-count of each state in a different color, with days on
 the x-axis.
