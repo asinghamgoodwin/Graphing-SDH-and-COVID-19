@@ -145,14 +145,8 @@ newly_infected
 
 ```{r}
 change_state = function(id, prev_state, day){ #TODO: Fix inputs elsewhere
-  new_state = prev_state
+  new_state = prev_state # The default is to stay at the same state. This always happens for RECOVERED or DEAD
   rand = runif(1) #Question: is it ok to use the same random number for every decision in this function?
-  
-  # Take out later, for debugging
-  cat("\n\nPerson ID: ", id)
-  cat("\nDay: ", day)
-  cat("\nPrevious state: ", prev_state)
-  cat("\nRandom number: ", rand)
   
   if (prev_state == SUCCEPTIBLE) {
     if (newly_infected[[str_c("day_", day)]][id] == 1) {
@@ -160,16 +154,56 @@ change_state = function(id, prev_state, day){ #TODO: Fix inputs elsewhere
       else {new_state = INFECTED_SYMPTOMATIC_PRE_SYMPTOMS}
     }
   }
-  
-  
-  if (prev_state == INFECTED_SYMPTOMATIC_PRE_SYMPTOMS){
-    if (rand < .3){ new_state = DEAD}
-    else if (rand > .7) {new_state = RECOVERED}
+
+  if (prev_state == INFECTED_ASYMPTOMATIC) {
+    # WAIT 4.5 days before turning infectious
   }
-  
+
+  if (prev_state == INFECTIOUS_ASYMPTOMATIC) {
+    # WAIT 4 days before recovering
+    # INFECT OTHERS according to parameters
+  }
+
+  if (prev_state == INFECTED_SYMPTOMATIC_PRE_SYMPTOMS) {
+    # WAIT 4.5 days before turning infectious
+  }
+
+  if (prev_state == INFECTIOUS_SYMPTOMATIC_PRE_SYMPTOMS) {
+    # WAIT .5 days before turning symptomatic 
+    # INFECT OTHERS according to parameters
+  }
+
+  if (prev_state == SYMPTOMATIC_NEED_HOSPITAL) {
+    # SEEK CARE with 5 day delay, or don't
+  }
+
+  if (prev_state == SYMPTOMATIC_DONT_NEED_HOSPITAL) {
+    # WAIT 3.5 days then recover
+  }
+
+  if (prev_state == NEED_HOSPITAL_SEEK_CARE) {
+    # immediately either get care or don't
+  }
+
+  if (prev_state == NEED_HOSPITAL_DONT_SEEK_CARE) {
+    # immediately transition to don't get care (maybe delete this state if it's redundant??)
+  }
+
+  if (prev_state == GET_HOSPITAL_CARE) {
+    # probabalistically die or recover, after 10.5 days in bed
+  }
+
+  if (prev_state == DONT_GET_NEEDED_CARE) {
+    # die after 10 days
+  }
+
   # Take out later, for debugging
+  cat("\n\nPerson ID: ", id)
+  cat("\nDay: ", day)
+  cat("\nPrevious state: ", prev_state)
+  cat("\nRandom number: ", rand)
   cat("\nNew state: ", new_state)
-  
+
   new_state
 }
 
