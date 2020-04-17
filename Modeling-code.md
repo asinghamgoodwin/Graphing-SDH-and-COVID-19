@@ -193,7 +193,7 @@ newly_infected
     ## #   day_99 <dbl>, day_100 <dbl>
 
 ``` r
-change_state = function(id, prev_state, day){ #TODO: Fix inputs elsewhere
+change_state = function(id, prev_state, day, population){ #TODO: Fix inputs elsewhere
   new_state = prev_state # The default is to stay at the same state. This always happens for RECOVERED or DEAD
   rand = runif(1) #Question: is it ok to use the same random number for every decision in this function?
   
@@ -358,21 +358,26 @@ disease state at time
 n.
 
 ``` r
-# TODO: make a function to generate new day columns based on some initial parameter.
 # TODO: decide what to do about states as factors. Currently I just made everything strings because I couldn't keep things straight.
-population = tibble(
-  person_ids = 1:initial_population_size,
-  day_1 = create_initial_population_with_one_infected(initial_population_size)
-)
-
-for (day in 2:total_days) {
-  prev_day = population[[(str_c("day_", day - 1))]]
-  population =
-    add_column(
-      population,
-      !!str_c("day_", day) := flatten_chr(map2(population$person_ids, prev_day, change_state, day))
+run_simulation = function(initial_population_size, total_days) {
+  population = tibble(
+    person_ids = 1:initial_population_size,
+    day_1 = create_initial_population_with_one_infected(initial_population_size)
+  )
+  
+  for (day in 2:total_days) {
+    prev_day = population[[(str_c("day_", day - 1))]]
+    population =
+      add_column(
+        population,
+        !!str_c("day_", day) := flatten_chr(map2(population$person_ids, prev_day, change_state, day, population))
       )
   }
+  
+  population
+}
+
+population = run_simulation(initial_population_size, total_days)
 ```
 
     ## 
@@ -380,11930 +385,11882 @@ for (day in 2:total_days) {
     ## Person ID:  1
     ## Day:  2
     ## Previous state:  infected_symptomatic_pre_symptoms
-    ## Random number:  0.5056189
+    ## Random number:  0.4089264
     ## New state:  infected_symptomatic_pre_symptoms
     ## 
     ## Person ID:  2
     ## Day:  2
     ## Previous state:  succeptible
-    ## Random number:  0.05626092
+    ## Random number:  0.2426733
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  2
     ## Previous state:  succeptible
-    ## Random number:  0.7540533
+    ## Random number:  0.3906138
     ## New state:  succeptible
     ## 
     ## Person ID:  4
     ## Day:  2
     ## Previous state:  succeptible
-    ## Random number:  0.7581559
+    ## Random number:  0.6488351
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  2
     ## Previous state:  succeptible
-    ## Random number:  0.8300333
+    ## Random number:  0.03611637
     ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  2
     ## Previous state:  succeptible
-    ## Random number:  0.9911717
+    ## Random number:  0.7870682
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  2
     ## Previous state:  succeptible
-    ## Random number:  0.3263472
+    ## Random number:  0.002460883
     ## New state:  succeptible
     ## 
     ## Person ID:  8
     ## Day:  2
     ## Previous state:  succeptible
-    ## Random number:  0.12771
+    ## Random number:  0.7241532
     ## New state:  succeptible
     ## 
     ## Person ID:  9
     ## Day:  2
     ## Previous state:  succeptible
-    ## Random number:  0.6880302
+    ## Random number:  0.8944167
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  2
     ## Previous state:  succeptible
-    ## Random number:  0.1611388
+    ## Random number:  0.5976398
     ## New state:  succeptible
     ## 
     ## Person ID:  11
     ## Day:  2
     ## Previous state:  succeptible
-    ## Random number:  0.8712257
+    ## Random number:  0.7131404
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  2
     ## Previous state:  succeptible
-    ## Random number:  0.4687487
+    ## Random number:  0.2525878
     ## New state:  succeptible
     ## 
     ## Person ID:  13
     ## Day:  2
     ## Previous state:  succeptible
-    ## Random number:  0.9601811
+    ## Random number:  0.4014143
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  2
     ## Previous state:  succeptible
-    ## Random number:  0.6434255
+    ## Random number:  0.9275316
     ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  2
     ## Previous state:  succeptible
-    ## Random number:  0.4892698
+    ## Random number:  0.9343152
     ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  2
     ## Previous state:  succeptible
-    ## Random number:  0.8526457
+    ## Random number:  0.05361324
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  2
     ## Previous state:  succeptible
-    ## Random number:  0.6025187
+    ## Random number:  0.1391818
     ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  2
     ## Previous state:  succeptible
-    ## Random number:  0.2893562
+    ## Random number:  0.1199414
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  2
     ## Previous state:  succeptible
-    ## Random number:  0.8237077
+    ## Random number:  0.1480188
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  2
     ## Previous state:  succeptible
-    ## Random number:  0.4693671
+    ## Random number:  0.8021691
     ## New state:  succeptible
     ## 
     ## Person ID:  1
     ## Day:  3
     ## Previous state:  infected_symptomatic_pre_symptoms
-    ## Random number:  0.7047031
+    ## Random number:  0.3920902
     ## New state:  infected_symptomatic_pre_symptoms
     ## 
     ## Person ID:  2
     ## Day:  3
     ## Previous state:  succeptible
-    ## Random number:  0.6577303
+    ## Random number:  0.8926534
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  3
     ## Previous state:  succeptible
-    ## Random number:  0.1619865
+    ## Random number:  0.7480844
     ## New state:  succeptible
     ## 
     ## Person ID:  4
     ## Day:  3
     ## Previous state:  succeptible
-    ## Random number:  0.9383991
+    ## Random number:  0.4041351
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  3
     ## Previous state:  succeptible
-    ## Random number:  0.7405465
+    ## Random number:  0.2279744
     ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  3
     ## Previous state:  succeptible
-    ## Random number:  0.1025113
+    ## Random number:  0.6146601
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  3
     ## Previous state:  succeptible
-    ## Random number:  0.8186909
+    ## Random number:  0.7722822
     ## New state:  succeptible
     ## 
     ## Person ID:  8
     ## Day:  3
     ## Previous state:  succeptible
-    ## Random number:  0.7328332
+    ## Random number:  0.2142588
     ## New state:  succeptible
     ## 
     ## Person ID:  9
     ## Day:  3
     ## Previous state:  succeptible
-    ## Random number:  0.3389361
+    ## Random number:  0.4645919
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  3
     ## Previous state:  succeptible
-    ## Random number:  0.8445859
+    ## Random number:  0.2132908
     ## New state:  succeptible
     ## 
     ## Person ID:  11
     ## Day:  3
     ## Previous state:  succeptible
-    ## Random number:  0.9820436
+    ## Random number:  0.1462128
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  3
     ## Previous state:  succeptible
-    ## Random number:  0.4681185
+    ## Random number:  0.7759546
     ## New state:  succeptible
     ## 
     ## Person ID:  13
     ## Day:  3
     ## Previous state:  succeptible
-    ## Random number:  0.4252454
+    ## Random number:  0.5824353
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  3
     ## Previous state:  succeptible
-    ## Random number:  0.2074167
+    ## Random number:  0.8178942
     ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  3
     ## Previous state:  succeptible
-    ## Random number:  0.5850585
+    ## Random number:  0.03174639
     ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  3
     ## Previous state:  succeptible
-    ## Random number:  0.9619557
+    ## Random number:  0.1021241
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  3
     ## Previous state:  succeptible
-    ## Random number:  0.9709811
+    ## Random number:  0.7333079
     ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  3
     ## Previous state:  succeptible
-    ## Random number:  0.3927648
+    ## Random number:  0.7381041
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  3
     ## Previous state:  succeptible
-    ## Random number:  0.1319707
+    ## Random number:  0.8189246
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  3
     ## Previous state:  succeptible
-    ## Random number:  0.6680126
+    ## Random number:  0.5454205
     ## New state:  succeptible
     ## 
     ## Person ID:  1
     ## Day:  4
     ## Previous state:  infected_symptomatic_pre_symptoms
-    ## Random number:  0.6331358
+    ## Random number:  0.8261401
     ## New state:  infected_symptomatic_pre_symptoms
     ## 
     ## Person ID:  2
     ## Day:  4
     ## Previous state:  succeptible
-    ## Random number:  0.3967471
+    ## Random number:  0.5980803
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  4
     ## Previous state:  succeptible
-    ## Random number:  0.4141346
+    ## Random number:  0.4337382
     ## New state:  succeptible
     ## 
     ## Person ID:  4
     ## Day:  4
     ## Previous state:  succeptible
-    ## Random number:  0.8666397
+    ## Random number:  0.4812131
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  4
     ## Previous state:  succeptible
-    ## Random number:  0.2867993
+    ## Random number:  0.7101066
     ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  4
     ## Previous state:  succeptible
-    ## Random number:  0.7789378
+    ## Random number:  0.5363974
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  4
     ## Previous state:  succeptible
-    ## Random number:  0.4950689
+    ## Random number:  0.9790267
     ## New state:  succeptible
     ## 
     ## Person ID:  8
     ## Day:  4
     ## Previous state:  succeptible
-    ## Random number:  0.8458875
+    ## Random number:  0.5377319
     ## New state:  succeptible
     ## 
     ## Person ID:  9
     ## Day:  4
     ## Previous state:  succeptible
-    ## Random number:  0.8070653
+    ## Random number:  0.5563789
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  4
     ## Previous state:  succeptible
-    ## Random number:  0.3008574
+    ## Random number:  0.7265112
     ## New state:  succeptible
     ## 
     ## Person ID:  11
     ## Day:  4
     ## Previous state:  succeptible
-    ## Random number:  0.9233406
+    ## Random number:  0.5367291
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  4
     ## Previous state:  succeptible
-    ## Random number:  0.3083262
+    ## Random number:  0.6053319
     ## New state:  succeptible
     ## 
     ## Person ID:  13
     ## Day:  4
     ## Previous state:  succeptible
-    ## Random number:  0.3511293
+    ## Random number:  0.02669382
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  4
     ## Previous state:  succeptible
-    ## Random number:  0.8774768
+    ## Random number:  0.9764204
     ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  4
     ## Previous state:  succeptible
-    ## Random number:  0.6956942
+    ## Random number:  0.352232
     ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  4
     ## Previous state:  succeptible
-    ## Random number:  0.8091159
+    ## Random number:  0.9055727
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  4
     ## Previous state:  succeptible
-    ## Random number:  0.8006344
+    ## Random number:  0.7817386
     ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  4
     ## Previous state:  succeptible
-    ## Random number:  0.3844784
+    ## Random number:  0.347899
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  4
     ## Previous state:  succeptible
-    ## Random number:  0.2768978
+    ## Random number:  0.7067895
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  4
     ## Previous state:  succeptible
-    ## Random number:  0.5366029
+    ## Random number:  0.2030991
     ## New state:  succeptible
     ## 
     ## Person ID:  1
     ## Day:  5
     ## Previous state:  infected_symptomatic_pre_symptoms
-    ## Random number:  0.167163
+    ## Random number:  0.2048982
     ## New state:  infectious_symptomatic_pre_symptoms
     ## 
     ## Person ID:  2
     ## Day:  5
     ## Previous state:  succeptible
-    ## Random number:  0.6401809
+    ## Random number:  0.155224
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  5
     ## Previous state:  succeptible
-    ## Random number:  0.02793452
+    ## Random number:  0.9977464
     ## New state:  succeptible
     ## 
     ## Person ID:  4
     ## Day:  5
     ## Previous state:  succeptible
-    ## Random number:  0.4536767
+    ## Random number:  0.327697
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  5
     ## Previous state:  succeptible
-    ## Random number:  0.0231692
+    ## Random number:  0.8841722
     ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  5
     ## Previous state:  succeptible
-    ## Random number:  0.8401001
+    ## Random number:  0.4904717
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  5
     ## Previous state:  succeptible
-    ## Random number:  0.1382983
+    ## Random number:  0.1530213
     ## New state:  succeptible
     ## 
     ## Person ID:  8
     ## Day:  5
     ## Previous state:  succeptible
-    ## Random number:  0.7324927
+    ## Random number:  0.9000201
     ## New state:  succeptible
     ## 
     ## Person ID:  9
     ## Day:  5
     ## Previous state:  succeptible
-    ## Random number:  0.653504
+    ## Random number:  0.5834944
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  5
     ## Previous state:  succeptible
-    ## Random number:  0.147324
+    ## Random number:  0.9490458
     ## New state:  succeptible
     ## 
     ## Person ID:  11
     ## Day:  5
     ## Previous state:  succeptible
-    ## Random number:  0.05474567
+    ## Random number:  0.5652649
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  5
     ## Previous state:  succeptible
-    ## Random number:  0.4926365
+    ## Random number:  0.2449288
     ## New state:  succeptible
     ## 
     ## Person ID:  13
     ## Day:  5
     ## Previous state:  succeptible
-    ## Random number:  0.4361412
+    ## Random number:  0.5015709
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  5
     ## Previous state:  succeptible
-    ## Random number:  0.005211411
+    ## Random number:  0.6534372
     ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  5
     ## Previous state:  succeptible
-    ## Random number:  0.4243651
+    ## Random number:  0.4574514
     ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  5
     ## Previous state:  succeptible
-    ## Random number:  0.9471468
+    ## Random number:  0.7875669
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  5
     ## Previous state:  succeptible
-    ## Random number:  0.8530026
+    ## Random number:  0.3947893
     ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  5
     ## Previous state:  succeptible
-    ## Random number:  0.1700546
+    ## Random number:  0.3029422
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  5
     ## Previous state:  succeptible
-    ## Random number:  0.9822927
+    ## Random number:  0.5458148
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  5
     ## Previous state:  succeptible
-    ## Random number:  0.1948849
+    ## Random number:  0.2864702
     ## New state:  succeptible
     ## 
     ## Person ID:  1
     ## Day:  6
     ## Previous state:  infectious_symptomatic_pre_symptoms
-    ## Random number:  0.08630626
-    ## New state:  symptomatic_need_hospital
+    ## Random number:  0.6542932
+    ## New state:  symptomatic_dont_need_hospital
     ## 
     ## Person ID:  2
     ## Day:  6
     ## Previous state:  succeptible
-    ## Random number:  0.3687446
+    ## Random number:  0.4273344
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  6
     ## Previous state:  succeptible
-    ## Random number:  0.2120783
+    ## Random number:  0.2145516
     ## New state:  succeptible
     ## 
     ## Person ID:  4
     ## Day:  6
     ## Previous state:  succeptible
-    ## Random number:  0.1704473
+    ## Random number:  0.160815
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  6
     ## Previous state:  succeptible
-    ## Random number:  0.1378496
+    ## Random number:  0.8035246
     ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  6
     ## Previous state:  succeptible
-    ## Random number:  0.2288066
+    ## Random number:  0.5756797
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  6
     ## Previous state:  succeptible
-    ## Random number:  0.08685924
+    ## Random number:  0.3664406
     ## New state:  succeptible
     ## 
     ## Person ID:  8
     ## Day:  6
     ## Previous state:  succeptible
-    ## Random number:  0.9818525
+    ## Random number:  0.01300773
     ## New state:  succeptible
     ## 
     ## Person ID:  9
     ## Day:  6
     ## Previous state:  succeptible
-    ## Random number:  0.3224566
+    ## Random number:  0.6753176
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  6
     ## Previous state:  succeptible
-    ## Random number:  0.4576201
+    ## Random number:  0.003139607
     ## New state:  succeptible
     ## 
     ## Person ID:  11
     ## Day:  6
     ## Previous state:  succeptible
-    ## Random number:  0.486738
+    ## Random number:  0.8479168
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  6
     ## Previous state:  succeptible
-    ## Random number:  0.1595493
-    ## New state:  succeptible
+    ## Random number:  0.8681816
+    ## New state:  infected_symptomatic_pre_symptoms
     ## 
     ## Person ID:  13
     ## Day:  6
     ## Previous state:  succeptible
-    ## Random number:  0.7175753
+    ## Random number:  0.5853371
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  6
     ## Previous state:  succeptible
-    ## Random number:  0.4374899
+    ## Random number:  0.1709364
     ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  6
     ## Previous state:  succeptible
-    ## Random number:  0.571129
+    ## Random number:  0.5726751
     ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  6
     ## Previous state:  succeptible
-    ## Random number:  0.2987163
+    ## Random number:  0.6650879
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  6
     ## Previous state:  succeptible
-    ## Random number:  0.1797011
-    ## New state:  infected_asymptomatic
+    ## Random number:  0.2962395
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  6
     ## Previous state:  succeptible
-    ## Random number:  0.07886023
+    ## Random number:  0.5330625
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  6
     ## Previous state:  succeptible
-    ## Random number:  0.3758156
+    ## Random number:  0.4375975
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  6
     ## Previous state:  succeptible
-    ## Random number:  0.390451
+    ## Random number:  0.1879828
     ## New state:  succeptible
     ## 
     ## Person ID:  1
     ## Day:  7
-    ## Previous state:  symptomatic_need_hospital
-    ## Random number:  0.7460431
-    ## New state:  symptomatic_need_hospital
+    ## Previous state:  symptomatic_dont_need_hospital
+    ## Random number:  0.7765722
+    ## New state:  symptomatic_dont_need_hospital
     ## 
     ## Person ID:  2
     ## Day:  7
     ## Previous state:  succeptible
-    ## Random number:  0.4024393
+    ## Random number:  0.2928032
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  7
     ## Previous state:  succeptible
-    ## Random number:  0.2510231
+    ## Random number:  0.33552
     ## New state:  succeptible
     ## 
     ## Person ID:  4
     ## Day:  7
     ## Previous state:  succeptible
-    ## Random number:  0.07178463
+    ## Random number:  0.0202993
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  7
     ## Previous state:  succeptible
-    ## Random number:  0.09204066
+    ## Random number:  0.1378517
     ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  7
     ## Previous state:  succeptible
-    ## Random number:  0.5687976
+    ## Random number:  0.5346419
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  7
     ## Previous state:  succeptible
-    ## Random number:  0.4825659
+    ## Random number:  0.3619457
     ## New state:  succeptible
     ## 
     ## Person ID:  8
     ## Day:  7
     ## Previous state:  succeptible
-    ## Random number:  0.9411717
+    ## Random number:  0.9192499
     ## New state:  succeptible
     ## 
     ## Person ID:  9
     ## Day:  7
     ## Previous state:  succeptible
-    ## Random number:  0.2512306
+    ## Random number:  0.6797136
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  7
     ## Previous state:  succeptible
-    ## Random number:  0.2735041
+    ## Random number:  0.9385943
     ## New state:  succeptible
     ## 
     ## Person ID:  11
     ## Day:  7
     ## Previous state:  succeptible
-    ## Random number:  0.9718129
+    ## Random number:  0.1829584
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  7
-    ## Previous state:  succeptible
-    ## Random number:  0.92219
-    ## New state:  succeptible
+    ## Previous state:  infected_symptomatic_pre_symptoms
+    ## Random number:  0.4009163
+    ## New state:  infected_symptomatic_pre_symptoms
     ## 
     ## Person ID:  13
     ## Day:  7
     ## Previous state:  succeptible
-    ## Random number:  0.8497491
+    ## Random number:  0.5005577
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  7
     ## Previous state:  succeptible
-    ## Random number:  0.02442374
+    ## Random number:  0.8836924
     ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  7
     ## Previous state:  succeptible
-    ## Random number:  0.8786015
+    ## Random number:  0.01962104
     ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  7
     ## Previous state:  succeptible
-    ## Random number:  0.9239947
+    ## Random number:  0.2871239
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  7
-    ## Previous state:  infected_asymptomatic
-    ## Random number:  0.1244482
-    ## New state:  infected_asymptomatic
+    ## Previous state:  succeptible
+    ## Random number:  0.8273454
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  7
     ## Previous state:  succeptible
-    ## Random number:  0.9655085
+    ## Random number:  0.7188151
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  7
     ## Previous state:  succeptible
-    ## Random number:  0.5285345
+    ## Random number:  0.5100326
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  7
     ## Previous state:  succeptible
-    ## Random number:  0.5163264
+    ## Random number:  0.7793456
     ## New state:  succeptible
     ## 
     ## Person ID:  1
     ## Day:  8
-    ## Previous state:  symptomatic_need_hospital
-    ## Random number:  0.5118653
-    ## New state:  symptomatic_need_hospital
+    ## Previous state:  symptomatic_dont_need_hospital
+    ## Random number:  0.6397825
+    ## New state:  symptomatic_dont_need_hospital
     ## 
     ## Person ID:  2
     ## Day:  8
     ## Previous state:  succeptible
-    ## Random number:  0.7834502
+    ## Random number:  0.1615266
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  8
     ## Previous state:  succeptible
-    ## Random number:  0.9622724
+    ## Random number:  0.3207085
     ## New state:  succeptible
     ## 
     ## Person ID:  4
     ## Day:  8
     ## Previous state:  succeptible
-    ## Random number:  0.7523495
+    ## Random number:  0.01455032
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  8
     ## Previous state:  succeptible
-    ## Random number:  0.8735665
+    ## Random number:  0.6354194
     ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  8
     ## Previous state:  succeptible
-    ## Random number:  0.222429
+    ## Random number:  0.2700039
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  8
     ## Previous state:  succeptible
-    ## Random number:  0.3443988
+    ## Random number:  0.7177486
     ## New state:  succeptible
     ## 
     ## Person ID:  8
     ## Day:  8
     ## Previous state:  succeptible
-    ## Random number:  0.8102983
+    ## Random number:  0.8719685
     ## New state:  succeptible
     ## 
     ## Person ID:  9
     ## Day:  8
     ## Previous state:  succeptible
-    ## Random number:  0.4145703
+    ## Random number:  0.4977863
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  8
     ## Previous state:  succeptible
-    ## Random number:  0.8731616
+    ## Random number:  0.07808585
     ## New state:  succeptible
     ## 
     ## Person ID:  11
     ## Day:  8
     ## Previous state:  succeptible
-    ## Random number:  0.4316568
+    ## Random number:  0.4263643
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  8
-    ## Previous state:  succeptible
-    ## Random number:  0.9564571
-    ## New state:  succeptible
+    ## Previous state:  infected_symptomatic_pre_symptoms
+    ## Random number:  0.2586663
+    ## New state:  infected_symptomatic_pre_symptoms
     ## 
     ## Person ID:  13
     ## Day:  8
     ## Previous state:  succeptible
-    ## Random number:  0.3579235
+    ## Random number:  0.8797642
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  8
     ## Previous state:  succeptible
-    ## Random number:  0.164622
+    ## Random number:  0.08559361
     ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  8
     ## Previous state:  succeptible
-    ## Random number:  0.05827018
+    ## Random number:  0.8715555
     ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  8
     ## Previous state:  succeptible
-    ## Random number:  0.9274781
+    ## Random number:  0.4076341
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  8
-    ## Previous state:  infected_asymptomatic
-    ## Random number:  0.03158083
-    ## New state:  infected_asymptomatic
+    ## Previous state:  succeptible
+    ## Random number:  0.9345554
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  8
     ## Previous state:  succeptible
-    ## Random number:  0.6024949
+    ## Random number:  0.855942
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  8
     ## Previous state:  succeptible
-    ## Random number:  0.2927809
+    ## Random number:  0.9258616
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  8
     ## Previous state:  succeptible
-    ## Random number:  0.7179352
+    ## Random number:  0.728877
     ## New state:  succeptible
     ## 
     ## Person ID:  1
     ## Day:  9
-    ## Previous state:  symptomatic_need_hospital
-    ## Random number:  0.7746591
-    ## New state:  symptomatic_need_hospital
+    ## Previous state:  symptomatic_dont_need_hospital
+    ## Random number:  0.965488
+    ## New state:  symptomatic_dont_need_hospital
     ## 
     ## Person ID:  2
     ## Day:  9
     ## Previous state:  succeptible
-    ## Random number:  0.3915061
+    ## Random number:  0.7545065
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  9
     ## Previous state:  succeptible
-    ## Random number:  0.1181759
+    ## Random number:  0.8070454
     ## New state:  succeptible
     ## 
     ## Person ID:  4
     ## Day:  9
     ## Previous state:  succeptible
-    ## Random number:  0.7603037
+    ## Random number:  0.5871663
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  9
     ## Previous state:  succeptible
-    ## Random number:  0.9653333
+    ## Random number:  0.4612233
     ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  9
     ## Previous state:  succeptible
-    ## Random number:  0.3657951
+    ## Random number:  0.9215354
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  9
     ## Previous state:  succeptible
-    ## Random number:  0.3591385
+    ## Random number:  0.6180303
     ## New state:  succeptible
     ## 
     ## Person ID:  8
     ## Day:  9
     ## Previous state:  succeptible
-    ## Random number:  0.7979735
+    ## Random number:  0.5034876
     ## New state:  succeptible
     ## 
     ## Person ID:  9
     ## Day:  9
     ## Previous state:  succeptible
-    ## Random number:  0.8638607
+    ## Random number:  0.3331198
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  9
     ## Previous state:  succeptible
-    ## Random number:  0.6787583
+    ## Random number:  0.4048213
     ## New state:  succeptible
     ## 
     ## Person ID:  11
     ## Day:  9
     ## Previous state:  succeptible
-    ## Random number:  0.02696128
+    ## Random number:  0.5107171
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  9
-    ## Previous state:  succeptible
-    ## Random number:  0.5485571
-    ## New state:  succeptible
+    ## Previous state:  infected_symptomatic_pre_symptoms
+    ## Random number:  0.9871938
+    ## New state:  infected_symptomatic_pre_symptoms
     ## 
     ## Person ID:  13
     ## Day:  9
     ## Previous state:  succeptible
-    ## Random number:  0.3983031
+    ## Random number:  0.5254019
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  9
     ## Previous state:  succeptible
-    ## Random number:  0.8864099
+    ## Random number:  0.07873316
     ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  9
     ## Previous state:  succeptible
-    ## Random number:  0.1503021
+    ## Random number:  0.5457806
     ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  9
     ## Previous state:  succeptible
-    ## Random number:  0.6777708
+    ## Random number:  0.3175994
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  9
-    ## Previous state:  infected_asymptomatic
-    ## Random number:  0.04993577
-    ## New state:  infected_asymptomatic
+    ## Previous state:  succeptible
+    ## Random number:  0.8159083
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  9
     ## Previous state:  succeptible
-    ## Random number:  0.5600467
+    ## Random number:  0.7003068
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  9
     ## Previous state:  succeptible
-    ## Random number:  0.4059896
+    ## Random number:  0.800888
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  9
     ## Previous state:  succeptible
-    ## Random number:  0.08653129
+    ## Random number:  0.2814601
     ## New state:  succeptible
     ## 
     ## Person ID:  1
     ## Day:  10
-    ## Previous state:  symptomatic_need_hospital
-    ## Random number:  0.136248
-    ## New state:  symptomatic_need_hospital
+    ## Previous state:  symptomatic_dont_need_hospital
+    ## Random number:  0.5531016
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  10
     ## Previous state:  succeptible
-    ## Random number:  0.550047
+    ## Random number:  0.7682774
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  10
     ## Previous state:  succeptible
-    ## Random number:  0.3532968
+    ## Random number:  0.7596539
     ## New state:  succeptible
     ## 
     ## Person ID:  4
     ## Day:  10
     ## Previous state:  succeptible
-    ## Random number:  0.744614
+    ## Random number:  0.7145466
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  10
     ## Previous state:  succeptible
-    ## Random number:  0.5146171
+    ## Random number:  0.2396118
     ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  10
     ## Previous state:  succeptible
-    ## Random number:  0.009080473
+    ## Random number:  0.1473384
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  10
     ## Previous state:  succeptible
-    ## Random number:  0.9508925
+    ## Random number:  0.8601747
     ## New state:  succeptible
     ## 
     ## Person ID:  8
     ## Day:  10
     ## Previous state:  succeptible
-    ## Random number:  0.4093151
+    ## Random number:  0.3953132
     ## New state:  succeptible
     ## 
     ## Person ID:  9
     ## Day:  10
     ## Previous state:  succeptible
-    ## Random number:  0.07289397
+    ## Random number:  0.9206804
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  10
     ## Previous state:  succeptible
-    ## Random number:  0.8294498
+    ## Random number:  0.6961928
     ## New state:  succeptible
     ## 
     ## Person ID:  11
     ## Day:  10
     ## Previous state:  succeptible
-    ## Random number:  0.3990899
+    ## Random number:  0.1604443
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  10
-    ## Previous state:  succeptible
-    ## Random number:  0.9479277
-    ## New state:  succeptible
+    ## Previous state:  infected_symptomatic_pre_symptoms
+    ## Random number:  0.3791825
+    ## New state:  infectious_symptomatic_pre_symptoms
     ## 
     ## Person ID:  13
     ## Day:  10
     ## Previous state:  succeptible
-    ## Random number:  0.3619136
+    ## Random number:  0.2611304
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  10
     ## Previous state:  succeptible
-    ## Random number:  0.4357046
+    ## Random number:  0.3797142
     ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  10
     ## Previous state:  succeptible
-    ## Random number:  0.3429119
+    ## Random number:  0.3893987
     ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  10
     ## Previous state:  succeptible
-    ## Random number:  0.5091546
+    ## Random number:  0.2293079
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  10
-    ## Previous state:  infected_asymptomatic
-    ## Random number:  0.3006245
-    ## New state:  infectious_asymptomatic
+    ## Previous state:  succeptible
+    ## Random number:  0.8836351
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  10
     ## Previous state:  succeptible
-    ## Random number:  0.1606815
+    ## Random number:  0.3246783
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  10
     ## Previous state:  succeptible
-    ## Random number:  0.2659916
+    ## Random number:  0.9929517
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  10
     ## Previous state:  succeptible
-    ## Random number:  0.9543309
+    ## Random number:  0.3515778
     ## New state:  succeptible
     ## 
     ## Person ID:  1
     ## Day:  11
+    ## Previous state:  recovered
+    ## Random number:  0.7476271
+    ## New state:  recovered
+    ## 
+    ## Person ID:  2
+    ## Day:  11
+    ## Previous state:  succeptible
+    ## Random number:  0.1550974
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  3
+    ## Day:  11
+    ## Previous state:  succeptible
+    ## Random number:  0.9154509
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  4
+    ## Day:  11
+    ## Previous state:  succeptible
+    ## Random number:  0.5576285
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  5
+    ## Day:  11
+    ## Previous state:  succeptible
+    ## Random number:  0.3458825
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  6
+    ## Day:  11
+    ## Previous state:  succeptible
+    ## Random number:  0.5192832
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  7
+    ## Day:  11
+    ## Previous state:  succeptible
+    ## Random number:  0.5954008
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  8
+    ## Day:  11
+    ## Previous state:  succeptible
+    ## Random number:  0.5126391
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  9
+    ## Day:  11
+    ## Previous state:  succeptible
+    ## Random number:  0.4501994
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  10
+    ## Day:  11
+    ## Previous state:  succeptible
+    ## Random number:  0.5522328
+    ## New state:  infected_symptomatic_pre_symptoms
+    ## 
+    ## Person ID:  11
+    ## Day:  11
+    ## Previous state:  succeptible
+    ## Random number:  0.2964236
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  12
+    ## Day:  11
+    ## Previous state:  infectious_symptomatic_pre_symptoms
+    ## Random number:  0.05249978
+    ## New state:  symptomatic_need_hospital
+    ## 
+    ## Person ID:  13
+    ## Day:  11
+    ## Previous state:  succeptible
+    ## Random number:  0.9644635
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  14
+    ## Day:  11
+    ## Previous state:  succeptible
+    ## Random number:  0.741492
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  15
+    ## Day:  11
+    ## Previous state:  succeptible
+    ## Random number:  0.00642725
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  16
+    ## Day:  11
+    ## Previous state:  succeptible
+    ## Random number:  0.2050764
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  17
+    ## Day:  11
+    ## Previous state:  succeptible
+    ## Random number:  0.7961818
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  18
+    ## Day:  11
+    ## Previous state:  succeptible
+    ## Random number:  0.7490261
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  19
+    ## Day:  11
+    ## Previous state:  succeptible
+    ## Random number:  0.3508674
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  20
+    ## Day:  11
+    ## Previous state:  succeptible
+    ## Random number:  0.1177384
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  1
+    ## Day:  12
+    ## Previous state:  recovered
+    ## Random number:  0.1851369
+    ## New state:  recovered
+    ## 
+    ## Person ID:  2
+    ## Day:  12
+    ## Previous state:  succeptible
+    ## Random number:  0.2363728
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  3
+    ## Day:  12
+    ## Previous state:  succeptible
+    ## Random number:  0.5651501
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  4
+    ## Day:  12
+    ## Previous state:  succeptible
+    ## Random number:  0.7043427
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  5
+    ## Day:  12
+    ## Previous state:  succeptible
+    ## Random number:  0.1507107
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  6
+    ## Day:  12
+    ## Previous state:  succeptible
+    ## Random number:  0.8206015
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  7
+    ## Day:  12
+    ## Previous state:  succeptible
+    ## Random number:  0.6937967
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  8
+    ## Day:  12
+    ## Previous state:  succeptible
+    ## Random number:  0.5484015
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  9
+    ## Day:  12
+    ## Previous state:  succeptible
+    ## Random number:  0.2109072
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  10
+    ## Day:  12
+    ## Previous state:  infected_symptomatic_pre_symptoms
+    ## Random number:  0.05901332
+    ## New state:  infected_symptomatic_pre_symptoms
+    ## 
+    ## Person ID:  11
+    ## Day:  12
+    ## Previous state:  succeptible
+    ## Random number:  0.4984773
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  12
+    ## Day:  12
     ## Previous state:  symptomatic_need_hospital
-    ## Random number:  0.524849
+    ## Random number:  0.7020213
+    ## New state:  symptomatic_need_hospital
+    ## 
+    ## Person ID:  13
+    ## Day:  12
+    ## Previous state:  succeptible
+    ## Random number:  0.7226628
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  14
+    ## Day:  12
+    ## Previous state:  succeptible
+    ## Random number:  0.03134359
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  15
+    ## Day:  12
+    ## Previous state:  succeptible
+    ## Random number:  0.6497139
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  16
+    ## Day:  12
+    ## Previous state:  succeptible
+    ## Random number:  0.3523652
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  17
+    ## Day:  12
+    ## Previous state:  succeptible
+    ## Random number:  0.2945672
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  18
+    ## Day:  12
+    ## Previous state:  succeptible
+    ## Random number:  0.9308219
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  19
+    ## Day:  12
+    ## Previous state:  succeptible
+    ## Random number:  0.4140282
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  20
+    ## Day:  12
+    ## Previous state:  succeptible
+    ## Random number:  0.9265891
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  1
+    ## Day:  13
+    ## Previous state:  recovered
+    ## Random number:  0.4895078
+    ## New state:  recovered
+    ## 
+    ## Person ID:  2
+    ## Day:  13
+    ## Previous state:  succeptible
+    ## Random number:  0.03095949
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  3
+    ## Day:  13
+    ## Previous state:  succeptible
+    ## Random number:  0.4927207
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  4
+    ## Day:  13
+    ## Previous state:  succeptible
+    ## Random number:  0.8925247
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  5
+    ## Day:  13
+    ## Previous state:  succeptible
+    ## Random number:  0.1825463
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  6
+    ## Day:  13
+    ## Previous state:  succeptible
+    ## Random number:  0.08327289
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  7
+    ## Day:  13
+    ## Previous state:  succeptible
+    ## Random number:  0.8770625
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  8
+    ## Day:  13
+    ## Previous state:  succeptible
+    ## Random number:  0.7175056
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  9
+    ## Day:  13
+    ## Previous state:  succeptible
+    ## Random number:  0.8167394
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  10
+    ## Day:  13
+    ## Previous state:  infected_symptomatic_pre_symptoms
+    ## Random number:  0.1860802
+    ## New state:  infected_symptomatic_pre_symptoms
+    ## 
+    ## Person ID:  11
+    ## Day:  13
+    ## Previous state:  succeptible
+    ## Random number:  0.2275808
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  12
+    ## Day:  13
+    ## Previous state:  symptomatic_need_hospital
+    ## Random number:  0.9295146
+    ## New state:  symptomatic_need_hospital
+    ## 
+    ## Person ID:  13
+    ## Day:  13
+    ## Previous state:  succeptible
+    ## Random number:  0.2972654
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  14
+    ## Day:  13
+    ## Previous state:  succeptible
+    ## Random number:  0.9700733
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  15
+    ## Day:  13
+    ## Previous state:  succeptible
+    ## Random number:  0.317137
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  16
+    ## Day:  13
+    ## Previous state:  succeptible
+    ## Random number:  0.6597159
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  17
+    ## Day:  13
+    ## Previous state:  succeptible
+    ## Random number:  0.03361471
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  18
+    ## Day:  13
+    ## Previous state:  succeptible
+    ## Random number:  0.9361192
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  19
+    ## Day:  13
+    ## Previous state:  succeptible
+    ## Random number:  0.3033273
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  20
+    ## Day:  13
+    ## Previous state:  succeptible
+    ## Random number:  0.2068479
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  1
+    ## Day:  14
+    ## Previous state:  recovered
+    ## Random number:  0.162477
+    ## New state:  recovered
+    ## 
+    ## Person ID:  2
+    ## Day:  14
+    ## Previous state:  succeptible
+    ## Random number:  0.6045232
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  3
+    ## Day:  14
+    ## Previous state:  succeptible
+    ## Random number:  0.3018237
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  4
+    ## Day:  14
+    ## Previous state:  succeptible
+    ## Random number:  0.1815029
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  5
+    ## Day:  14
+    ## Previous state:  succeptible
+    ## Random number:  0.8914282
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  6
+    ## Day:  14
+    ## Previous state:  succeptible
+    ## Random number:  0.6496179
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  7
+    ## Day:  14
+    ## Previous state:  succeptible
+    ## Random number:  0.5688659
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  8
+    ## Day:  14
+    ## Previous state:  succeptible
+    ## Random number:  0.5184828
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  9
+    ## Day:  14
+    ## Previous state:  succeptible
+    ## Random number:  0.981309
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  10
+    ## Day:  14
+    ## Previous state:  infected_symptomatic_pre_symptoms
+    ## Random number:  0.08725677
+    ## New state:  infected_symptomatic_pre_symptoms
+    ## 
+    ## Person ID:  11
+    ## Day:  14
+    ## Previous state:  succeptible
+    ## Random number:  0.7551549
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  12
+    ## Day:  14
+    ## Previous state:  symptomatic_need_hospital
+    ## Random number:  0.8985906
+    ## New state:  symptomatic_need_hospital
+    ## 
+    ## Person ID:  13
+    ## Day:  14
+    ## Previous state:  succeptible
+    ## Random number:  0.5456875
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  14
+    ## Day:  14
+    ## Previous state:  succeptible
+    ## Random number:  0.253848
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  15
+    ## Day:  14
+    ## Previous state:  succeptible
+    ## Random number:  0.2368719
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  16
+    ## Day:  14
+    ## Previous state:  succeptible
+    ## Random number:  0.2727172
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  17
+    ## Day:  14
+    ## Previous state:  succeptible
+    ## Random number:  0.6723068
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  18
+    ## Day:  14
+    ## Previous state:  succeptible
+    ## Random number:  0.3469249
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  19
+    ## Day:  14
+    ## Previous state:  succeptible
+    ## Random number:  0.8575587
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  20
+    ## Day:  14
+    ## Previous state:  succeptible
+    ## Random number:  0.06490395
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  1
+    ## Day:  15
+    ## Previous state:  recovered
+    ## Random number:  0.6127013
+    ## New state:  recovered
+    ## 
+    ## Person ID:  2
+    ## Day:  15
+    ## Previous state:  succeptible
+    ## Random number:  0.9407883
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  3
+    ## Day:  15
+    ## Previous state:  succeptible
+    ## Random number:  0.4704657
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  4
+    ## Day:  15
+    ## Previous state:  succeptible
+    ## Random number:  0.5739712
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  5
+    ## Day:  15
+    ## Previous state:  succeptible
+    ## Random number:  0.02103449
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  6
+    ## Day:  15
+    ## Previous state:  succeptible
+    ## Random number:  0.6956969
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  7
+    ## Day:  15
+    ## Previous state:  succeptible
+    ## Random number:  0.4129637
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  8
+    ## Day:  15
+    ## Previous state:  succeptible
+    ## Random number:  0.3526564
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  9
+    ## Day:  15
+    ## Previous state:  succeptible
+    ## Random number:  0.2259305
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  10
+    ## Day:  15
+    ## Previous state:  infected_symptomatic_pre_symptoms
+    ## Random number:  0.1759237
+    ## New state:  infectious_symptomatic_pre_symptoms
+    ## 
+    ## Person ID:  11
+    ## Day:  15
+    ## Previous state:  succeptible
+    ## Random number:  0.8251872
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  12
+    ## Day:  15
+    ## Previous state:  symptomatic_need_hospital
+    ## Random number:  0.529509
+    ## New state:  symptomatic_need_hospital
+    ## 
+    ## Person ID:  13
+    ## Day:  15
+    ## Previous state:  succeptible
+    ## Random number:  0.2152517
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  14
+    ## Day:  15
+    ## Previous state:  succeptible
+    ## Random number:  0.1987172
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  15
+    ## Day:  15
+    ## Previous state:  succeptible
+    ## Random number:  0.7909396
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  16
+    ## Day:  15
+    ## Previous state:  succeptible
+    ## Random number:  0.8911732
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  17
+    ## Day:  15
+    ## Previous state:  succeptible
+    ## Random number:  0.119802
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  18
+    ## Day:  15
+    ## Previous state:  succeptible
+    ## Random number:  0.8637411
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  19
+    ## Day:  15
+    ## Previous state:  succeptible
+    ## Random number:  0.06588197
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  20
+    ## Day:  15
+    ## Previous state:  succeptible
+    ## Random number:  0.1974425
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  1
+    ## Day:  16
+    ## Previous state:  recovered
+    ## Random number:  0.0005496568
+    ## New state:  recovered
+    ## 
+    ## Person ID:  2
+    ## Day:  16
+    ## Previous state:  succeptible
+    ## Random number:  0.8774558
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  3
+    ## Day:  16
+    ## Previous state:  succeptible
+    ## Random number:  0.8029626
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  4
+    ## Day:  16
+    ## Previous state:  succeptible
+    ## Random number:  0.689062
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  5
+    ## Day:  16
+    ## Previous state:  succeptible
+    ## Random number:  0.8766078
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  6
+    ## Day:  16
+    ## Previous state:  succeptible
+    ## Random number:  0.3778016
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  7
+    ## Day:  16
+    ## Previous state:  succeptible
+    ## Random number:  0.9582825
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  8
+    ## Day:  16
+    ## Previous state:  succeptible
+    ## Random number:  0.4299927
+    ## New state:  infected_symptomatic_pre_symptoms
+    ## 
+    ## Person ID:  9
+    ## Day:  16
+    ## Previous state:  succeptible
+    ## Random number:  0.7223532
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  10
+    ## Day:  16
+    ## Previous state:  infectious_symptomatic_pre_symptoms
+    ## Random number:  0.7325709
+    ## New state:  symptomatic_dont_need_hospital
+    ## 
+    ## Person ID:  11
+    ## Day:  16
+    ## Previous state:  succeptible
+    ## Random number:  0.5787127
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  12
+    ## Day:  16
+    ## Previous state:  symptomatic_need_hospital
+    ## Random number:  0.3347762
     ## New state:  need_hospital_seek_care
     ## 
-    ## Person ID:  2
-    ## Day:  11
-    ## Previous state:  succeptible
-    ## Random number:  0.3044584
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  3
-    ## Day:  11
-    ## Previous state:  succeptible
-    ## Random number:  0.8576128
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  4
-    ## Day:  11
-    ## Previous state:  succeptible
-    ## Random number:  0.1156131
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  5
-    ## Day:  11
-    ## Previous state:  succeptible
-    ## Random number:  0.3813731
-    ## New state:  infected_symptomatic_pre_symptoms
-    ## 
-    ## Person ID:  6
-    ## Day:  11
-    ## Previous state:  succeptible
-    ## Random number:  0.3853291
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  7
-    ## Day:  11
-    ## Previous state:  succeptible
-    ## Random number:  0.147808
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  8
-    ## Day:  11
-    ## Previous state:  succeptible
-    ## Random number:  0.2067582
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  9
-    ## Day:  11
-    ## Previous state:  succeptible
-    ## Random number:  0.04009936
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  10
-    ## Day:  11
-    ## Previous state:  succeptible
-    ## Random number:  0.4894787
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  11
-    ## Day:  11
-    ## Previous state:  succeptible
-    ## Random number:  0.7037848
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  12
-    ## Day:  11
-    ## Previous state:  succeptible
-    ## Random number:  0.5374451
-    ## New state:  succeptible
-    ## 
     ## Person ID:  13
-    ## Day:  11
+    ## Day:  16
     ## Previous state:  succeptible
-    ## Random number:  0.1481545
+    ## Random number:  0.1921706
     ## New state:  succeptible
     ## 
     ## Person ID:  14
-    ## Day:  11
+    ## Day:  16
     ## Previous state:  succeptible
-    ## Random number:  0.6878117
+    ## Random number:  0.916894
     ## New state:  succeptible
     ## 
     ## Person ID:  15
-    ## Day:  11
+    ## Day:  16
     ## Previous state:  succeptible
-    ## Random number:  0.9306626
+    ## Random number:  0.8969674
     ## New state:  succeptible
     ## 
     ## Person ID:  16
-    ## Day:  11
+    ## Day:  16
     ## Previous state:  succeptible
-    ## Random number:  0.6316335
+    ## Random number:  0.1375381
     ## New state:  succeptible
     ## 
     ## Person ID:  17
-    ## Day:  11
-    ## Previous state:  infectious_asymptomatic
-    ## Random number:  0.1870246
-    ## New state:  recovered
+    ## Day:  16
+    ## Previous state:  succeptible
+    ## Random number:  0.8520962
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
-    ## Day:  11
+    ## Day:  16
     ## Previous state:  succeptible
-    ## Random number:  0.2563206
+    ## Random number:  0.2584016
     ## New state:  succeptible
     ## 
     ## Person ID:  19
-    ## Day:  11
+    ## Day:  16
     ## Previous state:  succeptible
-    ## Random number:  0.9018554
+    ## Random number:  0.4198683
     ## New state:  succeptible
     ## 
     ## Person ID:  20
-    ## Day:  11
+    ## Day:  16
     ## Previous state:  succeptible
-    ## Random number:  0.004954233
+    ## Random number:  0.4592149
     ## New state:  succeptible
     ## 
     ## Person ID:  1
-    ## Day:  12
+    ## Day:  17
+    ## Previous state:  recovered
+    ## Random number:  0.4836637
+    ## New state:  recovered
+    ## 
+    ## Person ID:  2
+    ## Day:  17
+    ## Previous state:  succeptible
+    ## Random number:  0.07305893
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  3
+    ## Day:  17
+    ## Previous state:  succeptible
+    ## Random number:  0.008525124
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  4
+    ## Day:  17
+    ## Previous state:  succeptible
+    ## Random number:  0.7682821
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  5
+    ## Day:  17
+    ## Previous state:  succeptible
+    ## Random number:  0.865639
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  6
+    ## Day:  17
+    ## Previous state:  succeptible
+    ## Random number:  0.1897143
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  7
+    ## Day:  17
+    ## Previous state:  succeptible
+    ## Random number:  0.4198858
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  8
+    ## Day:  17
+    ## Previous state:  infected_symptomatic_pre_symptoms
+    ## Random number:  0.08818584
+    ## New state:  infected_symptomatic_pre_symptoms
+    ## 
+    ## Person ID:  9
+    ## Day:  17
+    ## Previous state:  succeptible
+    ## Random number:  0.8752596
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  10
+    ## Day:  17
+    ## Previous state:  symptomatic_dont_need_hospital
+    ## Random number:  0.8780564
+    ## New state:  symptomatic_dont_need_hospital
+    ## 
+    ## Person ID:  11
+    ## Day:  17
+    ## Previous state:  succeptible
+    ## Random number:  0.4924914
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  12
+    ## Day:  17
     ## Previous state:  need_hospital_seek_care
-    ## Random number:  0.2084683
+    ## Random number:  0.6608463
     ## New state:  get_hospital_care
     ## 
-    ## Person ID:  2
-    ## Day:  12
-    ## Previous state:  succeptible
-    ## Random number:  0.4939373
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  3
-    ## Day:  12
-    ## Previous state:  succeptible
-    ## Random number:  0.7756239
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  4
-    ## Day:  12
-    ## Previous state:  succeptible
-    ## Random number:  0.04278241
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  5
-    ## Day:  12
-    ## Previous state:  infected_symptomatic_pre_symptoms
-    ## Random number:  0.7076559
-    ## New state:  infected_symptomatic_pre_symptoms
-    ## 
-    ## Person ID:  6
-    ## Day:  12
-    ## Previous state:  succeptible
-    ## Random number:  0.264828
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  7
-    ## Day:  12
-    ## Previous state:  succeptible
-    ## Random number:  0.977929
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  8
-    ## Day:  12
-    ## Previous state:  succeptible
-    ## Random number:  0.01058148
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  9
-    ## Day:  12
-    ## Previous state:  succeptible
-    ## Random number:  0.9001834
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  10
-    ## Day:  12
-    ## Previous state:  succeptible
-    ## Random number:  0.7856042
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  11
-    ## Day:  12
-    ## Previous state:  succeptible
-    ## Random number:  0.7298714
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  12
-    ## Day:  12
-    ## Previous state:  succeptible
-    ## Random number:  0.4069239
-    ## New state:  succeptible
-    ## 
     ## Person ID:  13
-    ## Day:  12
+    ## Day:  17
     ## Previous state:  succeptible
-    ## Random number:  0.5578687
+    ## Random number:  0.608291
     ## New state:  succeptible
     ## 
     ## Person ID:  14
-    ## Day:  12
+    ## Day:  17
     ## Previous state:  succeptible
-    ## Random number:  0.2609113
+    ## Random number:  0.7381803
     ## New state:  succeptible
     ## 
     ## Person ID:  15
-    ## Day:  12
+    ## Day:  17
     ## Previous state:  succeptible
-    ## Random number:  0.7234939
+    ## Random number:  0.7038869
     ## New state:  succeptible
     ## 
     ## Person ID:  16
-    ## Day:  12
+    ## Day:  17
     ## Previous state:  succeptible
-    ## Random number:  0.8466485
+    ## Random number:  0.8447508
     ## New state:  succeptible
     ## 
     ## Person ID:  17
-    ## Day:  12
-    ## Previous state:  recovered
-    ## Random number:  0.2871611
-    ## New state:  recovered
+    ## Day:  17
+    ## Previous state:  succeptible
+    ## Random number:  0.7239336
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
-    ## Day:  12
+    ## Day:  17
     ## Previous state:  succeptible
-    ## Random number:  0.1304142
+    ## Random number:  0.3136003
     ## New state:  succeptible
     ## 
     ## Person ID:  19
-    ## Day:  12
+    ## Day:  17
     ## Previous state:  succeptible
-    ## Random number:  0.3908349
+    ## Random number:  0.8680061
     ## New state:  succeptible
     ## 
     ## Person ID:  20
-    ## Day:  12
+    ## Day:  17
     ## Previous state:  succeptible
-    ## Random number:  0.6849737
+    ## Random number:  0.6849628
     ## New state:  succeptible
     ## 
     ## Person ID:  1
-    ## Day:  13
-    ## Previous state:  get_hospital_care
-    ## Random number:  0.7343709
-    ## New state:  get_hospital_care
+    ## Day:  18
+    ## Previous state:  recovered
+    ## Random number:  0.7454505
+    ## New state:  recovered
     ## 
     ## Person ID:  2
-    ## Day:  13
+    ## Day:  18
     ## Previous state:  succeptible
-    ## Random number:  0.1028839
+    ## Random number:  0.7802951
     ## New state:  succeptible
     ## 
     ## Person ID:  3
-    ## Day:  13
+    ## Day:  18
     ## Previous state:  succeptible
-    ## Random number:  0.8348192
+    ## Random number:  0.8572806
     ## New state:  succeptible
     ## 
     ## Person ID:  4
-    ## Day:  13
+    ## Day:  18
     ## Previous state:  succeptible
-    ## Random number:  0.9073415
+    ## Random number:  0.2472162
     ## New state:  succeptible
     ## 
     ## Person ID:  5
-    ## Day:  13
-    ## Previous state:  infected_symptomatic_pre_symptoms
-    ## Random number:  0.01660771
-    ## New state:  infected_symptomatic_pre_symptoms
+    ## Day:  18
+    ## Previous state:  succeptible
+    ## Random number:  0.9610003
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
-    ## Day:  13
+    ## Day:  18
     ## Previous state:  succeptible
-    ## Random number:  0.5722472
+    ## Random number:  0.1660021
     ## New state:  succeptible
     ## 
     ## Person ID:  7
-    ## Day:  13
+    ## Day:  18
     ## Previous state:  succeptible
-    ## Random number:  0.340947
+    ## Random number:  0.9192543
     ## New state:  succeptible
     ## 
     ## Person ID:  8
-    ## Day:  13
-    ## Previous state:  succeptible
-    ## Random number:  0.9275125
-    ## New state:  succeptible
+    ## Day:  18
+    ## Previous state:  infected_symptomatic_pre_symptoms
+    ## Random number:  0.6299842
+    ## New state:  infected_symptomatic_pre_symptoms
     ## 
     ## Person ID:  9
-    ## Day:  13
+    ## Day:  18
     ## Previous state:  succeptible
-    ## Random number:  0.4693512
+    ## Random number:  0.5490237
     ## New state:  succeptible
     ## 
     ## Person ID:  10
-    ## Day:  13
-    ## Previous state:  succeptible
-    ## Random number:  0.1656014
-    ## New state:  succeptible
+    ## Day:  18
+    ## Previous state:  symptomatic_dont_need_hospital
+    ## Random number:  0.1296538
+    ## New state:  symptomatic_dont_need_hospital
     ## 
     ## Person ID:  11
-    ## Day:  13
+    ## Day:  18
     ## Previous state:  succeptible
-    ## Random number:  0.849473
+    ## Random number:  0.8263453
     ## New state:  succeptible
     ## 
     ## Person ID:  12
-    ## Day:  13
-    ## Previous state:  succeptible
-    ## Random number:  0.2941413
-    ## New state:  succeptible
+    ## Day:  18
+    ## Previous state:  get_hospital_care
+    ## Random number:  0.4993248
+    ## New state:  get_hospital_care
     ## 
     ## Person ID:  13
-    ## Day:  13
+    ## Day:  18
     ## Previous state:  succeptible
-    ## Random number:  0.7784073
+    ## Random number:  0.6591519
     ## New state:  succeptible
     ## 
     ## Person ID:  14
-    ## Day:  13
+    ## Day:  18
     ## Previous state:  succeptible
-    ## Random number:  0.9264926
+    ## Random number:  0.04222616
     ## New state:  succeptible
     ## 
     ## Person ID:  15
-    ## Day:  13
+    ## Day:  18
     ## Previous state:  succeptible
-    ## Random number:  0.3137485
+    ## Random number:  0.06409361
     ## New state:  succeptible
     ## 
     ## Person ID:  16
-    ## Day:  13
+    ## Day:  18
     ## Previous state:  succeptible
-    ## Random number:  0.924844
+    ## Random number:  0.762571
     ## New state:  succeptible
     ## 
     ## Person ID:  17
-    ## Day:  13
-    ## Previous state:  recovered
-    ## Random number:  0.4118904
-    ## New state:  recovered
+    ## Day:  18
+    ## Previous state:  succeptible
+    ## Random number:  0.4764142
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
-    ## Day:  13
+    ## Day:  18
     ## Previous state:  succeptible
-    ## Random number:  0.9020883
+    ## Random number:  0.5891194
     ## New state:  succeptible
     ## 
     ## Person ID:  19
-    ## Day:  13
+    ## Day:  18
     ## Previous state:  succeptible
-    ## Random number:  0.03824833
+    ## Random number:  0.4143221
     ## New state:  succeptible
     ## 
     ## Person ID:  20
-    ## Day:  13
+    ## Day:  18
     ## Previous state:  succeptible
-    ## Random number:  0.7181439
+    ## Random number:  0.9012365
     ## New state:  succeptible
     ## 
     ## Person ID:  1
-    ## Day:  14
-    ## Previous state:  get_hospital_care
-    ## Random number:  0.5601376
-    ## New state:  get_hospital_care
+    ## Day:  19
+    ## Previous state:  recovered
+    ## Random number:  0.2238092
+    ## New state:  recovered
     ## 
     ## Person ID:  2
-    ## Day:  14
+    ## Day:  19
     ## Previous state:  succeptible
-    ## Random number:  0.008346251
+    ## Random number:  0.5527695
     ## New state:  succeptible
     ## 
     ## Person ID:  3
-    ## Day:  14
+    ## Day:  19
     ## Previous state:  succeptible
-    ## Random number:  0.5860197
+    ## Random number:  0.08339726
     ## New state:  succeptible
     ## 
     ## Person ID:  4
-    ## Day:  14
+    ## Day:  19
     ## Previous state:  succeptible
-    ## Random number:  0.5200387
+    ## Random number:  0.1918091
     ## New state:  succeptible
     ## 
     ## Person ID:  5
-    ## Day:  14
-    ## Previous state:  infected_symptomatic_pre_symptoms
-    ## Random number:  0.6399303
-    ## New state:  infected_symptomatic_pre_symptoms
+    ## Day:  19
+    ## Previous state:  succeptible
+    ## Random number:  0.6627903
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
-    ## Day:  14
+    ## Day:  19
     ## Previous state:  succeptible
-    ## Random number:  0.2741375
+    ## Random number:  0.4054196
     ## New state:  succeptible
     ## 
     ## Person ID:  7
-    ## Day:  14
+    ## Day:  19
     ## Previous state:  succeptible
-    ## Random number:  0.2049173
+    ## Random number:  0.5904563
     ## New state:  succeptible
     ## 
     ## Person ID:  8
-    ## Day:  14
-    ## Previous state:  succeptible
-    ## Random number:  0.5433172
-    ## New state:  succeptible
+    ## Day:  19
+    ## Previous state:  infected_symptomatic_pre_symptoms
+    ## Random number:  0.9705296
+    ## New state:  infected_symptomatic_pre_symptoms
     ## 
     ## Person ID:  9
-    ## Day:  14
+    ## Day:  19
     ## Previous state:  succeptible
-    ## Random number:  0.9972093
+    ## Random number:  0.9666283
     ## New state:  succeptible
     ## 
     ## Person ID:  10
-    ## Day:  14
-    ## Previous state:  succeptible
-    ## Random number:  0.4793906
-    ## New state:  succeptible
+    ## Day:  19
+    ## Previous state:  symptomatic_dont_need_hospital
+    ## Random number:  0.9594971
+    ## New state:  symptomatic_dont_need_hospital
     ## 
     ## Person ID:  11
-    ## Day:  14
+    ## Day:  19
     ## Previous state:  succeptible
-    ## Random number:  0.3079467
+    ## Random number:  0.7629875
     ## New state:  succeptible
     ## 
     ## Person ID:  12
-    ## Day:  14
-    ## Previous state:  succeptible
-    ## Random number:  0.7511761
-    ## New state:  succeptible
+    ## Day:  19
+    ## Previous state:  get_hospital_care
+    ## Random number:  0.1142115
+    ## New state:  get_hospital_care
     ## 
     ## Person ID:  13
-    ## Day:  14
+    ## Day:  19
     ## Previous state:  succeptible
-    ## Random number:  0.6284933
+    ## Random number:  0.6412647
     ## New state:  succeptible
     ## 
     ## Person ID:  14
-    ## Day:  14
+    ## Day:  19
     ## Previous state:  succeptible
-    ## Random number:  0.8172366
+    ## Random number:  0.1671408
     ## New state:  succeptible
     ## 
     ## Person ID:  15
-    ## Day:  14
+    ## Day:  19
     ## Previous state:  succeptible
-    ## Random number:  0.3495662
+    ## Random number:  0.8069584
     ## New state:  succeptible
     ## 
     ## Person ID:  16
-    ## Day:  14
+    ## Day:  19
     ## Previous state:  succeptible
-    ## Random number:  0.6759604
+    ## Random number:  0.697462
     ## New state:  succeptible
     ## 
     ## Person ID:  17
-    ## Day:  14
-    ## Previous state:  recovered
-    ## Random number:  0.8373957
-    ## New state:  recovered
+    ## Day:  19
+    ## Previous state:  succeptible
+    ## Random number:  0.8186167
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
-    ## Day:  14
+    ## Day:  19
     ## Previous state:  succeptible
-    ## Random number:  0.04059673
+    ## Random number:  0.149618
     ## New state:  succeptible
     ## 
     ## Person ID:  19
-    ## Day:  14
+    ## Day:  19
     ## Previous state:  succeptible
-    ## Random number:  0.7699389
+    ## Random number:  0.7173351
     ## New state:  succeptible
     ## 
     ## Person ID:  20
-    ## Day:  14
+    ## Day:  19
     ## Previous state:  succeptible
-    ## Random number:  0.1117419
+    ## Random number:  0.3006416
     ## New state:  succeptible
     ## 
     ## Person ID:  1
-    ## Day:  15
-    ## Previous state:  get_hospital_care
-    ## Random number:  0.1123564
-    ## New state:  get_hospital_care
+    ## Day:  20
+    ## Previous state:  recovered
+    ## Random number:  0.1632542
+    ## New state:  recovered
     ## 
     ## Person ID:  2
-    ## Day:  15
+    ## Day:  20
     ## Previous state:  succeptible
-    ## Random number:  0.8381123
+    ## Random number:  0.0798661
     ## New state:  succeptible
     ## 
     ## Person ID:  3
-    ## Day:  15
+    ## Day:  20
     ## Previous state:  succeptible
-    ## Random number:  0.6358265
+    ## Random number:  0.5802054
     ## New state:  succeptible
     ## 
     ## Person ID:  4
-    ## Day:  15
+    ## Day:  20
     ## Previous state:  succeptible
-    ## Random number:  0.8566732
+    ## Random number:  0.2533526
     ## New state:  succeptible
     ## 
     ## Person ID:  5
-    ## Day:  15
+    ## Day:  20
+    ## Previous state:  succeptible
+    ## Random number:  0.8233758
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  6
+    ## Day:  20
+    ## Previous state:  succeptible
+    ## Random number:  0.318645
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  7
+    ## Day:  20
+    ## Previous state:  succeptible
+    ## Random number:  0.7011416
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  8
+    ## Day:  20
     ## Previous state:  infected_symptomatic_pre_symptoms
-    ## Random number:  0.649667
+    ## Random number:  0.01297656
     ## New state:  infectious_symptomatic_pre_symptoms
     ## 
-    ## Person ID:  6
-    ## Day:  15
-    ## Previous state:  succeptible
-    ## Random number:  0.09385887
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  7
-    ## Day:  15
-    ## Previous state:  succeptible
-    ## Random number:  0.04962349
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  8
-    ## Day:  15
-    ## Previous state:  succeptible
-    ## Random number:  0.47952
-    ## New state:  succeptible
-    ## 
     ## Person ID:  9
-    ## Day:  15
+    ## Day:  20
     ## Previous state:  succeptible
-    ## Random number:  0.8060946
+    ## Random number:  0.8652812
     ## New state:  succeptible
     ## 
     ## Person ID:  10
-    ## Day:  15
-    ## Previous state:  succeptible
-    ## Random number:  0.7758832
-    ## New state:  succeptible
+    ## Day:  20
+    ## Previous state:  symptomatic_dont_need_hospital
+    ## Random number:  0.1707172
+    ## New state:  recovered
     ## 
     ## Person ID:  11
-    ## Day:  15
+    ## Day:  20
     ## Previous state:  succeptible
-    ## Random number:  0.8365203
+    ## Random number:  0.7570717
     ## New state:  succeptible
     ## 
     ## Person ID:  12
-    ## Day:  15
-    ## Previous state:  succeptible
-    ## Random number:  0.6558972
-    ## New state:  succeptible
+    ## Day:  20
+    ## Previous state:  get_hospital_care
+    ## Random number:  0.7067534
+    ## New state:  get_hospital_care
     ## 
     ## Person ID:  13
-    ## Day:  15
+    ## Day:  20
     ## Previous state:  succeptible
-    ## Random number:  0.8124295
+    ## Random number:  0.06795747
     ## New state:  succeptible
     ## 
     ## Person ID:  14
-    ## Day:  15
+    ## Day:  20
     ## Previous state:  succeptible
-    ## Random number:  0.6363819
+    ## Random number:  0.2268764
     ## New state:  succeptible
     ## 
     ## Person ID:  15
-    ## Day:  15
+    ## Day:  20
     ## Previous state:  succeptible
-    ## Random number:  0.5692132
+    ## Random number:  0.4595654
     ## New state:  succeptible
     ## 
     ## Person ID:  16
-    ## Day:  15
+    ## Day:  20
     ## Previous state:  succeptible
-    ## Random number:  0.9483711
+    ## Random number:  0.5228327
     ## New state:  succeptible
     ## 
     ## Person ID:  17
-    ## Day:  15
-    ## Previous state:  recovered
-    ## Random number:  0.6136462
-    ## New state:  recovered
+    ## Day:  20
+    ## Previous state:  succeptible
+    ## Random number:  0.5333166
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
-    ## Day:  15
+    ## Day:  20
     ## Previous state:  succeptible
-    ## Random number:  0.8077974
+    ## Random number:  0.2813131
     ## New state:  succeptible
     ## 
     ## Person ID:  19
-    ## Day:  15
+    ## Day:  20
     ## Previous state:  succeptible
-    ## Random number:  0.440109
+    ## Random number:  0.3779923
     ## New state:  succeptible
     ## 
     ## Person ID:  20
-    ## Day:  15
+    ## Day:  20
     ## Previous state:  succeptible
-    ## Random number:  0.9936062
+    ## Random number:  0.5038202
     ## New state:  succeptible
     ## 
     ## Person ID:  1
-    ## Day:  16
-    ## Previous state:  get_hospital_care
-    ## Random number:  0.3855696
-    ## New state:  get_hospital_care
+    ## Day:  21
+    ## Previous state:  recovered
+    ## Random number:  0.231137
+    ## New state:  recovered
     ## 
     ## Person ID:  2
-    ## Day:  16
+    ## Day:  21
     ## Previous state:  succeptible
-    ## Random number:  0.7317924
+    ## Random number:  0.7470634
     ## New state:  succeptible
     ## 
     ## Person ID:  3
-    ## Day:  16
+    ## Day:  21
     ## Previous state:  succeptible
-    ## Random number:  0.7880595
+    ## Random number:  0.2452326
     ## New state:  succeptible
     ## 
     ## Person ID:  4
-    ## Day:  16
+    ## Day:  21
     ## Previous state:  succeptible
-    ## Random number:  0.6688528
+    ## Random number:  0.7750027
     ## New state:  succeptible
     ## 
     ## Person ID:  5
-    ## Day:  16
+    ## Day:  21
+    ## Previous state:  succeptible
+    ## Random number:  0.9030772
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  6
+    ## Day:  21
+    ## Previous state:  succeptible
+    ## Random number:  0.8079648
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  7
+    ## Day:  21
+    ## Previous state:  succeptible
+    ## Random number:  0.1971959
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  8
+    ## Day:  21
     ## Previous state:  infectious_symptomatic_pre_symptoms
-    ## Random number:  0.6614184
+    ## Random number:  0.5600861
     ## New state:  symptomatic_dont_need_hospital
     ## 
-    ## Person ID:  6
-    ## Day:  16
-    ## Previous state:  succeptible
-    ## Random number:  0.07350922
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  7
-    ## Day:  16
-    ## Previous state:  succeptible
-    ## Random number:  0.8075903
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  8
-    ## Day:  16
-    ## Previous state:  succeptible
-    ## Random number:  0.2143542
-    ## New state:  succeptible
-    ## 
     ## Person ID:  9
-    ## Day:  16
+    ## Day:  21
     ## Previous state:  succeptible
-    ## Random number:  0.4277764
+    ## Random number:  0.2556641
     ## New state:  succeptible
     ## 
     ## Person ID:  10
-    ## Day:  16
-    ## Previous state:  succeptible
-    ## Random number:  0.2336228
-    ## New state:  succeptible
+    ## Day:  21
+    ## Previous state:  recovered
+    ## Random number:  0.8117156
+    ## New state:  recovered
     ## 
     ## Person ID:  11
-    ## Day:  16
+    ## Day:  21
     ## Previous state:  succeptible
-    ## Random number:  0.655629
+    ## Random number:  0.3576963
     ## New state:  succeptible
     ## 
     ## Person ID:  12
-    ## Day:  16
-    ## Previous state:  succeptible
-    ## Random number:  0.1412463
-    ## New state:  succeptible
+    ## Day:  21
+    ## Previous state:  get_hospital_care
+    ## Random number:  0.1483822
+    ## New state:  get_hospital_care
     ## 
     ## Person ID:  13
-    ## Day:  16
+    ## Day:  21
     ## Previous state:  succeptible
-    ## Random number:  0.839473
+    ## Random number:  0.6594986
     ## New state:  succeptible
     ## 
     ## Person ID:  14
-    ## Day:  16
+    ## Day:  21
     ## Previous state:  succeptible
-    ## Random number:  0.3401924
-    ## New state:  infected_symptomatic_pre_symptoms
+    ## Random number:  0.4353196
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
-    ## Day:  16
+    ## Day:  21
     ## Previous state:  succeptible
-    ## Random number:  0.9423228
+    ## Random number:  0.4976013
     ## New state:  succeptible
     ## 
     ## Person ID:  16
-    ## Day:  16
+    ## Day:  21
     ## Previous state:  succeptible
-    ## Random number:  0.5594678
+    ## Random number:  0.2132049
     ## New state:  succeptible
     ## 
     ## Person ID:  17
-    ## Day:  16
-    ## Previous state:  recovered
-    ## Random number:  0.07429561
-    ## New state:  recovered
+    ## Day:  21
+    ## Previous state:  succeptible
+    ## Random number:  0.9438455
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
-    ## Day:  16
+    ## Day:  21
     ## Previous state:  succeptible
-    ## Random number:  0.2105841
+    ## Random number:  0.5054071
     ## New state:  succeptible
     ## 
     ## Person ID:  19
-    ## Day:  16
+    ## Day:  21
     ## Previous state:  succeptible
-    ## Random number:  0.3951438
+    ## Random number:  0.4128181
     ## New state:  succeptible
     ## 
     ## Person ID:  20
-    ## Day:  16
+    ## Day:  21
     ## Previous state:  succeptible
-    ## Random number:  0.821457
-    ## New state:  succeptible
+    ## Random number:  0.05998341
+    ## New state:  infected_asymptomatic
     ## 
     ## Person ID:  1
-    ## Day:  17
-    ## Previous state:  get_hospital_care
-    ## Random number:  0.029975
-    ## New state:  get_hospital_care
+    ## Day:  22
+    ## Previous state:  recovered
+    ## Random number:  0.2652196
+    ## New state:  recovered
     ## 
     ## Person ID:  2
-    ## Day:  17
+    ## Day:  22
     ## Previous state:  succeptible
-    ## Random number:  0.9254564
+    ## Random number:  0.8442734
     ## New state:  succeptible
     ## 
     ## Person ID:  3
-    ## Day:  17
+    ## Day:  22
     ## Previous state:  succeptible
-    ## Random number:  0.6704916
+    ## Random number:  0.4207695
     ## New state:  succeptible
     ## 
     ## Person ID:  4
-    ## Day:  17
+    ## Day:  22
     ## Previous state:  succeptible
-    ## Random number:  0.2447506
+    ## Random number:  0.09073666
     ## New state:  succeptible
     ## 
     ## Person ID:  5
-    ## Day:  17
-    ## Previous state:  symptomatic_dont_need_hospital
-    ## Random number:  0.194108
-    ## New state:  symptomatic_dont_need_hospital
+    ## Day:  22
+    ## Previous state:  succeptible
+    ## Random number:  0.8501158
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
-    ## Day:  17
+    ## Day:  22
     ## Previous state:  succeptible
-    ## Random number:  0.6570197
+    ## Random number:  0.6462318
     ## New state:  succeptible
     ## 
     ## Person ID:  7
-    ## Day:  17
+    ## Day:  22
     ## Previous state:  succeptible
-    ## Random number:  0.165191
+    ## Random number:  0.3398471
     ## New state:  succeptible
     ## 
     ## Person ID:  8
-    ## Day:  17
-    ## Previous state:  succeptible
-    ## Random number:  0.02547096
-    ## New state:  succeptible
+    ## Day:  22
+    ## Previous state:  symptomatic_dont_need_hospital
+    ## Random number:  0.9718428
+    ## New state:  symptomatic_dont_need_hospital
     ## 
     ## Person ID:  9
-    ## Day:  17
+    ## Day:  22
     ## Previous state:  succeptible
-    ## Random number:  0.9114212
+    ## Random number:  0.6358797
     ## New state:  succeptible
     ## 
     ## Person ID:  10
-    ## Day:  17
-    ## Previous state:  succeptible
-    ## Random number:  0.2528351
-    ## New state:  succeptible
+    ## Day:  22
+    ## Previous state:  recovered
+    ## Random number:  0.07366914
+    ## New state:  recovered
     ## 
     ## Person ID:  11
-    ## Day:  17
+    ## Day:  22
     ## Previous state:  succeptible
-    ## Random number:  0.3360072
+    ## Random number:  0.3364103
     ## New state:  succeptible
     ## 
     ## Person ID:  12
-    ## Day:  17
-    ## Previous state:  succeptible
-    ## Random number:  0.3505593
-    ## New state:  succeptible
+    ## Day:  22
+    ## Previous state:  get_hospital_care
+    ## Random number:  0.9002477
+    ## New state:  get_hospital_care
     ## 
     ## Person ID:  13
-    ## Day:  17
+    ## Day:  22
     ## Previous state:  succeptible
-    ## Random number:  0.8331614
+    ## Random number:  0.4103947
     ## New state:  succeptible
     ## 
     ## Person ID:  14
-    ## Day:  17
-    ## Previous state:  infected_symptomatic_pre_symptoms
-    ## Random number:  0.3881405
-    ## New state:  infected_symptomatic_pre_symptoms
+    ## Day:  22
+    ## Previous state:  succeptible
+    ## Random number:  0.9703195
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
-    ## Day:  17
+    ## Day:  22
     ## Previous state:  succeptible
-    ## Random number:  0.9110186
+    ## Random number:  0.9904855
     ## New state:  succeptible
     ## 
     ## Person ID:  16
-    ## Day:  17
+    ## Day:  22
     ## Previous state:  succeptible
-    ## Random number:  0.4198785
+    ## Random number:  0.4583157
     ## New state:  succeptible
     ## 
     ## Person ID:  17
-    ## Day:  17
-    ## Previous state:  recovered
-    ## Random number:  0.08965319
-    ## New state:  recovered
+    ## Day:  22
+    ## Previous state:  succeptible
+    ## Random number:  0.007504817
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
-    ## Day:  17
+    ## Day:  22
     ## Previous state:  succeptible
-    ## Random number:  0.1100035
+    ## Random number:  0.3166881
     ## New state:  succeptible
     ## 
     ## Person ID:  19
-    ## Day:  17
+    ## Day:  22
     ## Previous state:  succeptible
-    ## Random number:  0.3493854
+    ## Random number:  0.6971703
     ## New state:  succeptible
     ## 
     ## Person ID:  20
-    ## Day:  17
-    ## Previous state:  succeptible
-    ## Random number:  0.1507009
-    ## New state:  succeptible
+    ## Day:  22
+    ## Previous state:  infected_asymptomatic
+    ## Random number:  0.02161831
+    ## New state:  infected_asymptomatic
     ## 
     ## Person ID:  1
-    ## Day:  18
-    ## Previous state:  get_hospital_care
-    ## Random number:  0.5035167
-    ## New state:  get_hospital_care
+    ## Day:  23
+    ## Previous state:  recovered
+    ## Random number:  0.716762
+    ## New state:  recovered
     ## 
     ## Person ID:  2
-    ## Day:  18
+    ## Day:  23
     ## Previous state:  succeptible
-    ## Random number:  0.4666995
+    ## Random number:  0.08561164
     ## New state:  succeptible
     ## 
     ## Person ID:  3
-    ## Day:  18
+    ## Day:  23
     ## Previous state:  succeptible
-    ## Random number:  0.7229431
+    ## Random number:  0.6895778
     ## New state:  succeptible
     ## 
     ## Person ID:  4
-    ## Day:  18
+    ## Day:  23
     ## Previous state:  succeptible
-    ## Random number:  0.2686446
+    ## Random number:  0.3185773
     ## New state:  succeptible
     ## 
     ## Person ID:  5
-    ## Day:  18
-    ## Previous state:  symptomatic_dont_need_hospital
-    ## Random number:  0.5803707
-    ## New state:  symptomatic_dont_need_hospital
+    ## Day:  23
+    ## Previous state:  succeptible
+    ## Random number:  0.3550472
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
-    ## Day:  18
+    ## Day:  23
     ## Previous state:  succeptible
-    ## Random number:  0.7605374
+    ## Random number:  0.5043884
     ## New state:  succeptible
     ## 
     ## Person ID:  7
-    ## Day:  18
+    ## Day:  23
     ## Previous state:  succeptible
-    ## Random number:  0.734047
+    ## Random number:  0.8953123
     ## New state:  succeptible
     ## 
     ## Person ID:  8
-    ## Day:  18
-    ## Previous state:  succeptible
-    ## Random number:  0.1518689
-    ## New state:  succeptible
+    ## Day:  23
+    ## Previous state:  symptomatic_dont_need_hospital
+    ## Random number:  0.64489
+    ## New state:  symptomatic_dont_need_hospital
     ## 
     ## Person ID:  9
-    ## Day:  18
+    ## Day:  23
     ## Previous state:  succeptible
-    ## Random number:  0.251152
+    ## Random number:  0.4384093
     ## New state:  succeptible
     ## 
     ## Person ID:  10
-    ## Day:  18
-    ## Previous state:  succeptible
-    ## Random number:  0.3622509
-    ## New state:  succeptible
+    ## Day:  23
+    ## Previous state:  recovered
+    ## Random number:  0.7685213
+    ## New state:  recovered
     ## 
     ## Person ID:  11
-    ## Day:  18
+    ## Day:  23
     ## Previous state:  succeptible
-    ## Random number:  0.4558108
+    ## Random number:  0.9948286
     ## New state:  succeptible
     ## 
     ## Person ID:  12
-    ## Day:  18
-    ## Previous state:  succeptible
-    ## Random number:  0.4969122
-    ## New state:  succeptible
+    ## Day:  23
+    ## Previous state:  get_hospital_care
+    ## Random number:  0.3551838
+    ## New state:  get_hospital_care
     ## 
     ## Person ID:  13
-    ## Day:  18
+    ## Day:  23
     ## Previous state:  succeptible
-    ## Random number:  0.7363082
+    ## Random number:  0.6787629
     ## New state:  succeptible
     ## 
     ## Person ID:  14
-    ## Day:  18
-    ## Previous state:  infected_symptomatic_pre_symptoms
-    ## Random number:  0.2871682
-    ## New state:  infected_symptomatic_pre_symptoms
+    ## Day:  23
+    ## Previous state:  succeptible
+    ## Random number:  0.8870368
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
-    ## Day:  18
+    ## Day:  23
     ## Previous state:  succeptible
-    ## Random number:  0.7066902
+    ## Random number:  0.9570383
     ## New state:  succeptible
     ## 
     ## Person ID:  16
-    ## Day:  18
+    ## Day:  23
     ## Previous state:  succeptible
-    ## Random number:  0.6448039
+    ## Random number:  0.8623818
     ## New state:  succeptible
     ## 
     ## Person ID:  17
-    ## Day:  18
-    ## Previous state:  recovered
-    ## Random number:  0.288795
-    ## New state:  recovered
+    ## Day:  23
+    ## Previous state:  succeptible
+    ## Random number:  0.5696015
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
-    ## Day:  18
+    ## Day:  23
     ## Previous state:  succeptible
-    ## Random number:  0.2066455
+    ## Random number:  0.2688995
     ## New state:  succeptible
     ## 
     ## Person ID:  19
-    ## Day:  18
+    ## Day:  23
     ## Previous state:  succeptible
-    ## Random number:  0.7686944
+    ## Random number:  0.08747512
     ## New state:  succeptible
     ## 
     ## Person ID:  20
-    ## Day:  18
-    ## Previous state:  succeptible
-    ## Random number:  0.8286911
-    ## New state:  succeptible
+    ## Day:  23
+    ## Previous state:  infected_asymptomatic
+    ## Random number:  0.2133866
+    ## New state:  infected_asymptomatic
     ## 
     ## Person ID:  1
-    ## Day:  19
-    ## Previous state:  get_hospital_care
-    ## Random number:  0.3058061
-    ## New state:  get_hospital_care
+    ## Day:  24
+    ## Previous state:  recovered
+    ## Random number:  0.03045276
+    ## New state:  recovered
     ## 
     ## Person ID:  2
-    ## Day:  19
+    ## Day:  24
     ## Previous state:  succeptible
-    ## Random number:  0.1023544
+    ## Random number:  0.7077912
     ## New state:  succeptible
     ## 
     ## Person ID:  3
-    ## Day:  19
+    ## Day:  24
     ## Previous state:  succeptible
-    ## Random number:  0.6506116
+    ## Random number:  0.009707964
     ## New state:  succeptible
     ## 
     ## Person ID:  4
-    ## Day:  19
+    ## Day:  24
     ## Previous state:  succeptible
-    ## Random number:  0.8697104
+    ## Random number:  0.7900387
     ## New state:  succeptible
     ## 
     ## Person ID:  5
-    ## Day:  19
-    ## Previous state:  symptomatic_dont_need_hospital
-    ## Random number:  0.7631539
-    ## New state:  symptomatic_dont_need_hospital
+    ## Day:  24
+    ## Previous state:  succeptible
+    ## Random number:  0.4100319
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
-    ## Day:  19
+    ## Day:  24
     ## Previous state:  succeptible
-    ## Random number:  0.7245535
+    ## Random number:  0.71078
     ## New state:  succeptible
     ## 
     ## Person ID:  7
-    ## Day:  19
+    ## Day:  24
     ## Previous state:  succeptible
-    ## Random number:  0.3795766
+    ## Random number:  0.5784825
     ## New state:  succeptible
     ## 
     ## Person ID:  8
-    ## Day:  19
-    ## Previous state:  succeptible
-    ## Random number:  0.5846758
-    ## New state:  succeptible
+    ## Day:  24
+    ## Previous state:  symptomatic_dont_need_hospital
+    ## Random number:  0.2433572
+    ## New state:  symptomatic_dont_need_hospital
     ## 
     ## Person ID:  9
-    ## Day:  19
+    ## Day:  24
     ## Previous state:  succeptible
-    ## Random number:  0.8660374
+    ## Random number:  0.6986121
     ## New state:  succeptible
     ## 
     ## Person ID:  10
-    ## Day:  19
-    ## Previous state:  succeptible
-    ## Random number:  0.3249543
-    ## New state:  succeptible
+    ## Day:  24
+    ## Previous state:  recovered
+    ## Random number:  0.3495141
+    ## New state:  recovered
     ## 
     ## Person ID:  11
-    ## Day:  19
+    ## Day:  24
     ## Previous state:  succeptible
-    ## Random number:  0.2654941
+    ## Random number:  0.5364633
     ## New state:  succeptible
     ## 
     ## Person ID:  12
-    ## Day:  19
-    ## Previous state:  succeptible
-    ## Random number:  0.217597
-    ## New state:  succeptible
+    ## Day:  24
+    ## Previous state:  get_hospital_care
+    ## Random number:  0.7346398
+    ## New state:  get_hospital_care
     ## 
     ## Person ID:  13
-    ## Day:  19
+    ## Day:  24
     ## Previous state:  succeptible
-    ## Random number:  0.3563963
+    ## Random number:  0.4233639
     ## New state:  succeptible
     ## 
     ## Person ID:  14
-    ## Day:  19
-    ## Previous state:  infected_symptomatic_pre_symptoms
-    ## Random number:  0.03653198
-    ## New state:  infected_symptomatic_pre_symptoms
+    ## Day:  24
+    ## Previous state:  succeptible
+    ## Random number:  0.509651
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
-    ## Day:  19
+    ## Day:  24
     ## Previous state:  succeptible
-    ## Random number:  0.9067037
+    ## Random number:  0.1259068
     ## New state:  succeptible
     ## 
     ## Person ID:  16
-    ## Day:  19
+    ## Day:  24
     ## Previous state:  succeptible
-    ## Random number:  0.1485321
+    ## Random number:  0.791572
     ## New state:  succeptible
     ## 
     ## Person ID:  17
-    ## Day:  19
-    ## Previous state:  recovered
-    ## Random number:  0.8351932
-    ## New state:  recovered
+    ## Day:  24
+    ## Previous state:  succeptible
+    ## Random number:  0.06976276
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
-    ## Day:  19
+    ## Day:  24
     ## Previous state:  succeptible
-    ## Random number:  0.01467288
+    ## Random number:  0.1121955
     ## New state:  succeptible
     ## 
     ## Person ID:  19
-    ## Day:  19
+    ## Day:  24
     ## Previous state:  succeptible
-    ## Random number:  0.410542
+    ## Random number:  0.921047
     ## New state:  succeptible
     ## 
     ## Person ID:  20
-    ## Day:  19
-    ## Previous state:  succeptible
-    ## Random number:  0.2158093
-    ## New state:  succeptible
+    ## Day:  24
+    ## Previous state:  infected_asymptomatic
+    ## Random number:  0.4710585
+    ## New state:  infected_asymptomatic
     ## 
     ## Person ID:  1
-    ## Day:  20
-    ## Previous state:  get_hospital_care
-    ## Random number:  0.508858
-    ## New state:  get_hospital_care
+    ## Day:  25
+    ## Previous state:  recovered
+    ## Random number:  0.7922187
+    ## New state:  recovered
     ## 
     ## Person ID:  2
-    ## Day:  20
+    ## Day:  25
     ## Previous state:  succeptible
-    ## Random number:  0.712087
+    ## Random number:  0.780453
     ## New state:  succeptible
     ## 
     ## Person ID:  3
-    ## Day:  20
+    ## Day:  25
     ## Previous state:  succeptible
-    ## Random number:  0.2412817
+    ## Random number:  0.1194598
     ## New state:  succeptible
     ## 
     ## Person ID:  4
-    ## Day:  20
+    ## Day:  25
     ## Previous state:  succeptible
-    ## Random number:  0.5518926
+    ## Random number:  0.5983998
     ## New state:  succeptible
     ## 
     ## Person ID:  5
-    ## Day:  20
-    ## Previous state:  symptomatic_dont_need_hospital
-    ## Random number:  0.6448185
-    ## New state:  recovered
+    ## Day:  25
+    ## Previous state:  succeptible
+    ## Random number:  0.7911573
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
-    ## Day:  20
+    ## Day:  25
     ## Previous state:  succeptible
-    ## Random number:  0.8974036
+    ## Random number:  0.6908471
     ## New state:  succeptible
     ## 
     ## Person ID:  7
-    ## Day:  20
+    ## Day:  25
     ## Previous state:  succeptible
-    ## Random number:  0.2667184
+    ## Random number:  0.7205345
     ## New state:  succeptible
     ## 
     ## Person ID:  8
-    ## Day:  20
-    ## Previous state:  succeptible
-    ## Random number:  0.06334127
-    ## New state:  succeptible
+    ## Day:  25
+    ## Previous state:  symptomatic_dont_need_hospital
+    ## Random number:  0.6739478
+    ## New state:  recovered
     ## 
     ## Person ID:  9
-    ## Day:  20
+    ## Day:  25
     ## Previous state:  succeptible
-    ## Random number:  0.5928516
+    ## Random number:  0.601961
     ## New state:  succeptible
     ## 
     ## Person ID:  10
-    ## Day:  20
-    ## Previous state:  succeptible
-    ## Random number:  0.3528916
-    ## New state:  succeptible
+    ## Day:  25
+    ## Previous state:  recovered
+    ## Random number:  0.8662646
+    ## New state:  recovered
     ## 
     ## Person ID:  11
-    ## Day:  20
+    ## Day:  25
     ## Previous state:  succeptible
-    ## Random number:  0.8350486
+    ## Random number:  0.5334403
     ## New state:  succeptible
     ## 
     ## Person ID:  12
-    ## Day:  20
-    ## Previous state:  succeptible
-    ## Random number:  0.4690811
-    ## New state:  succeptible
+    ## Day:  25
+    ## Previous state:  get_hospital_care
+    ## Random number:  0.8708008
+    ## New state:  get_hospital_care
     ## 
     ## Person ID:  13
-    ## Day:  20
+    ## Day:  25
     ## Previous state:  succeptible
-    ## Random number:  0.7673754
+    ## Random number:  0.01564856
     ## New state:  succeptible
     ## 
     ## Person ID:  14
-    ## Day:  20
+    ## Day:  25
+    ## Previous state:  succeptible
+    ## Random number:  0.9805077
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  15
+    ## Day:  25
+    ## Previous state:  succeptible
+    ## Random number:  0.3651219
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  16
+    ## Day:  25
+    ## Previous state:  succeptible
+    ## Random number:  0.656407
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  17
+    ## Day:  25
+    ## Previous state:  succeptible
+    ## Random number:  0.975102
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  18
+    ## Day:  25
+    ## Previous state:  succeptible
+    ## Random number:  0.4486998
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  19
+    ## Day:  25
+    ## Previous state:  succeptible
+    ## Random number:  0.9701105
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  20
+    ## Day:  25
+    ## Previous state:  infected_asymptomatic
+    ## Random number:  0.9493621
+    ## New state:  infectious_asymptomatic
+    ## 
+    ## Person ID:  1
+    ## Day:  26
+    ## Previous state:  recovered
+    ## Random number:  0.5073689
+    ## New state:  recovered
+    ## 
+    ## Person ID:  2
+    ## Day:  26
+    ## Previous state:  succeptible
+    ## Random number:  0.2893919
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  3
+    ## Day:  26
+    ## Previous state:  succeptible
+    ## Random number:  0.00637969
+    ## New state:  infected_asymptomatic
+    ## 
+    ## Person ID:  4
+    ## Day:  26
+    ## Previous state:  succeptible
+    ## Random number:  0.4743703
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  5
+    ## Day:  26
+    ## Previous state:  succeptible
+    ## Random number:  0.7047164
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  6
+    ## Day:  26
+    ## Previous state:  succeptible
+    ## Random number:  0.1819437
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  7
+    ## Day:  26
+    ## Previous state:  succeptible
+    ## Random number:  0.2343801
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  8
+    ## Day:  26
+    ## Previous state:  recovered
+    ## Random number:  0.3880744
+    ## New state:  recovered
+    ## 
+    ## Person ID:  9
+    ## Day:  26
+    ## Previous state:  succeptible
+    ## Random number:  0.5295809
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  10
+    ## Day:  26
+    ## Previous state:  recovered
+    ## Random number:  0.656026
+    ## New state:  recovered
+    ## 
+    ## Person ID:  11
+    ## Day:  26
+    ## Previous state:  succeptible
+    ## Random number:  0.8644851
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  12
+    ## Day:  26
+    ## Previous state:  get_hospital_care
+    ## Random number:  0.8654036
+    ## New state:  get_hospital_care
+    ## 
+    ## Person ID:  13
+    ## Day:  26
+    ## Previous state:  succeptible
+    ## Random number:  0.8752769
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  14
+    ## Day:  26
+    ## Previous state:  succeptible
+    ## Random number:  0.2032412
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  15
+    ## Day:  26
+    ## Previous state:  succeptible
+    ## Random number:  0.6131017
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  16
+    ## Day:  26
+    ## Previous state:  succeptible
+    ## Random number:  0.07990735
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  17
+    ## Day:  26
+    ## Previous state:  succeptible
+    ## Random number:  0.2719048
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  18
+    ## Day:  26
+    ## Previous state:  succeptible
+    ## Random number:  0.31206
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  19
+    ## Day:  26
+    ## Previous state:  succeptible
+    ## Random number:  0.8376085
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  20
+    ## Day:  26
+    ## Previous state:  infectious_asymptomatic
+    ## Random number:  0.664138
+    ## New state:  recovered
+    ## 
+    ## Person ID:  1
+    ## Day:  27
+    ## Previous state:  recovered
+    ## Random number:  0.9956549
+    ## New state:  recovered
+    ## 
+    ## Person ID:  2
+    ## Day:  27
+    ## Previous state:  succeptible
+    ## Random number:  0.1165491
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  3
+    ## Day:  27
+    ## Previous state:  infected_asymptomatic
+    ## Random number:  0.7123808
+    ## New state:  infected_asymptomatic
+    ## 
+    ## Person ID:  4
+    ## Day:  27
+    ## Previous state:  succeptible
+    ## Random number:  0.213376
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  5
+    ## Day:  27
+    ## Previous state:  succeptible
+    ## Random number:  0.3349905
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  6
+    ## Day:  27
+    ## Previous state:  succeptible
+    ## Random number:  0.8903462
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  7
+    ## Day:  27
+    ## Previous state:  succeptible
+    ## Random number:  0.3581874
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  8
+    ## Day:  27
+    ## Previous state:  recovered
+    ## Random number:  0.3188194
+    ## New state:  recovered
+    ## 
+    ## Person ID:  9
+    ## Day:  27
+    ## Previous state:  succeptible
+    ## Random number:  0.2282718
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  10
+    ## Day:  27
+    ## Previous state:  recovered
+    ## Random number:  0.4613508
+    ## New state:  recovered
+    ## 
+    ## Person ID:  11
+    ## Day:  27
+    ## Previous state:  succeptible
+    ## Random number:  0.696996
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  12
+    ## Day:  27
+    ## Previous state:  get_hospital_care
+    ## Random number:  0.3893845
+    ## New state:  dead
+    ## 
+    ## Person ID:  13
+    ## Day:  27
+    ## Previous state:  succeptible
+    ## Random number:  0.3367199
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  14
+    ## Day:  27
+    ## Previous state:  succeptible
+    ## Random number:  0.969311
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  15
+    ## Day:  27
+    ## Previous state:  succeptible
+    ## Random number:  0.2315561
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  16
+    ## Day:  27
+    ## Previous state:  succeptible
+    ## Random number:  0.4112686
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  17
+    ## Day:  27
+    ## Previous state:  succeptible
+    ## Random number:  0.2440508
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  18
+    ## Day:  27
+    ## Previous state:  succeptible
+    ## Random number:  0.7003553
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  19
+    ## Day:  27
+    ## Previous state:  succeptible
+    ## Random number:  0.2862519
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  20
+    ## Day:  27
+    ## Previous state:  recovered
+    ## Random number:  0.6927212
+    ## New state:  recovered
+    ## 
+    ## Person ID:  1
+    ## Day:  28
+    ## Previous state:  recovered
+    ## Random number:  0.87294
+    ## New state:  recovered
+    ## 
+    ## Person ID:  2
+    ## Day:  28
+    ## Previous state:  succeptible
+    ## Random number:  0.07929283
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  3
+    ## Day:  28
+    ## Previous state:  infected_asymptomatic
+    ## Random number:  0.132009
+    ## New state:  infected_asymptomatic
+    ## 
+    ## Person ID:  4
+    ## Day:  28
+    ## Previous state:  succeptible
+    ## Random number:  0.3579585
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  5
+    ## Day:  28
+    ## Previous state:  succeptible
+    ## Random number:  0.334597
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  6
+    ## Day:  28
+    ## Previous state:  succeptible
+    ## Random number:  0.801307
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  7
+    ## Day:  28
+    ## Previous state:  succeptible
+    ## Random number:  0.6459477
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  8
+    ## Day:  28
+    ## Previous state:  recovered
+    ## Random number:  0.6339246
+    ## New state:  recovered
+    ## 
+    ## Person ID:  9
+    ## Day:  28
+    ## Previous state:  succeptible
+    ## Random number:  0.2825337
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  10
+    ## Day:  28
+    ## Previous state:  recovered
+    ## Random number:  0.5498416
+    ## New state:  recovered
+    ## 
+    ## Person ID:  11
+    ## Day:  28
+    ## Previous state:  succeptible
+    ## Random number:  0.5188603
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  12
+    ## Day:  28
+    ## Previous state:  dead
+    ## Random number:  0.169505
+    ## New state:  dead
+    ## 
+    ## Person ID:  13
+    ## Day:  28
+    ## Previous state:  succeptible
+    ## Random number:  0.4347824
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  14
+    ## Day:  28
+    ## Previous state:  succeptible
+    ## Random number:  0.1447354
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  15
+    ## Day:  28
+    ## Previous state:  succeptible
+    ## Random number:  0.8608447
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  16
+    ## Day:  28
+    ## Previous state:  succeptible
+    ## Random number:  0.7600717
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  17
+    ## Day:  28
+    ## Previous state:  succeptible
+    ## Random number:  0.2462953
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  18
+    ## Day:  28
+    ## Previous state:  succeptible
+    ## Random number:  0.6635299
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  19
+    ## Day:  28
+    ## Previous state:  succeptible
+    ## Random number:  0.6443607
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  20
+    ## Day:  28
+    ## Previous state:  recovered
+    ## Random number:  0.09398313
+    ## New state:  recovered
+    ## 
+    ## Person ID:  1
+    ## Day:  29
+    ## Previous state:  recovered
+    ## Random number:  0.7937565
+    ## New state:  recovered
+    ## 
+    ## Person ID:  2
+    ## Day:  29
+    ## Previous state:  succeptible
+    ## Random number:  0.255763
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  3
+    ## Day:  29
+    ## Previous state:  infected_asymptomatic
+    ## Random number:  0.3276911
+    ## New state:  infected_asymptomatic
+    ## 
+    ## Person ID:  4
+    ## Day:  29
+    ## Previous state:  succeptible
+    ## Random number:  0.2397506
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  5
+    ## Day:  29
+    ## Previous state:  succeptible
+    ## Random number:  0.8019888
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  6
+    ## Day:  29
+    ## Previous state:  succeptible
+    ## Random number:  0.485069
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  7
+    ## Day:  29
+    ## Previous state:  succeptible
+    ## Random number:  0.01550945
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  8
+    ## Day:  29
+    ## Previous state:  recovered
+    ## Random number:  0.3039506
+    ## New state:  recovered
+    ## 
+    ## Person ID:  9
+    ## Day:  29
+    ## Previous state:  succeptible
+    ## Random number:  0.674957
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  10
+    ## Day:  29
+    ## Previous state:  recovered
+    ## Random number:  0.2492295
+    ## New state:  recovered
+    ## 
+    ## Person ID:  11
+    ## Day:  29
+    ## Previous state:  succeptible
+    ## Random number:  0.2031102
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  12
+    ## Day:  29
+    ## Previous state:  dead
+    ## Random number:  0.8961107
+    ## New state:  dead
+    ## 
+    ## Person ID:  13
+    ## Day:  29
+    ## Previous state:  succeptible
+    ## Random number:  0.9740092
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  14
+    ## Day:  29
+    ## Previous state:  succeptible
+    ## Random number:  0.6569969
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  15
+    ## Day:  29
+    ## Previous state:  succeptible
+    ## Random number:  0.03428559
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  16
+    ## Day:  29
+    ## Previous state:  succeptible
+    ## Random number:  0.5832168
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  17
+    ## Day:  29
+    ## Previous state:  succeptible
+    ## Random number:  0.5217548
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  18
+    ## Day:  29
+    ## Previous state:  succeptible
+    ## Random number:  0.5326424
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  19
+    ## Day:  29
+    ## Previous state:  succeptible
+    ## Random number:  0.2460784
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  20
+    ## Day:  29
+    ## Previous state:  recovered
+    ## Random number:  0.8426195
+    ## New state:  recovered
+    ## 
+    ## Person ID:  1
+    ## Day:  30
+    ## Previous state:  recovered
+    ## Random number:  0.8785963
+    ## New state:  recovered
+    ## 
+    ## Person ID:  2
+    ## Day:  30
+    ## Previous state:  succeptible
+    ## Random number:  0.256913
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  3
+    ## Day:  30
+    ## Previous state:  infected_asymptomatic
+    ## Random number:  0.1721154
+    ## New state:  infectious_asymptomatic
+    ## 
+    ## Person ID:  4
+    ## Day:  30
+    ## Previous state:  succeptible
+    ## Random number:  0.2073967
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  5
+    ## Day:  30
+    ## Previous state:  succeptible
+    ## Random number:  0.5425421
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  6
+    ## Day:  30
+    ## Previous state:  succeptible
+    ## Random number:  0.2062402
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  7
+    ## Day:  30
+    ## Previous state:  succeptible
+    ## Random number:  0.2285139
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  8
+    ## Day:  30
+    ## Previous state:  recovered
+    ## Random number:  0.2131464
+    ## New state:  recovered
+    ## 
+    ## Person ID:  9
+    ## Day:  30
+    ## Previous state:  succeptible
+    ## Random number:  0.5028735
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  10
+    ## Day:  30
+    ## Previous state:  recovered
+    ## Random number:  0.8581292
+    ## New state:  recovered
+    ## 
+    ## Person ID:  11
+    ## Day:  30
+    ## Previous state:  succeptible
+    ## Random number:  0.5716251
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  12
+    ## Day:  30
+    ## Previous state:  dead
+    ## Random number:  0.2094643
+    ## New state:  dead
+    ## 
+    ## Person ID:  13
+    ## Day:  30
+    ## Previous state:  succeptible
+    ## Random number:  0.5079602
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  14
+    ## Day:  30
+    ## Previous state:  succeptible
+    ## Random number:  0.3073259
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  15
+    ## Day:  30
+    ## Previous state:  succeptible
+    ## Random number:  0.7424834
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  16
+    ## Day:  30
+    ## Previous state:  succeptible
+    ## Random number:  0.8836415
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  17
+    ## Day:  30
+    ## Previous state:  succeptible
+    ## Random number:  0.8734721
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  18
+    ## Day:  30
+    ## Previous state:  succeptible
+    ## Random number:  0.9499357
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  19
+    ## Day:  30
+    ## Previous state:  succeptible
+    ## Random number:  0.1293897
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  20
+    ## Day:  30
+    ## Previous state:  recovered
+    ## Random number:  0.8807634
+    ## New state:  recovered
+    ## 
+    ## Person ID:  1
+    ## Day:  31
+    ## Previous state:  recovered
+    ## Random number:  0.9492274
+    ## New state:  recovered
+    ## 
+    ## Person ID:  2
+    ## Day:  31
+    ## Previous state:  succeptible
+    ## Random number:  0.1744392
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  3
+    ## Day:  31
+    ## Previous state:  infectious_asymptomatic
+    ## Random number:  0.457729
+    ## New state:  recovered
+    ## 
+    ## Person ID:  4
+    ## Day:  31
+    ## Previous state:  succeptible
+    ## Random number:  0.9830715
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  5
+    ## Day:  31
+    ## Previous state:  succeptible
+    ## Random number:  0.6455862
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  6
+    ## Day:  31
+    ## Previous state:  succeptible
+    ## Random number:  0.9091952
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  7
+    ## Day:  31
+    ## Previous state:  succeptible
+    ## Random number:  0.8110263
+    ## New state:  infected_symptomatic_pre_symptoms
+    ## 
+    ## Person ID:  8
+    ## Day:  31
+    ## Previous state:  recovered
+    ## Random number:  0.7884564
+    ## New state:  recovered
+    ## 
+    ## Person ID:  9
+    ## Day:  31
+    ## Previous state:  succeptible
+    ## Random number:  0.5337738
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  10
+    ## Day:  31
+    ## Previous state:  recovered
+    ## Random number:  0.9115308
+    ## New state:  recovered
+    ## 
+    ## Person ID:  11
+    ## Day:  31
+    ## Previous state:  succeptible
+    ## Random number:  0.7544539
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  12
+    ## Day:  31
+    ## Previous state:  dead
+    ## Random number:  0.08315839
+    ## New state:  dead
+    ## 
+    ## Person ID:  13
+    ## Day:  31
+    ## Previous state:  succeptible
+    ## Random number:  0.598692
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  14
+    ## Day:  31
+    ## Previous state:  succeptible
+    ## Random number:  0.5268327
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  15
+    ## Day:  31
+    ## Previous state:  succeptible
+    ## Random number:  0.09886387
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  16
+    ## Day:  31
+    ## Previous state:  succeptible
+    ## Random number:  0.06777978
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  17
+    ## Day:  31
+    ## Previous state:  succeptible
+    ## Random number:  0.6860059
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  18
+    ## Day:  31
+    ## Previous state:  succeptible
+    ## Random number:  0.9433976
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  19
+    ## Day:  31
+    ## Previous state:  succeptible
+    ## Random number:  0.01225606
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  20
+    ## Day:  31
+    ## Previous state:  recovered
+    ## Random number:  0.554697
+    ## New state:  recovered
+    ## 
+    ## Person ID:  1
+    ## Day:  32
+    ## Previous state:  recovered
+    ## Random number:  0.5926304
+    ## New state:  recovered
+    ## 
+    ## Person ID:  2
+    ## Day:  32
+    ## Previous state:  succeptible
+    ## Random number:  0.08431278
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  3
+    ## Day:  32
+    ## Previous state:  recovered
+    ## Random number:  0.2509446
+    ## New state:  recovered
+    ## 
+    ## Person ID:  4
+    ## Day:  32
+    ## Previous state:  succeptible
+    ## Random number:  0.9082632
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  5
+    ## Day:  32
+    ## Previous state:  succeptible
+    ## Random number:  0.9893989
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  6
+    ## Day:  32
+    ## Previous state:  succeptible
+    ## Random number:  0.07168205
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  7
+    ## Day:  32
     ## Previous state:  infected_symptomatic_pre_symptoms
-    ## Random number:  0.5606706
+    ## Random number:  0.5854115
+    ## New state:  infected_symptomatic_pre_symptoms
+    ## 
+    ## Person ID:  8
+    ## Day:  32
+    ## Previous state:  recovered
+    ## Random number:  0.8294132
+    ## New state:  recovered
+    ## 
+    ## Person ID:  9
+    ## Day:  32
+    ## Previous state:  succeptible
+    ## Random number:  0.01161081
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  10
+    ## Day:  32
+    ## Previous state:  recovered
+    ## Random number:  0.3654831
+    ## New state:  recovered
+    ## 
+    ## Person ID:  11
+    ## Day:  32
+    ## Previous state:  succeptible
+    ## Random number:  0.8227432
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  12
+    ## Day:  32
+    ## Previous state:  dead
+    ## Random number:  0.5640456
+    ## New state:  dead
+    ## 
+    ## Person ID:  13
+    ## Day:  32
+    ## Previous state:  succeptible
+    ## Random number:  0.7009555
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  14
+    ## Day:  32
+    ## Previous state:  succeptible
+    ## Random number:  0.2734433
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  15
+    ## Day:  32
+    ## Previous state:  succeptible
+    ## Random number:  0.7935343
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  16
+    ## Day:  32
+    ## Previous state:  succeptible
+    ## Random number:  0.6325995
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  17
+    ## Day:  32
+    ## Previous state:  succeptible
+    ## Random number:  0.5242305
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  18
+    ## Day:  32
+    ## Previous state:  succeptible
+    ## Random number:  0.5296088
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  19
+    ## Day:  32
+    ## Previous state:  succeptible
+    ## Random number:  0.1643616
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  20
+    ## Day:  32
+    ## Previous state:  recovered
+    ## Random number:  0.4721652
+    ## New state:  recovered
+    ## 
+    ## Person ID:  1
+    ## Day:  33
+    ## Previous state:  recovered
+    ## Random number:  0.7508636
+    ## New state:  recovered
+    ## 
+    ## Person ID:  2
+    ## Day:  33
+    ## Previous state:  succeptible
+    ## Random number:  0.5548016
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  3
+    ## Day:  33
+    ## Previous state:  recovered
+    ## Random number:  0.5145014
+    ## New state:  recovered
+    ## 
+    ## Person ID:  4
+    ## Day:  33
+    ## Previous state:  succeptible
+    ## Random number:  0.6649272
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  5
+    ## Day:  33
+    ## Previous state:  succeptible
+    ## Random number:  0.1653244
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  6
+    ## Day:  33
+    ## Previous state:  succeptible
+    ## Random number:  0.6925761
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  7
+    ## Day:  33
+    ## Previous state:  infected_symptomatic_pre_symptoms
+    ## Random number:  0.262956
+    ## New state:  infected_symptomatic_pre_symptoms
+    ## 
+    ## Person ID:  8
+    ## Day:  33
+    ## Previous state:  recovered
+    ## Random number:  0.1823037
+    ## New state:  recovered
+    ## 
+    ## Person ID:  9
+    ## Day:  33
+    ## Previous state:  succeptible
+    ## Random number:  0.4619906
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  10
+    ## Day:  33
+    ## Previous state:  recovered
+    ## Random number:  0.5933513
+    ## New state:  recovered
+    ## 
+    ## Person ID:  11
+    ## Day:  33
+    ## Previous state:  succeptible
+    ## Random number:  0.916701
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  12
+    ## Day:  33
+    ## Previous state:  dead
+    ## Random number:  0.985779
+    ## New state:  dead
+    ## 
+    ## Person ID:  13
+    ## Day:  33
+    ## Previous state:  succeptible
+    ## Random number:  0.7132553
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  14
+    ## Day:  33
+    ## Previous state:  succeptible
+    ## Random number:  0.5766578
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  15
+    ## Day:  33
+    ## Previous state:  succeptible
+    ## Random number:  0.152556
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  16
+    ## Day:  33
+    ## Previous state:  succeptible
+    ## Random number:  0.9176516
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  17
+    ## Day:  33
+    ## Previous state:  succeptible
+    ## Random number:  0.6036889
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  18
+    ## Day:  33
+    ## Previous state:  succeptible
+    ## Random number:  0.6817953
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  19
+    ## Day:  33
+    ## Previous state:  succeptible
+    ## Random number:  0.5614234
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  20
+    ## Day:  33
+    ## Previous state:  recovered
+    ## Random number:  0.3073255
+    ## New state:  recovered
+    ## 
+    ## Person ID:  1
+    ## Day:  34
+    ## Previous state:  recovered
+    ## Random number:  0.4944076
+    ## New state:  recovered
+    ## 
+    ## Person ID:  2
+    ## Day:  34
+    ## Previous state:  succeptible
+    ## Random number:  0.9649645
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  3
+    ## Day:  34
+    ## Previous state:  recovered
+    ## Random number:  0.1749747
+    ## New state:  recovered
+    ## 
+    ## Person ID:  4
+    ## Day:  34
+    ## Previous state:  succeptible
+    ## Random number:  0.9172224
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  5
+    ## Day:  34
+    ## Previous state:  succeptible
+    ## Random number:  0.2568726
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  6
+    ## Day:  34
+    ## Previous state:  succeptible
+    ## Random number:  0.7486876
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  7
+    ## Day:  34
+    ## Previous state:  infected_symptomatic_pre_symptoms
+    ## Random number:  0.170075
+    ## New state:  infected_symptomatic_pre_symptoms
+    ## 
+    ## Person ID:  8
+    ## Day:  34
+    ## Previous state:  recovered
+    ## Random number:  0.5386427
+    ## New state:  recovered
+    ## 
+    ## Person ID:  9
+    ## Day:  34
+    ## Previous state:  succeptible
+    ## Random number:  0.3956414
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  10
+    ## Day:  34
+    ## Previous state:  recovered
+    ## Random number:  0.7272736
+    ## New state:  recovered
+    ## 
+    ## Person ID:  11
+    ## Day:  34
+    ## Previous state:  succeptible
+    ## Random number:  0.7982985
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  12
+    ## Day:  34
+    ## Previous state:  dead
+    ## Random number:  0.6591346
+    ## New state:  dead
+    ## 
+    ## Person ID:  13
+    ## Day:  34
+    ## Previous state:  succeptible
+    ## Random number:  0.02039515
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  14
+    ## Day:  34
+    ## Previous state:  succeptible
+    ## Random number:  0.3445213
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  15
+    ## Day:  34
+    ## Previous state:  succeptible
+    ## Random number:  0.4336023
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  16
+    ## Day:  34
+    ## Previous state:  succeptible
+    ## Random number:  0.04834279
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  17
+    ## Day:  34
+    ## Previous state:  succeptible
+    ## Random number:  0.725693
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  18
+    ## Day:  34
+    ## Previous state:  succeptible
+    ## Random number:  0.1039665
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  19
+    ## Day:  34
+    ## Previous state:  succeptible
+    ## Random number:  0.9516229
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  20
+    ## Day:  34
+    ## Previous state:  recovered
+    ## Random number:  0.5102871
+    ## New state:  recovered
+    ## 
+    ## Person ID:  1
+    ## Day:  35
+    ## Previous state:  recovered
+    ## Random number:  0.3650985
+    ## New state:  recovered
+    ## 
+    ## Person ID:  2
+    ## Day:  35
+    ## Previous state:  succeptible
+    ## Random number:  0.6613418
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  3
+    ## Day:  35
+    ## Previous state:  recovered
+    ## Random number:  0.4449759
+    ## New state:  recovered
+    ## 
+    ## Person ID:  4
+    ## Day:  35
+    ## Previous state:  succeptible
+    ## Random number:  0.6512808
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  5
+    ## Day:  35
+    ## Previous state:  succeptible
+    ## Random number:  0.3322726
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  6
+    ## Day:  35
+    ## Previous state:  succeptible
+    ## Random number:  0.9635818
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  7
+    ## Day:  35
+    ## Previous state:  infected_symptomatic_pre_symptoms
+    ## Random number:  0.5121402
     ## New state:  infectious_symptomatic_pre_symptoms
     ## 
-    ## Person ID:  15
-    ## Day:  20
-    ## Previous state:  succeptible
-    ## Random number:  0.9760309
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  16
-    ## Day:  20
-    ## Previous state:  succeptible
-    ## Random number:  0.8061547
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  17
-    ## Day:  20
-    ## Previous state:  recovered
-    ## Random number:  0.6192549
-    ## New state:  recovered
-    ## 
-    ## Person ID:  18
-    ## Day:  20
-    ## Previous state:  succeptible
-    ## Random number:  0.456928
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  19
-    ## Day:  20
-    ## Previous state:  succeptible
-    ## Random number:  0.4817038
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  20
-    ## Day:  20
-    ## Previous state:  succeptible
-    ## Random number:  0.1676345
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  1
-    ## Day:  21
-    ## Previous state:  get_hospital_care
-    ## Random number:  0.5962484
-    ## New state:  get_hospital_care
-    ## 
-    ## Person ID:  2
-    ## Day:  21
-    ## Previous state:  succeptible
-    ## Random number:  0.2798428
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  3
-    ## Day:  21
-    ## Previous state:  succeptible
-    ## Random number:  0.6035542
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  4
-    ## Day:  21
-    ## Previous state:  succeptible
-    ## Random number:  0.921302
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  5
-    ## Day:  21
-    ## Previous state:  recovered
-    ## Random number:  0.9673191
-    ## New state:  recovered
-    ## 
-    ## Person ID:  6
-    ## Day:  21
-    ## Previous state:  succeptible
-    ## Random number:  0.9590833
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  7
-    ## Day:  21
-    ## Previous state:  succeptible
-    ## Random number:  0.4050726
-    ## New state:  succeptible
-    ## 
     ## Person ID:  8
-    ## Day:  21
-    ## Previous state:  succeptible
-    ## Random number:  0.5514945
-    ## New state:  succeptible
+    ## Day:  35
+    ## Previous state:  recovered
+    ## Random number:  0.3116858
+    ## New state:  recovered
     ## 
     ## Person ID:  9
-    ## Day:  21
+    ## Day:  35
     ## Previous state:  succeptible
-    ## Random number:  0.5141402
+    ## Random number:  0.7417159
     ## New state:  succeptible
     ## 
     ## Person ID:  10
-    ## Day:  21
-    ## Previous state:  succeptible
-    ## Random number:  0.5995833
-    ## New state:  succeptible
+    ## Day:  35
+    ## Previous state:  recovered
+    ## Random number:  0.2700666
+    ## New state:  recovered
     ## 
     ## Person ID:  11
-    ## Day:  21
+    ## Day:  35
     ## Previous state:  succeptible
-    ## Random number:  0.1448763
+    ## Random number:  0.1740052
     ## New state:  succeptible
     ## 
     ## Person ID:  12
-    ## Day:  21
-    ## Previous state:  succeptible
-    ## Random number:  0.1938359
-    ## New state:  succeptible
+    ## Day:  35
+    ## Previous state:  dead
+    ## Random number:  0.7385825
+    ## New state:  dead
     ## 
     ## Person ID:  13
-    ## Day:  21
+    ## Day:  35
     ## Previous state:  succeptible
-    ## Random number:  0.02348745
+    ## Random number:  0.6807195
     ## New state:  succeptible
     ## 
     ## Person ID:  14
-    ## Day:  21
+    ## Day:  35
+    ## Previous state:  succeptible
+    ## Random number:  0.9777508
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  15
+    ## Day:  35
+    ## Previous state:  succeptible
+    ## Random number:  0.6251532
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  16
+    ## Day:  35
+    ## Previous state:  succeptible
+    ## Random number:  0.5242172
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  17
+    ## Day:  35
+    ## Previous state:  succeptible
+    ## Random number:  0.8941572
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  18
+    ## Day:  35
+    ## Previous state:  succeptible
+    ## Random number:  0.1143597
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  19
+    ## Day:  35
+    ## Previous state:  succeptible
+    ## Random number:  0.5252411
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  20
+    ## Day:  35
+    ## Previous state:  recovered
+    ## Random number:  0.3406955
+    ## New state:  recovered
+    ## 
+    ## Person ID:  1
+    ## Day:  36
+    ## Previous state:  recovered
+    ## Random number:  0.1176885
+    ## New state:  recovered
+    ## 
+    ## Person ID:  2
+    ## Day:  36
+    ## Previous state:  succeptible
+    ## Random number:  0.008244637
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  3
+    ## Day:  36
+    ## Previous state:  recovered
+    ## Random number:  0.3534314
+    ## New state:  recovered
+    ## 
+    ## Person ID:  4
+    ## Day:  36
+    ## Previous state:  succeptible
+    ## Random number:  0.03179158
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  5
+    ## Day:  36
+    ## Previous state:  succeptible
+    ## Random number:  0.0810151
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  6
+    ## Day:  36
+    ## Previous state:  succeptible
+    ## Random number:  0.09904587
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  7
+    ## Day:  36
     ## Previous state:  infectious_symptomatic_pre_symptoms
-    ## Random number:  0.2572808
+    ## Random number:  0.3061737
     ## New state:  symptomatic_dont_need_hospital
     ## 
-    ## Person ID:  15
-    ## Day:  21
-    ## Previous state:  succeptible
-    ## Random number:  0.721972
-    ## New state:  infected_symptomatic_pre_symptoms
-    ## 
-    ## Person ID:  16
-    ## Day:  21
-    ## Previous state:  succeptible
-    ## Random number:  0.006847531
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  17
-    ## Day:  21
-    ## Previous state:  recovered
-    ## Random number:  0.291864
-    ## New state:  recovered
-    ## 
-    ## Person ID:  18
-    ## Day:  21
-    ## Previous state:  succeptible
-    ## Random number:  0.7339787
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  19
-    ## Day:  21
-    ## Previous state:  succeptible
-    ## Random number:  0.9297182
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  20
-    ## Day:  21
-    ## Previous state:  succeptible
-    ## Random number:  0.9894426
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  1
-    ## Day:  22
-    ## Previous state:  get_hospital_care
-    ## Random number:  0.3142088
-    ## New state:  dead
-    ## 
-    ## Person ID:  2
-    ## Day:  22
-    ## Previous state:  succeptible
-    ## Random number:  0.04261391
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  3
-    ## Day:  22
-    ## Previous state:  succeptible
-    ## Random number:  0.150835
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  4
-    ## Day:  22
-    ## Previous state:  succeptible
-    ## Random number:  0.1908533
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  5
-    ## Day:  22
-    ## Previous state:  recovered
-    ## Random number:  0.8816486
-    ## New state:  recovered
-    ## 
-    ## Person ID:  6
-    ## Day:  22
-    ## Previous state:  succeptible
-    ## Random number:  0.7572266
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  7
-    ## Day:  22
-    ## Previous state:  succeptible
-    ## Random number:  0.1510428
-    ## New state:  succeptible
-    ## 
     ## Person ID:  8
-    ## Day:  22
-    ## Previous state:  succeptible
-    ## Random number:  0.349635
-    ## New state:  succeptible
+    ## Day:  36
+    ## Previous state:  recovered
+    ## Random number:  0.7664199
+    ## New state:  recovered
     ## 
     ## Person ID:  9
-    ## Day:  22
+    ## Day:  36
     ## Previous state:  succeptible
-    ## Random number:  0.4927834
+    ## Random number:  0.7298405
     ## New state:  succeptible
     ## 
     ## Person ID:  10
-    ## Day:  22
-    ## Previous state:  succeptible
-    ## Random number:  0.1550162
-    ## New state:  succeptible
+    ## Day:  36
+    ## Previous state:  recovered
+    ## Random number:  0.6981874
+    ## New state:  recovered
     ## 
     ## Person ID:  11
-    ## Day:  22
+    ## Day:  36
     ## Previous state:  succeptible
-    ## Random number:  0.7571739
+    ## Random number:  0.1989805
     ## New state:  succeptible
     ## 
     ## Person ID:  12
-    ## Day:  22
-    ## Previous state:  succeptible
-    ## Random number:  0.6630301
-    ## New state:  succeptible
+    ## Day:  36
+    ## Previous state:  dead
+    ## Random number:  0.817522
+    ## New state:  dead
     ## 
     ## Person ID:  13
-    ## Day:  22
+    ## Day:  36
     ## Previous state:  succeptible
-    ## Random number:  0.6350883
+    ## Random number:  0.596494
     ## New state:  succeptible
     ## 
     ## Person ID:  14
-    ## Day:  22
+    ## Day:  36
+    ## Previous state:  succeptible
+    ## Random number:  0.8267634
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  15
+    ## Day:  36
+    ## Previous state:  succeptible
+    ## Random number:  0.7360207
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  16
+    ## Day:  36
+    ## Previous state:  succeptible
+    ## Random number:  0.9184082
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  17
+    ## Day:  36
+    ## Previous state:  succeptible
+    ## Random number:  0.3562276
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  18
+    ## Day:  36
+    ## Previous state:  succeptible
+    ## Random number:  0.5592665
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  19
+    ## Day:  36
+    ## Previous state:  succeptible
+    ## Random number:  0.7927584
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  20
+    ## Day:  36
+    ## Previous state:  recovered
+    ## Random number:  0.2852531
+    ## New state:  recovered
+    ## 
+    ## Person ID:  1
+    ## Day:  37
+    ## Previous state:  recovered
+    ## Random number:  0.9876117
+    ## New state:  recovered
+    ## 
+    ## Person ID:  2
+    ## Day:  37
+    ## Previous state:  succeptible
+    ## Random number:  0.3667817
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  3
+    ## Day:  37
+    ## Previous state:  recovered
+    ## Random number:  0.722262
+    ## New state:  recovered
+    ## 
+    ## Person ID:  4
+    ## Day:  37
+    ## Previous state:  succeptible
+    ## Random number:  0.5622748
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  5
+    ## Day:  37
+    ## Previous state:  succeptible
+    ## Random number:  0.6661301
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  6
+    ## Day:  37
+    ## Previous state:  succeptible
+    ## Random number:  0.4051879
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  7
+    ## Day:  37
     ## Previous state:  symptomatic_dont_need_hospital
-    ## Random number:  0.4378481
+    ## Random number:  0.9654881
     ## New state:  symptomatic_dont_need_hospital
     ## 
-    ## Person ID:  15
-    ## Day:  22
-    ## Previous state:  infected_symptomatic_pre_symptoms
-    ## Random number:  0.7501755
-    ## New state:  infected_symptomatic_pre_symptoms
-    ## 
-    ## Person ID:  16
-    ## Day:  22
-    ## Previous state:  succeptible
-    ## Random number:  0.4539953
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  17
-    ## Day:  22
-    ## Previous state:  recovered
-    ## Random number:  0.6153956
-    ## New state:  recovered
-    ## 
-    ## Person ID:  18
-    ## Day:  22
-    ## Previous state:  succeptible
-    ## Random number:  0.8331582
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  19
-    ## Day:  22
-    ## Previous state:  succeptible
-    ## Random number:  0.1455752
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  20
-    ## Day:  22
-    ## Previous state:  succeptible
-    ## Random number:  0.9138198
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  1
-    ## Day:  23
-    ## Previous state:  dead
-    ## Random number:  0.795958
-    ## New state:  dead
-    ## 
-    ## Person ID:  2
-    ## Day:  23
-    ## Previous state:  succeptible
-    ## Random number:  0.8031189
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  3
-    ## Day:  23
-    ## Previous state:  succeptible
-    ## Random number:  0.147295
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  4
-    ## Day:  23
-    ## Previous state:  succeptible
-    ## Random number:  0.4974883
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  5
-    ## Day:  23
-    ## Previous state:  recovered
-    ## Random number:  0.2898888
-    ## New state:  recovered
-    ## 
-    ## Person ID:  6
-    ## Day:  23
-    ## Previous state:  succeptible
-    ## Random number:  0.1767127
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  7
-    ## Day:  23
-    ## Previous state:  succeptible
-    ## Random number:  0.01323453
-    ## New state:  succeptible
-    ## 
     ## Person ID:  8
-    ## Day:  23
-    ## Previous state:  succeptible
-    ## Random number:  0.8016289
-    ## New state:  succeptible
+    ## Day:  37
+    ## Previous state:  recovered
+    ## Random number:  0.2194353
+    ## New state:  recovered
     ## 
     ## Person ID:  9
-    ## Day:  23
+    ## Day:  37
     ## Previous state:  succeptible
-    ## Random number:  0.3615382
+    ## Random number:  0.1090925
     ## New state:  succeptible
     ## 
     ## Person ID:  10
-    ## Day:  23
-    ## Previous state:  succeptible
-    ## Random number:  0.9159366
-    ## New state:  succeptible
+    ## Day:  37
+    ## Previous state:  recovered
+    ## Random number:  0.9796109
+    ## New state:  recovered
     ## 
     ## Person ID:  11
-    ## Day:  23
+    ## Day:  37
     ## Previous state:  succeptible
-    ## Random number:  0.5677042
+    ## Random number:  0.5904755
     ## New state:  succeptible
     ## 
     ## Person ID:  12
-    ## Day:  23
-    ## Previous state:  succeptible
-    ## Random number:  0.3655561
-    ## New state:  succeptible
+    ## Day:  37
+    ## Previous state:  dead
+    ## Random number:  0.571044
+    ## New state:  dead
     ## 
     ## Person ID:  13
-    ## Day:  23
+    ## Day:  37
     ## Previous state:  succeptible
-    ## Random number:  0.2937741
+    ## Random number:  0.9999501
     ## New state:  succeptible
     ## 
     ## Person ID:  14
-    ## Day:  23
+    ## Day:  37
+    ## Previous state:  succeptible
+    ## Random number:  0.5166993
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  15
+    ## Day:  37
+    ## Previous state:  succeptible
+    ## Random number:  0.9030005
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  16
+    ## Day:  37
+    ## Previous state:  succeptible
+    ## Random number:  0.4200403
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  17
+    ## Day:  37
+    ## Previous state:  succeptible
+    ## Random number:  0.622623
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  18
+    ## Day:  37
+    ## Previous state:  succeptible
+    ## Random number:  0.1307716
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  19
+    ## Day:  37
+    ## Previous state:  succeptible
+    ## Random number:  0.03451932
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  20
+    ## Day:  37
+    ## Previous state:  recovered
+    ## Random number:  0.006889443
+    ## New state:  recovered
+    ## 
+    ## Person ID:  1
+    ## Day:  38
+    ## Previous state:  recovered
+    ## Random number:  0.9425488
+    ## New state:  recovered
+    ## 
+    ## Person ID:  2
+    ## Day:  38
+    ## Previous state:  succeptible
+    ## Random number:  0.3302183
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  3
+    ## Day:  38
+    ## Previous state:  recovered
+    ## Random number:  0.3641878
+    ## New state:  recovered
+    ## 
+    ## Person ID:  4
+    ## Day:  38
+    ## Previous state:  succeptible
+    ## Random number:  0.6685174
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  5
+    ## Day:  38
+    ## Previous state:  succeptible
+    ## Random number:  0.5254316
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  6
+    ## Day:  38
+    ## Previous state:  succeptible
+    ## Random number:  0.6218286
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  7
+    ## Day:  38
     ## Previous state:  symptomatic_dont_need_hospital
-    ## Random number:  0.02978905
+    ## Random number:  0.9544759
     ## New state:  symptomatic_dont_need_hospital
     ## 
-    ## Person ID:  15
-    ## Day:  23
-    ## Previous state:  infected_symptomatic_pre_symptoms
-    ## Random number:  0.1068228
-    ## New state:  infected_symptomatic_pre_symptoms
-    ## 
-    ## Person ID:  16
-    ## Day:  23
-    ## Previous state:  succeptible
-    ## Random number:  0.553116
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  17
-    ## Day:  23
-    ## Previous state:  recovered
-    ## Random number:  0.8744152
-    ## New state:  recovered
-    ## 
-    ## Person ID:  18
-    ## Day:  23
-    ## Previous state:  succeptible
-    ## Random number:  0.492054
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  19
-    ## Day:  23
-    ## Previous state:  succeptible
-    ## Random number:  0.4430868
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  20
-    ## Day:  23
-    ## Previous state:  succeptible
-    ## Random number:  0.06575111
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  1
-    ## Day:  24
-    ## Previous state:  dead
-    ## Random number:  0.6086055
-    ## New state:  dead
-    ## 
-    ## Person ID:  2
-    ## Day:  24
-    ## Previous state:  succeptible
-    ## Random number:  0.9740842
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  3
-    ## Day:  24
-    ## Previous state:  succeptible
-    ## Random number:  0.3525569
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  4
-    ## Day:  24
-    ## Previous state:  succeptible
-    ## Random number:  0.7877754
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  5
-    ## Day:  24
-    ## Previous state:  recovered
-    ## Random number:  0.6496414
-    ## New state:  recovered
-    ## 
-    ## Person ID:  6
-    ## Day:  24
-    ## Previous state:  succeptible
-    ## Random number:  0.4045877
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  7
-    ## Day:  24
-    ## Previous state:  succeptible
-    ## Random number:  0.4327465
-    ## New state:  succeptible
-    ## 
     ## Person ID:  8
-    ## Day:  24
-    ## Previous state:  succeptible
-    ## Random number:  0.1873277
-    ## New state:  succeptible
+    ## Day:  38
+    ## Previous state:  recovered
+    ## Random number:  0.7135276
+    ## New state:  recovered
     ## 
     ## Person ID:  9
-    ## Day:  24
+    ## Day:  38
     ## Previous state:  succeptible
-    ## Random number:  0.4559975
+    ## Random number:  0.5474909
     ## New state:  succeptible
     ## 
     ## Person ID:  10
-    ## Day:  24
-    ## Previous state:  succeptible
-    ## Random number:  0.3485596
-    ## New state:  succeptible
+    ## Day:  38
+    ## Previous state:  recovered
+    ## Random number:  0.3411529
+    ## New state:  recovered
     ## 
     ## Person ID:  11
-    ## Day:  24
+    ## Day:  38
     ## Previous state:  succeptible
-    ## Random number:  0.7508943
+    ## Random number:  0.9492062
     ## New state:  succeptible
     ## 
     ## Person ID:  12
-    ## Day:  24
-    ## Previous state:  succeptible
-    ## Random number:  0.06761061
-    ## New state:  succeptible
+    ## Day:  38
+    ## Previous state:  dead
+    ## Random number:  0.8054309
+    ## New state:  dead
     ## 
     ## Person ID:  13
-    ## Day:  24
+    ## Day:  38
     ## Previous state:  succeptible
-    ## Random number:  0.6855615
+    ## Random number:  0.02186177
     ## New state:  succeptible
     ## 
     ## Person ID:  14
-    ## Day:  24
+    ## Day:  38
+    ## Previous state:  succeptible
+    ## Random number:  0.119103
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  15
+    ## Day:  38
+    ## Previous state:  succeptible
+    ## Random number:  0.5746691
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  16
+    ## Day:  38
+    ## Previous state:  succeptible
+    ## Random number:  0.9306828
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  17
+    ## Day:  38
+    ## Previous state:  succeptible
+    ## Random number:  0.9364508
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  18
+    ## Day:  38
+    ## Previous state:  succeptible
+    ## Random number:  0.9591054
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  19
+    ## Day:  38
+    ## Previous state:  succeptible
+    ## Random number:  0.5757945
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  20
+    ## Day:  38
+    ## Previous state:  recovered
+    ## Random number:  0.06887369
+    ## New state:  recovered
+    ## 
+    ## Person ID:  1
+    ## Day:  39
+    ## Previous state:  recovered
+    ## Random number:  0.008843961
+    ## New state:  recovered
+    ## 
+    ## Person ID:  2
+    ## Day:  39
+    ## Previous state:  succeptible
+    ## Random number:  0.3933706
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  3
+    ## Day:  39
+    ## Previous state:  recovered
+    ## Random number:  0.725019
+    ## New state:  recovered
+    ## 
+    ## Person ID:  4
+    ## Day:  39
+    ## Previous state:  succeptible
+    ## Random number:  0.8086239
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  5
+    ## Day:  39
+    ## Previous state:  succeptible
+    ## Random number:  0.6489152
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  6
+    ## Day:  39
+    ## Previous state:  succeptible
+    ## Random number:  0.1743033
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  7
+    ## Day:  39
     ## Previous state:  symptomatic_dont_need_hospital
-    ## Random number:  0.713341
+    ## Random number:  0.4081144
     ## New state:  symptomatic_dont_need_hospital
     ## 
-    ## Person ID:  15
-    ## Day:  24
-    ## Previous state:  infected_symptomatic_pre_symptoms
-    ## Random number:  0.3565895
-    ## New state:  infected_symptomatic_pre_symptoms
-    ## 
-    ## Person ID:  16
-    ## Day:  24
-    ## Previous state:  succeptible
-    ## Random number:  0.6588417
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  17
-    ## Day:  24
-    ## Previous state:  recovered
-    ## Random number:  0.1442678
-    ## New state:  recovered
-    ## 
-    ## Person ID:  18
-    ## Day:  24
-    ## Previous state:  succeptible
-    ## Random number:  0.5515027
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  19
-    ## Day:  24
-    ## Previous state:  succeptible
-    ## Random number:  0.8565204
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  20
-    ## Day:  24
-    ## Previous state:  succeptible
-    ## Random number:  0.7530932
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  1
-    ## Day:  25
-    ## Previous state:  dead
-    ## Random number:  0.9663396
-    ## New state:  dead
-    ## 
-    ## Person ID:  2
-    ## Day:  25
-    ## Previous state:  succeptible
-    ## Random number:  0.1498284
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  3
-    ## Day:  25
-    ## Previous state:  succeptible
-    ## Random number:  0.7951527
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  4
-    ## Day:  25
-    ## Previous state:  succeptible
-    ## Random number:  0.5642122
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  5
-    ## Day:  25
-    ## Previous state:  recovered
-    ## Random number:  0.7954317
-    ## New state:  recovered
-    ## 
-    ## Person ID:  6
-    ## Day:  25
-    ## Previous state:  succeptible
-    ## Random number:  0.6180591
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  7
-    ## Day:  25
-    ## Previous state:  succeptible
-    ## Random number:  0.0989826
-    ## New state:  succeptible
-    ## 
     ## Person ID:  8
-    ## Day:  25
-    ## Previous state:  succeptible
-    ## Random number:  0.9063533
-    ## New state:  succeptible
+    ## Day:  39
+    ## Previous state:  recovered
+    ## Random number:  0.9870651
+    ## New state:  recovered
     ## 
     ## Person ID:  9
-    ## Day:  25
+    ## Day:  39
     ## Previous state:  succeptible
-    ## Random number:  0.7380105
+    ## Random number:  0.03902086
     ## New state:  succeptible
     ## 
     ## Person ID:  10
-    ## Day:  25
-    ## Previous state:  succeptible
-    ## Random number:  0.3555172
-    ## New state:  succeptible
+    ## Day:  39
+    ## Previous state:  recovered
+    ## Random number:  0.4780802
+    ## New state:  recovered
     ## 
     ## Person ID:  11
-    ## Day:  25
+    ## Day:  39
     ## Previous state:  succeptible
-    ## Random number:  0.1075055
+    ## Random number:  0.04560912
     ## New state:  succeptible
     ## 
     ## Person ID:  12
-    ## Day:  25
-    ## Previous state:  succeptible
-    ## Random number:  0.3940901
-    ## New state:  succeptible
+    ## Day:  39
+    ## Previous state:  dead
+    ## Random number:  0.1443558
+    ## New state:  dead
     ## 
     ## Person ID:  13
-    ## Day:  25
+    ## Day:  39
     ## Previous state:  succeptible
-    ## Random number:  0.2303048
+    ## Random number:  0.6010814
     ## New state:  succeptible
     ## 
     ## Person ID:  14
-    ## Day:  25
+    ## Day:  39
+    ## Previous state:  succeptible
+    ## Random number:  0.2719709
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  15
+    ## Day:  39
+    ## Previous state:  succeptible
+    ## Random number:  0.1576231
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  16
+    ## Day:  39
+    ## Previous state:  succeptible
+    ## Random number:  0.5394489
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  17
+    ## Day:  39
+    ## Previous state:  succeptible
+    ## Random number:  0.2291969
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  18
+    ## Day:  39
+    ## Previous state:  succeptible
+    ## Random number:  0.5289128
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  19
+    ## Day:  39
+    ## Previous state:  succeptible
+    ## Random number:  0.9107509
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  20
+    ## Day:  39
+    ## Previous state:  recovered
+    ## Random number:  0.6027566
+    ## New state:  recovered
+    ## 
+    ## Person ID:  1
+    ## Day:  40
+    ## Previous state:  recovered
+    ## Random number:  0.009117207
+    ## New state:  recovered
+    ## 
+    ## Person ID:  2
+    ## Day:  40
+    ## Previous state:  succeptible
+    ## Random number:  0.3494283
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  3
+    ## Day:  40
+    ## Previous state:  recovered
+    ## Random number:  0.996849
+    ## New state:  recovered
+    ## 
+    ## Person ID:  4
+    ## Day:  40
+    ## Previous state:  succeptible
+    ## Random number:  0.7982539
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  5
+    ## Day:  40
+    ## Previous state:  succeptible
+    ## Random number:  0.2767681
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  6
+    ## Day:  40
+    ## Previous state:  succeptible
+    ## Random number:  0.5552167
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  7
+    ## Day:  40
     ## Previous state:  symptomatic_dont_need_hospital
-    ## Random number:  0.6481889
+    ## Random number:  0.2248099
     ## New state:  recovered
-    ## 
-    ## Person ID:  15
-    ## Day:  25
-    ## Previous state:  infected_symptomatic_pre_symptoms
-    ## Random number:  0.1506881
-    ## New state:  infectious_symptomatic_pre_symptoms
-    ## 
-    ## Person ID:  16
-    ## Day:  25
-    ## Previous state:  succeptible
-    ## Random number:  0.7875394
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  17
-    ## Day:  25
-    ## Previous state:  recovered
-    ## Random number:  0.282552
-    ## New state:  recovered
-    ## 
-    ## Person ID:  18
-    ## Day:  25
-    ## Previous state:  succeptible
-    ## Random number:  0.3065366
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  19
-    ## Day:  25
-    ## Previous state:  succeptible
-    ## Random number:  0.1530977
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  20
-    ## Day:  25
-    ## Previous state:  succeptible
-    ## Random number:  0.3528866
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  1
-    ## Day:  26
-    ## Previous state:  dead
-    ## Random number:  0.03375667
-    ## New state:  dead
-    ## 
-    ## Person ID:  2
-    ## Day:  26
-    ## Previous state:  succeptible
-    ## Random number:  0.2187273
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  3
-    ## Day:  26
-    ## Previous state:  succeptible
-    ## Random number:  0.9856358
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  4
-    ## Day:  26
-    ## Previous state:  succeptible
-    ## Random number:  0.7862172
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  5
-    ## Day:  26
-    ## Previous state:  recovered
-    ## Random number:  0.1919181
-    ## New state:  recovered
-    ## 
-    ## Person ID:  6
-    ## Day:  26
-    ## Previous state:  succeptible
-    ## Random number:  0.5603292
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  7
-    ## Day:  26
-    ## Previous state:  succeptible
-    ## Random number:  0.3410582
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  8
-    ## Day:  26
-    ## Previous state:  succeptible
-    ## Random number:  0.3636698
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  9
-    ## Day:  26
-    ## Previous state:  succeptible
-    ## Random number:  0.7247468
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  10
-    ## Day:  26
-    ## Previous state:  succeptible
-    ## Random number:  0.4479792
-    ## New state:  infected_symptomatic_pre_symptoms
-    ## 
-    ## Person ID:  11
-    ## Day:  26
-    ## Previous state:  succeptible
-    ## Random number:  0.9513402
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  12
-    ## Day:  26
-    ## Previous state:  succeptible
-    ## Random number:  0.0312834
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  13
-    ## Day:  26
-    ## Previous state:  succeptible
-    ## Random number:  0.5196427
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  14
-    ## Day:  26
-    ## Previous state:  recovered
-    ## Random number:  0.4902114
-    ## New state:  recovered
-    ## 
-    ## Person ID:  15
-    ## Day:  26
-    ## Previous state:  infectious_symptomatic_pre_symptoms
-    ## Random number:  0.7386335
-    ## New state:  symptomatic_dont_need_hospital
-    ## 
-    ## Person ID:  16
-    ## Day:  26
-    ## Previous state:  succeptible
-    ## Random number:  0.5652444
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  17
-    ## Day:  26
-    ## Previous state:  recovered
-    ## Random number:  0.7468737
-    ## New state:  recovered
-    ## 
-    ## Person ID:  18
-    ## Day:  26
-    ## Previous state:  succeptible
-    ## Random number:  0.1785984
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  19
-    ## Day:  26
-    ## Previous state:  succeptible
-    ## Random number:  0.550886
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  20
-    ## Day:  26
-    ## Previous state:  succeptible
-    ## Random number:  0.8742991
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  1
-    ## Day:  27
-    ## Previous state:  dead
-    ## Random number:  0.9963578
-    ## New state:  dead
-    ## 
-    ## Person ID:  2
-    ## Day:  27
-    ## Previous state:  succeptible
-    ## Random number:  0.7578499
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  3
-    ## Day:  27
-    ## Previous state:  succeptible
-    ## Random number:  0.3348293
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  4
-    ## Day:  27
-    ## Previous state:  succeptible
-    ## Random number:  0.2769761
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  5
-    ## Day:  27
-    ## Previous state:  recovered
-    ## Random number:  0.1845844
-    ## New state:  recovered
-    ## 
-    ## Person ID:  6
-    ## Day:  27
-    ## Previous state:  succeptible
-    ## Random number:  0.4530667
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  7
-    ## Day:  27
-    ## Previous state:  succeptible
-    ## Random number:  0.8405707
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  8
-    ## Day:  27
-    ## Previous state:  succeptible
-    ## Random number:  0.9274799
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  9
-    ## Day:  27
-    ## Previous state:  succeptible
-    ## Random number:  0.6364551
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  10
-    ## Day:  27
-    ## Previous state:  infected_symptomatic_pre_symptoms
-    ## Random number:  0.8249822
-    ## New state:  infected_symptomatic_pre_symptoms
-    ## 
-    ## Person ID:  11
-    ## Day:  27
-    ## Previous state:  succeptible
-    ## Random number:  0.4160101
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  12
-    ## Day:  27
-    ## Previous state:  succeptible
-    ## Random number:  0.5025762
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  13
-    ## Day:  27
-    ## Previous state:  succeptible
-    ## Random number:  0.4612173
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  14
-    ## Day:  27
-    ## Previous state:  recovered
-    ## Random number:  0.3948325
-    ## New state:  recovered
-    ## 
-    ## Person ID:  15
-    ## Day:  27
-    ## Previous state:  symptomatic_dont_need_hospital
-    ## Random number:  0.457326
-    ## New state:  symptomatic_dont_need_hospital
-    ## 
-    ## Person ID:  16
-    ## Day:  27
-    ## Previous state:  succeptible
-    ## Random number:  0.06981608
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  17
-    ## Day:  27
-    ## Previous state:  recovered
-    ## Random number:  0.4132146
-    ## New state:  recovered
-    ## 
-    ## Person ID:  18
-    ## Day:  27
-    ## Previous state:  succeptible
-    ## Random number:  0.41745
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  19
-    ## Day:  27
-    ## Previous state:  succeptible
-    ## Random number:  0.829328
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  20
-    ## Day:  27
-    ## Previous state:  succeptible
-    ## Random number:  0.04061689
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  1
-    ## Day:  28
-    ## Previous state:  dead
-    ## Random number:  0.2641498
-    ## New state:  dead
-    ## 
-    ## Person ID:  2
-    ## Day:  28
-    ## Previous state:  succeptible
-    ## Random number:  0.412447
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  3
-    ## Day:  28
-    ## Previous state:  succeptible
-    ## Random number:  0.6769914
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  4
-    ## Day:  28
-    ## Previous state:  succeptible
-    ## Random number:  0.6366513
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  5
-    ## Day:  28
-    ## Previous state:  recovered
-    ## Random number:  0.8029135
-    ## New state:  recovered
-    ## 
-    ## Person ID:  6
-    ## Day:  28
-    ## Previous state:  succeptible
-    ## Random number:  0.7932413
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  7
-    ## Day:  28
-    ## Previous state:  succeptible
-    ## Random number:  0.3596492
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  8
-    ## Day:  28
-    ## Previous state:  succeptible
-    ## Random number:  0.7918741
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  9
-    ## Day:  28
-    ## Previous state:  succeptible
-    ## Random number:  0.6120188
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  10
-    ## Day:  28
-    ## Previous state:  infected_symptomatic_pre_symptoms
-    ## Random number:  0.7173671
-    ## New state:  infected_symptomatic_pre_symptoms
-    ## 
-    ## Person ID:  11
-    ## Day:  28
-    ## Previous state:  succeptible
-    ## Random number:  0.3768924
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  12
-    ## Day:  28
-    ## Previous state:  succeptible
-    ## Random number:  0.3353334
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  13
-    ## Day:  28
-    ## Previous state:  succeptible
-    ## Random number:  0.7983055
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  14
-    ## Day:  28
-    ## Previous state:  recovered
-    ## Random number:  0.9200671
-    ## New state:  recovered
-    ## 
-    ## Person ID:  15
-    ## Day:  28
-    ## Previous state:  symptomatic_dont_need_hospital
-    ## Random number:  0.7324729
-    ## New state:  symptomatic_dont_need_hospital
-    ## 
-    ## Person ID:  16
-    ## Day:  28
-    ## Previous state:  succeptible
-    ## Random number:  0.6083941
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  17
-    ## Day:  28
-    ## Previous state:  recovered
-    ## Random number:  0.5868736
-    ## New state:  recovered
-    ## 
-    ## Person ID:  18
-    ## Day:  28
-    ## Previous state:  succeptible
-    ## Random number:  0.6063964
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  19
-    ## Day:  28
-    ## Previous state:  succeptible
-    ## Random number:  0.3504435
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  20
-    ## Day:  28
-    ## Previous state:  succeptible
-    ## Random number:  0.0834792
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  1
-    ## Day:  29
-    ## Previous state:  dead
-    ## Random number:  0.3852323
-    ## New state:  dead
-    ## 
-    ## Person ID:  2
-    ## Day:  29
-    ## Previous state:  succeptible
-    ## Random number:  0.616761
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  3
-    ## Day:  29
-    ## Previous state:  succeptible
-    ## Random number:  0.554316
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  4
-    ## Day:  29
-    ## Previous state:  succeptible
-    ## Random number:  0.9195405
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  5
-    ## Day:  29
-    ## Previous state:  recovered
-    ## Random number:  0.5756827
-    ## New state:  recovered
-    ## 
-    ## Person ID:  6
-    ## Day:  29
-    ## Previous state:  succeptible
-    ## Random number:  0.240809
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  7
-    ## Day:  29
-    ## Previous state:  succeptible
-    ## Random number:  0.5329114
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  8
-    ## Day:  29
-    ## Previous state:  succeptible
-    ## Random number:  0.1836969
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  9
-    ## Day:  29
-    ## Previous state:  succeptible
-    ## Random number:  0.3614824
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  10
-    ## Day:  29
-    ## Previous state:  infected_symptomatic_pre_symptoms
-    ## Random number:  0.9188923
-    ## New state:  infected_symptomatic_pre_symptoms
-    ## 
-    ## Person ID:  11
-    ## Day:  29
-    ## Previous state:  succeptible
-    ## Random number:  0.7318724
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  12
-    ## Day:  29
-    ## Previous state:  succeptible
-    ## Random number:  0.3459085
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  13
-    ## Day:  29
-    ## Previous state:  succeptible
-    ## Random number:  0.7131403
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  14
-    ## Day:  29
-    ## Previous state:  recovered
-    ## Random number:  0.2568475
-    ## New state:  recovered
-    ## 
-    ## Person ID:  15
-    ## Day:  29
-    ## Previous state:  symptomatic_dont_need_hospital
-    ## Random number:  0.5230177
-    ## New state:  symptomatic_dont_need_hospital
-    ## 
-    ## Person ID:  16
-    ## Day:  29
-    ## Previous state:  succeptible
-    ## Random number:  0.1386202
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  17
-    ## Day:  29
-    ## Previous state:  recovered
-    ## Random number:  0.7634995
-    ## New state:  recovered
-    ## 
-    ## Person ID:  18
-    ## Day:  29
-    ## Previous state:  succeptible
-    ## Random number:  0.4342795
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  19
-    ## Day:  29
-    ## Previous state:  succeptible
-    ## Random number:  0.8703999
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  20
-    ## Day:  29
-    ## Previous state:  succeptible
-    ## Random number:  0.7890085
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  1
-    ## Day:  30
-    ## Previous state:  dead
-    ## Random number:  0.8985203
-    ## New state:  dead
-    ## 
-    ## Person ID:  2
-    ## Day:  30
-    ## Previous state:  succeptible
-    ## Random number:  0.8349501
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  3
-    ## Day:  30
-    ## Previous state:  succeptible
-    ## Random number:  0.6093605
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  4
-    ## Day:  30
-    ## Previous state:  succeptible
-    ## Random number:  0.549018
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  5
-    ## Day:  30
-    ## Previous state:  recovered
-    ## Random number:  0.8921031
-    ## New state:  recovered
-    ## 
-    ## Person ID:  6
-    ## Day:  30
-    ## Previous state:  succeptible
-    ## Random number:  0.3947882
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  7
-    ## Day:  30
-    ## Previous state:  succeptible
-    ## Random number:  0.2012943
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  8
-    ## Day:  30
-    ## Previous state:  succeptible
-    ## Random number:  0.3864148
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  9
-    ## Day:  30
-    ## Previous state:  succeptible
-    ## Random number:  0.55813
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  10
-    ## Day:  30
-    ## Previous state:  infected_symptomatic_pre_symptoms
-    ## Random number:  0.6452399
-    ## New state:  infectious_symptomatic_pre_symptoms
-    ## 
-    ## Person ID:  11
-    ## Day:  30
-    ## Previous state:  succeptible
-    ## Random number:  0.9467845
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  12
-    ## Day:  30
-    ## Previous state:  succeptible
-    ## Random number:  0.890294
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  13
-    ## Day:  30
-    ## Previous state:  succeptible
-    ## Random number:  0.64933
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  14
-    ## Day:  30
-    ## Previous state:  recovered
-    ## Random number:  0.3290393
-    ## New state:  recovered
-    ## 
-    ## Person ID:  15
-    ## Day:  30
-    ## Previous state:  symptomatic_dont_need_hospital
-    ## Random number:  0.4913664
-    ## New state:  recovered
-    ## 
-    ## Person ID:  16
-    ## Day:  30
-    ## Previous state:  succeptible
-    ## Random number:  0.223359
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  17
-    ## Day:  30
-    ## Previous state:  recovered
-    ## Random number:  0.548758
-    ## New state:  recovered
-    ## 
-    ## Person ID:  18
-    ## Day:  30
-    ## Previous state:  succeptible
-    ## Random number:  0.6134337
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  19
-    ## Day:  30
-    ## Previous state:  succeptible
-    ## Random number:  0.3746327
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  20
-    ## Day:  30
-    ## Previous state:  succeptible
-    ## Random number:  0.1946793
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  1
-    ## Day:  31
-    ## Previous state:  dead
-    ## Random number:  0.6914439
-    ## New state:  dead
-    ## 
-    ## Person ID:  2
-    ## Day:  31
-    ## Previous state:  succeptible
-    ## Random number:  0.4743182
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  3
-    ## Day:  31
-    ## Previous state:  succeptible
-    ## Random number:  0.5611498
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  4
-    ## Day:  31
-    ## Previous state:  succeptible
-    ## Random number:  0.9389831
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  5
-    ## Day:  31
-    ## Previous state:  recovered
-    ## Random number:  0.549712
-    ## New state:  recovered
-    ## 
-    ## Person ID:  6
-    ## Day:  31
-    ## Previous state:  succeptible
-    ## Random number:  0.7470733
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  7
-    ## Day:  31
-    ## Previous state:  succeptible
-    ## Random number:  0.4970964
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  8
-    ## Day:  31
-    ## Previous state:  succeptible
-    ## Random number:  0.8482834
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  9
-    ## Day:  31
-    ## Previous state:  succeptible
-    ## Random number:  0.9862415
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  10
-    ## Day:  31
-    ## Previous state:  infectious_symptomatic_pre_symptoms
-    ## Random number:  0.8170373
-    ## New state:  symptomatic_dont_need_hospital
-    ## 
-    ## Person ID:  11
-    ## Day:  31
-    ## Previous state:  succeptible
-    ## Random number:  0.6016332
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  12
-    ## Day:  31
-    ## Previous state:  succeptible
-    ## Random number:  0.2001083
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  13
-    ## Day:  31
-    ## Previous state:  succeptible
-    ## Random number:  0.2804254
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  14
-    ## Day:  31
-    ## Previous state:  recovered
-    ## Random number:  0.002840585
-    ## New state:  recovered
-    ## 
-    ## Person ID:  15
-    ## Day:  31
-    ## Previous state:  recovered
-    ## Random number:  0.4027684
-    ## New state:  recovered
-    ## 
-    ## Person ID:  16
-    ## Day:  31
-    ## Previous state:  succeptible
-    ## Random number:  0.8311641
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  17
-    ## Day:  31
-    ## Previous state:  recovered
-    ## Random number:  0.6352709
-    ## New state:  recovered
-    ## 
-    ## Person ID:  18
-    ## Day:  31
-    ## Previous state:  succeptible
-    ## Random number:  0.08262631
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  19
-    ## Day:  31
-    ## Previous state:  succeptible
-    ## Random number:  0.9656042
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  20
-    ## Day:  31
-    ## Previous state:  succeptible
-    ## Random number:  0.8828181
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  1
-    ## Day:  32
-    ## Previous state:  dead
-    ## Random number:  0.5505112
-    ## New state:  dead
-    ## 
-    ## Person ID:  2
-    ## Day:  32
-    ## Previous state:  succeptible
-    ## Random number:  0.1463418
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  3
-    ## Day:  32
-    ## Previous state:  succeptible
-    ## Random number:  0.6063478
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  4
-    ## Day:  32
-    ## Previous state:  succeptible
-    ## Random number:  0.9646552
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  5
-    ## Day:  32
-    ## Previous state:  recovered
-    ## Random number:  0.9550505
-    ## New state:  recovered
-    ## 
-    ## Person ID:  6
-    ## Day:  32
-    ## Previous state:  succeptible
-    ## Random number:  0.9836938
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  7
-    ## Day:  32
-    ## Previous state:  succeptible
-    ## Random number:  0.5683982
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  8
-    ## Day:  32
-    ## Previous state:  succeptible
-    ## Random number:  0.2548702
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  9
-    ## Day:  32
-    ## Previous state:  succeptible
-    ## Random number:  0.07361252
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  10
-    ## Day:  32
-    ## Previous state:  symptomatic_dont_need_hospital
-    ## Random number:  0.5947375
-    ## New state:  symptomatic_dont_need_hospital
-    ## 
-    ## Person ID:  11
-    ## Day:  32
-    ## Previous state:  succeptible
-    ## Random number:  0.6340456
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  12
-    ## Day:  32
-    ## Previous state:  succeptible
-    ## Random number:  0.4529098
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  13
-    ## Day:  32
-    ## Previous state:  succeptible
-    ## Random number:  0.6166579
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  14
-    ## Day:  32
-    ## Previous state:  recovered
-    ## Random number:  0.981205
-    ## New state:  recovered
-    ## 
-    ## Person ID:  15
-    ## Day:  32
-    ## Previous state:  recovered
-    ## Random number:  0.5375073
-    ## New state:  recovered
-    ## 
-    ## Person ID:  16
-    ## Day:  32
-    ## Previous state:  succeptible
-    ## Random number:  0.7999743
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  17
-    ## Day:  32
-    ## Previous state:  recovered
-    ## Random number:  0.2756032
-    ## New state:  recovered
-    ## 
-    ## Person ID:  18
-    ## Day:  32
-    ## Previous state:  succeptible
-    ## Random number:  0.07150321
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  19
-    ## Day:  32
-    ## Previous state:  succeptible
-    ## Random number:  0.1355136
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  20
-    ## Day:  32
-    ## Previous state:  succeptible
-    ## Random number:  0.1638255
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  1
-    ## Day:  33
-    ## Previous state:  dead
-    ## Random number:  0.7615484
-    ## New state:  dead
-    ## 
-    ## Person ID:  2
-    ## Day:  33
-    ## Previous state:  succeptible
-    ## Random number:  0.3752046
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  3
-    ## Day:  33
-    ## Previous state:  succeptible
-    ## Random number:  0.1809892
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  4
-    ## Day:  33
-    ## Previous state:  succeptible
-    ## Random number:  0.05975775
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  5
-    ## Day:  33
-    ## Previous state:  recovered
-    ## Random number:  0.0872431
-    ## New state:  recovered
-    ## 
-    ## Person ID:  6
-    ## Day:  33
-    ## Previous state:  succeptible
-    ## Random number:  0.8759205
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  7
-    ## Day:  33
-    ## Previous state:  succeptible
-    ## Random number:  0.04125781
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  8
-    ## Day:  33
-    ## Previous state:  succeptible
-    ## Random number:  0.5064005
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  9
-    ## Day:  33
-    ## Previous state:  succeptible
-    ## Random number:  0.2570177
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  10
-    ## Day:  33
-    ## Previous state:  symptomatic_dont_need_hospital
-    ## Random number:  0.05933374
-    ## New state:  symptomatic_dont_need_hospital
-    ## 
-    ## Person ID:  11
-    ## Day:  33
-    ## Previous state:  succeptible
-    ## Random number:  0.8167835
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  12
-    ## Day:  33
-    ## Previous state:  succeptible
-    ## Random number:  0.2960363
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  13
-    ## Day:  33
-    ## Previous state:  succeptible
-    ## Random number:  0.337452
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  14
-    ## Day:  33
-    ## Previous state:  recovered
-    ## Random number:  0.7040772
-    ## New state:  recovered
-    ## 
-    ## Person ID:  15
-    ## Day:  33
-    ## Previous state:  recovered
-    ## Random number:  0.2420484
-    ## New state:  recovered
-    ## 
-    ## Person ID:  16
-    ## Day:  33
-    ## Previous state:  succeptible
-    ## Random number:  0.5728531
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  17
-    ## Day:  33
-    ## Previous state:  recovered
-    ## Random number:  0.6761577
-    ## New state:  recovered
-    ## 
-    ## Person ID:  18
-    ## Day:  33
-    ## Previous state:  succeptible
-    ## Random number:  0.5941276
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  19
-    ## Day:  33
-    ## Previous state:  succeptible
-    ## Random number:  0.278165
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  20
-    ## Day:  33
-    ## Previous state:  succeptible
-    ## Random number:  0.5871886
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  1
-    ## Day:  34
-    ## Previous state:  dead
-    ## Random number:  0.1541076
-    ## New state:  dead
-    ## 
-    ## Person ID:  2
-    ## Day:  34
-    ## Previous state:  succeptible
-    ## Random number:  0.4344524
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  3
-    ## Day:  34
-    ## Previous state:  succeptible
-    ## Random number:  0.3969128
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  4
-    ## Day:  34
-    ## Previous state:  succeptible
-    ## Random number:  0.5865989
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  5
-    ## Day:  34
-    ## Previous state:  recovered
-    ## Random number:  0.2437818
-    ## New state:  recovered
-    ## 
-    ## Person ID:  6
-    ## Day:  34
-    ## Previous state:  succeptible
-    ## Random number:  0.461659
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  7
-    ## Day:  34
-    ## Previous state:  succeptible
-    ## Random number:  0.8343499
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  8
-    ## Day:  34
-    ## Previous state:  succeptible
-    ## Random number:  0.454219
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  9
-    ## Day:  34
-    ## Previous state:  succeptible
-    ## Random number:  0.3287532
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  10
-    ## Day:  34
-    ## Previous state:  symptomatic_dont_need_hospital
-    ## Random number:  0.7905252
-    ## New state:  symptomatic_dont_need_hospital
-    ## 
-    ## Person ID:  11
-    ## Day:  34
-    ## Previous state:  succeptible
-    ## Random number:  0.8449521
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  12
-    ## Day:  34
-    ## Previous state:  succeptible
-    ## Random number:  0.2824158
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  13
-    ## Day:  34
-    ## Previous state:  succeptible
-    ## Random number:  0.2527309
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  14
-    ## Day:  34
-    ## Previous state:  recovered
-    ## Random number:  0.5010164
-    ## New state:  recovered
-    ## 
-    ## Person ID:  15
-    ## Day:  34
-    ## Previous state:  recovered
-    ## Random number:  0.5416686
-    ## New state:  recovered
-    ## 
-    ## Person ID:  16
-    ## Day:  34
-    ## Previous state:  succeptible
-    ## Random number:  0.3980581
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  17
-    ## Day:  34
-    ## Previous state:  recovered
-    ## Random number:  0.5063971
-    ## New state:  recovered
-    ## 
-    ## Person ID:  18
-    ## Day:  34
-    ## Previous state:  succeptible
-    ## Random number:  0.615314
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  19
-    ## Day:  34
-    ## Previous state:  succeptible
-    ## Random number:  0.8905476
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  20
-    ## Day:  34
-    ## Previous state:  succeptible
-    ## Random number:  0.9623747
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  1
-    ## Day:  35
-    ## Previous state:  dead
-    ## Random number:  0.9580126
-    ## New state:  dead
-    ## 
-    ## Person ID:  2
-    ## Day:  35
-    ## Previous state:  succeptible
-    ## Random number:  0.8215615
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  3
-    ## Day:  35
-    ## Previous state:  succeptible
-    ## Random number:  0.7755244
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  4
-    ## Day:  35
-    ## Previous state:  succeptible
-    ## Random number:  0.2005306
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  5
-    ## Day:  35
-    ## Previous state:  recovered
-    ## Random number:  0.2465783
-    ## New state:  recovered
-    ## 
-    ## Person ID:  6
-    ## Day:  35
-    ## Previous state:  succeptible
-    ## Random number:  0.5424553
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  7
-    ## Day:  35
-    ## Previous state:  succeptible
-    ## Random number:  0.7081861
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  8
-    ## Day:  35
-    ## Previous state:  succeptible
-    ## Random number:  0.980717
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  9
-    ## Day:  35
-    ## Previous state:  succeptible
-    ## Random number:  0.5529634
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  10
-    ## Day:  35
-    ## Previous state:  symptomatic_dont_need_hospital
-    ## Random number:  0.6926093
-    ## New state:  recovered
-    ## 
-    ## Person ID:  11
-    ## Day:  35
-    ## Previous state:  succeptible
-    ## Random number:  0.6473445
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  12
-    ## Day:  35
-    ## Previous state:  succeptible
-    ## Random number:  0.1961194
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  13
-    ## Day:  35
-    ## Previous state:  succeptible
-    ## Random number:  0.004599786
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  14
-    ## Day:  35
-    ## Previous state:  recovered
-    ## Random number:  0.3178846
-    ## New state:  recovered
-    ## 
-    ## Person ID:  15
-    ## Day:  35
-    ## Previous state:  recovered
-    ## Random number:  0.3537054
-    ## New state:  recovered
-    ## 
-    ## Person ID:  16
-    ## Day:  35
-    ## Previous state:  succeptible
-    ## Random number:  0.7218212
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  17
-    ## Day:  35
-    ## Previous state:  recovered
-    ## Random number:  0.3003561
-    ## New state:  recovered
-    ## 
-    ## Person ID:  18
-    ## Day:  35
-    ## Previous state:  succeptible
-    ## Random number:  0.1443064
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  19
-    ## Day:  35
-    ## Previous state:  succeptible
-    ## Random number:  0.3933941
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  20
-    ## Day:  35
-    ## Previous state:  succeptible
-    ## Random number:  0.6538173
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  1
-    ## Day:  36
-    ## Previous state:  dead
-    ## Random number:  0.3145855
-    ## New state:  dead
-    ## 
-    ## Person ID:  2
-    ## Day:  36
-    ## Previous state:  succeptible
-    ## Random number:  0.7465097
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  3
-    ## Day:  36
-    ## Previous state:  succeptible
-    ## Random number:  0.4852967
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  4
-    ## Day:  36
-    ## Previous state:  succeptible
-    ## Random number:  0.7901039
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  5
-    ## Day:  36
-    ## Previous state:  recovered
-    ## Random number:  0.733718
-    ## New state:  recovered
-    ## 
-    ## Person ID:  6
-    ## Day:  36
-    ## Previous state:  succeptible
-    ## Random number:  0.03005021
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  7
-    ## Day:  36
-    ## Previous state:  succeptible
-    ## Random number:  0.5014158
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  8
-    ## Day:  36
-    ## Previous state:  succeptible
-    ## Random number:  0.9213398
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  9
-    ## Day:  36
-    ## Previous state:  succeptible
-    ## Random number:  0.5013389
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  10
-    ## Day:  36
-    ## Previous state:  recovered
-    ## Random number:  0.9381462
-    ## New state:  recovered
-    ## 
-    ## Person ID:  11
-    ## Day:  36
-    ## Previous state:  succeptible
-    ## Random number:  0.21331
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  12
-    ## Day:  36
-    ## Previous state:  succeptible
-    ## Random number:  0.03791542
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  13
-    ## Day:  36
-    ## Previous state:  succeptible
-    ## Random number:  0.331929
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  14
-    ## Day:  36
-    ## Previous state:  recovered
-    ## Random number:  0.4059614
-    ## New state:  recovered
-    ## 
-    ## Person ID:  15
-    ## Day:  36
-    ## Previous state:  recovered
-    ## Random number:  0.9768322
-    ## New state:  recovered
-    ## 
-    ## Person ID:  16
-    ## Day:  36
-    ## Previous state:  succeptible
-    ## Random number:  0.7725866
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  17
-    ## Day:  36
-    ## Previous state:  recovered
-    ## Random number:  0.2992369
-    ## New state:  recovered
-    ## 
-    ## Person ID:  18
-    ## Day:  36
-    ## Previous state:  succeptible
-    ## Random number:  0.276521
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  19
-    ## Day:  36
-    ## Previous state:  succeptible
-    ## Random number:  0.06098438
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  20
-    ## Day:  36
-    ## Previous state:  succeptible
-    ## Random number:  0.3315777
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  1
-    ## Day:  37
-    ## Previous state:  dead
-    ## Random number:  0.9816488
-    ## New state:  dead
-    ## 
-    ## Person ID:  2
-    ## Day:  37
-    ## Previous state:  succeptible
-    ## Random number:  0.7149675
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  3
-    ## Day:  37
-    ## Previous state:  succeptible
-    ## Random number:  0.9564864
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  4
-    ## Day:  37
-    ## Previous state:  succeptible
-    ## Random number:  0.5966545
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  5
-    ## Day:  37
-    ## Previous state:  recovered
-    ## Random number:  0.6250229
-    ## New state:  recovered
-    ## 
-    ## Person ID:  6
-    ## Day:  37
-    ## Previous state:  succeptible
-    ## Random number:  0.683093
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  7
-    ## Day:  37
-    ## Previous state:  succeptible
-    ## Random number:  0.6761371
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  8
-    ## Day:  37
-    ## Previous state:  succeptible
-    ## Random number:  0.761206
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  9
-    ## Day:  37
-    ## Previous state:  succeptible
-    ## Random number:  0.03949708
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  10
-    ## Day:  37
-    ## Previous state:  recovered
-    ## Random number:  0.479044
-    ## New state:  recovered
-    ## 
-    ## Person ID:  11
-    ## Day:  37
-    ## Previous state:  succeptible
-    ## Random number:  0.9677144
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  12
-    ## Day:  37
-    ## Previous state:  succeptible
-    ## Random number:  0.5420123
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  13
-    ## Day:  37
-    ## Previous state:  succeptible
-    ## Random number:  0.9711281
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  14
-    ## Day:  37
-    ## Previous state:  recovered
-    ## Random number:  0.4093325
-    ## New state:  recovered
-    ## 
-    ## Person ID:  15
-    ## Day:  37
-    ## Previous state:  recovered
-    ## Random number:  0.8642849
-    ## New state:  recovered
-    ## 
-    ## Person ID:  16
-    ## Day:  37
-    ## Previous state:  succeptible
-    ## Random number:  0.518319
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  17
-    ## Day:  37
-    ## Previous state:  recovered
-    ## Random number:  0.3432758
-    ## New state:  recovered
-    ## 
-    ## Person ID:  18
-    ## Day:  37
-    ## Previous state:  succeptible
-    ## Random number:  0.4232367
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  19
-    ## Day:  37
-    ## Previous state:  succeptible
-    ## Random number:  0.4762259
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  20
-    ## Day:  37
-    ## Previous state:  succeptible
-    ## Random number:  0.6116593
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  1
-    ## Day:  38
-    ## Previous state:  dead
-    ## Random number:  0.8199919
-    ## New state:  dead
-    ## 
-    ## Person ID:  2
-    ## Day:  38
-    ## Previous state:  succeptible
-    ## Random number:  0.04314232
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  3
-    ## Day:  38
-    ## Previous state:  succeptible
-    ## Random number:  0.7407365
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  4
-    ## Day:  38
-    ## Previous state:  succeptible
-    ## Random number:  0.09259286
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  5
-    ## Day:  38
-    ## Previous state:  recovered
-    ## Random number:  0.2531491
-    ## New state:  recovered
-    ## 
-    ## Person ID:  6
-    ## Day:  38
-    ## Previous state:  succeptible
-    ## Random number:  0.9801854
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  7
-    ## Day:  38
-    ## Previous state:  succeptible
-    ## Random number:  0.1943433
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  8
-    ## Day:  38
-    ## Previous state:  succeptible
-    ## Random number:  0.4160014
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  9
-    ## Day:  38
-    ## Previous state:  succeptible
-    ## Random number:  0.8625469
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  10
-    ## Day:  38
-    ## Previous state:  recovered
-    ## Random number:  0.8690999
-    ## New state:  recovered
-    ## 
-    ## Person ID:  11
-    ## Day:  38
-    ## Previous state:  succeptible
-    ## Random number:  0.5566415
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  12
-    ## Day:  38
-    ## Previous state:  succeptible
-    ## Random number:  0.4601462
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  13
-    ## Day:  38
-    ## Previous state:  succeptible
-    ## Random number:  0.1665306
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  14
-    ## Day:  38
-    ## Previous state:  recovered
-    ## Random number:  0.9990265
-    ## New state:  recovered
-    ## 
-    ## Person ID:  15
-    ## Day:  38
-    ## Previous state:  recovered
-    ## Random number:  0.6048562
-    ## New state:  recovered
-    ## 
-    ## Person ID:  16
-    ## Day:  38
-    ## Previous state:  succeptible
-    ## Random number:  0.6796499
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  17
-    ## Day:  38
-    ## Previous state:  recovered
-    ## Random number:  0.6721284
-    ## New state:  recovered
-    ## 
-    ## Person ID:  18
-    ## Day:  38
-    ## Previous state:  succeptible
-    ## Random number:  0.3612163
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  19
-    ## Day:  38
-    ## Previous state:  succeptible
-    ## Random number:  0.7955729
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  20
-    ## Day:  38
-    ## Previous state:  succeptible
-    ## Random number:  0.5341651
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  1
-    ## Day:  39
-    ## Previous state:  dead
-    ## Random number:  0.6399358
-    ## New state:  dead
-    ## 
-    ## Person ID:  2
-    ## Day:  39
-    ## Previous state:  succeptible
-    ## Random number:  0.8984533
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  3
-    ## Day:  39
-    ## Previous state:  succeptible
-    ## Random number:  0.3273913
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  4
-    ## Day:  39
-    ## Previous state:  succeptible
-    ## Random number:  0.963859
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  5
-    ## Day:  39
-    ## Previous state:  recovered
-    ## Random number:  0.07731131
-    ## New state:  recovered
-    ## 
-    ## Person ID:  6
-    ## Day:  39
-    ## Previous state:  succeptible
-    ## Random number:  0.9444427
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  7
-    ## Day:  39
-    ## Previous state:  succeptible
-    ## Random number:  0.3180116
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  8
-    ## Day:  39
-    ## Previous state:  succeptible
-    ## Random number:  0.416571
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  9
-    ## Day:  39
-    ## Previous state:  succeptible
-    ## Random number:  0.3680933
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  10
-    ## Day:  39
-    ## Previous state:  recovered
-    ## Random number:  0.4871015
-    ## New state:  recovered
-    ## 
-    ## Person ID:  11
-    ## Day:  39
-    ## Previous state:  succeptible
-    ## Random number:  0.1795091
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  12
-    ## Day:  39
-    ## Previous state:  succeptible
-    ## Random number:  0.3746158
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  13
-    ## Day:  39
-    ## Previous state:  succeptible
-    ## Random number:  0.4750434
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  14
-    ## Day:  39
-    ## Previous state:  recovered
-    ## Random number:  0.4039582
-    ## New state:  recovered
-    ## 
-    ## Person ID:  15
-    ## Day:  39
-    ## Previous state:  recovered
-    ## Random number:  0.6279375
-    ## New state:  recovered
-    ## 
-    ## Person ID:  16
-    ## Day:  39
-    ## Previous state:  succeptible
-    ## Random number:  0.5324855
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  17
-    ## Day:  39
-    ## Previous state:  recovered
-    ## Random number:  0.6931943
-    ## New state:  recovered
-    ## 
-    ## Person ID:  18
-    ## Day:  39
-    ## Previous state:  succeptible
-    ## Random number:  0.7520761
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  19
-    ## Day:  39
-    ## Previous state:  succeptible
-    ## Random number:  0.5067596
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  20
-    ## Day:  39
-    ## Previous state:  succeptible
-    ## Random number:  0.462348
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  1
-    ## Day:  40
-    ## Previous state:  dead
-    ## Random number:  0.2700037
-    ## New state:  dead
-    ## 
-    ## Person ID:  2
-    ## Day:  40
-    ## Previous state:  succeptible
-    ## Random number:  0.5419966
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  3
-    ## Day:  40
-    ## Previous state:  succeptible
-    ## Random number:  0.4487878
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  4
-    ## Day:  40
-    ## Previous state:  succeptible
-    ## Random number:  0.803139
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  5
-    ## Day:  40
-    ## Previous state:  recovered
-    ## Random number:  0.04122847
-    ## New state:  recovered
-    ## 
-    ## Person ID:  6
-    ## Day:  40
-    ## Previous state:  succeptible
-    ## Random number:  0.2806528
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  7
-    ## Day:  40
-    ## Previous state:  succeptible
-    ## Random number:  0.4471844
-    ## New state:  succeptible
     ## 
     ## Person ID:  8
     ## Day:  40
-    ## Previous state:  succeptible
-    ## Random number:  0.8958119
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.4524638
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  40
     ## Previous state:  succeptible
-    ## Random number:  0.458744
+    ## Random number:  0.08502552
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  40
     ## Previous state:  recovered
-    ## Random number:  0.9590447
+    ## Random number:  0.4350159
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  40
     ## Previous state:  succeptible
-    ## Random number:  0.7551411
+    ## Random number:  0.5838357
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  40
-    ## Previous state:  succeptible
-    ## Random number:  0.684704
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.0876671
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  40
     ## Previous state:  succeptible
-    ## Random number:  0.258546
+    ## Random number:  0.8977013
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  40
-    ## Previous state:  recovered
-    ## Random number:  0.008234621
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.4491493
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  40
-    ## Previous state:  recovered
-    ## Random number:  0.9193391
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.8198587
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  40
     ## Previous state:  succeptible
-    ## Random number:  0.9036685
+    ## Random number:  0.262609
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  40
-    ## Previous state:  recovered
-    ## Random number:  0.9778523
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.258131
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  40
     ## Previous state:  succeptible
-    ## Random number:  0.1701725
+    ## Random number:  0.6211805
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  40
     ## Previous state:  succeptible
-    ## Random number:  0.3164344
+    ## Random number:  0.8500918
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  40
-    ## Previous state:  succeptible
-    ## Random number:  0.1279394
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.5196464
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  41
-    ## Previous state:  dead
-    ## Random number:  0.3107273
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.668407
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  41
     ## Previous state:  succeptible
-    ## Random number:  0.3146252
+    ## Random number:  0.006367837
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  41
-    ## Previous state:  succeptible
-    ## Random number:  0.7004876
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.8885351
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  41
     ## Previous state:  succeptible
-    ## Random number:  0.4470686
+    ## Random number:  0.3025354
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  41
-    ## Previous state:  recovered
-    ## Random number:  0.3213154
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.1520685
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  41
     ## Previous state:  succeptible
-    ## Random number:  0.6910972
+    ## Random number:  0.2369197
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  41
-    ## Previous state:  succeptible
-    ## Random number:  0.7578951
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.2647067
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  41
-    ## Previous state:  succeptible
-    ## Random number:  0.2040641
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.5401588
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  41
     ## Previous state:  succeptible
-    ## Random number:  0.09723603
+    ## Random number:  0.01334171
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  41
     ## Previous state:  recovered
-    ## Random number:  0.481516
+    ## Random number:  0.7621354
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  41
     ## Previous state:  succeptible
-    ## Random number:  0.1800332
+    ## Random number:  0.5466709
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  41
-    ## Previous state:  succeptible
-    ## Random number:  0.7635606
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.3415447
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  41
     ## Previous state:  succeptible
-    ## Random number:  0.7624256
+    ## Random number:  0.9296133
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  41
-    ## Previous state:  recovered
-    ## Random number:  0.535332
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.3968422
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  41
-    ## Previous state:  recovered
-    ## Random number:  0.9774425
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.02347803
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  41
     ## Previous state:  succeptible
-    ## Random number:  0.2138701
+    ## Random number:  0.4830763
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  41
-    ## Previous state:  recovered
-    ## Random number:  0.3447775
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.6454256
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  41
     ## Previous state:  succeptible
-    ## Random number:  0.05222263
+    ## Random number:  0.1579053
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  41
     ## Previous state:  succeptible
-    ## Random number:  0.09977275
+    ## Random number:  0.4455946
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  41
-    ## Previous state:  succeptible
-    ## Random number:  0.2156405
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.9322994
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  42
-    ## Previous state:  dead
-    ## Random number:  0.9939849
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.06329842
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  42
     ## Previous state:  succeptible
-    ## Random number:  0.09568742
+    ## Random number:  0.615351
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  42
-    ## Previous state:  succeptible
-    ## Random number:  0.3459314
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.3536619
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  42
     ## Previous state:  succeptible
-    ## Random number:  0.03267378
+    ## Random number:  0.1863619
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  42
-    ## Previous state:  recovered
-    ## Random number:  0.493572
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.932459
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  42
     ## Previous state:  succeptible
-    ## Random number:  0.6452949
+    ## Random number:  0.3775007
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  42
-    ## Previous state:  succeptible
-    ## Random number:  0.7155348
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.1399179
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  42
-    ## Previous state:  succeptible
-    ## Random number:  0.5978841
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.4030427
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  42
     ## Previous state:  succeptible
-    ## Random number:  0.9350228
+    ## Random number:  0.03084591
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  42
     ## Previous state:  recovered
-    ## Random number:  0.3790342
+    ## Random number:  0.7074473
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  42
     ## Previous state:  succeptible
-    ## Random number:  0.1138869
+    ## Random number:  0.1637979
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  42
-    ## Previous state:  succeptible
-    ## Random number:  0.1925662
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.2414716
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  42
     ## Previous state:  succeptible
-    ## Random number:  0.2798524
+    ## Random number:  0.533059
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  42
-    ## Previous state:  recovered
-    ## Random number:  0.8540205
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.08411121
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  42
-    ## Previous state:  recovered
-    ## Random number:  0.2701632
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.6326091
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  42
     ## Previous state:  succeptible
-    ## Random number:  0.8728151
+    ## Random number:  0.3153168
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  42
-    ## Previous state:  recovered
-    ## Random number:  0.1997777
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.6813297
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  42
     ## Previous state:  succeptible
-    ## Random number:  0.2308418
+    ## Random number:  0.7719333
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  42
     ## Previous state:  succeptible
-    ## Random number:  0.734306
+    ## Random number:  0.5292536
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  42
-    ## Previous state:  succeptible
-    ## Random number:  0.06576611
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.344574
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  43
-    ## Previous state:  dead
-    ## Random number:  0.9067315
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.8161141
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  43
     ## Previous state:  succeptible
-    ## Random number:  0.9081225
+    ## Random number:  0.8569378
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  43
-    ## Previous state:  succeptible
-    ## Random number:  0.5554779
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.4020637
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  43
     ## Previous state:  succeptible
-    ## Random number:  0.6610949
+    ## Random number:  0.7950314
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  43
-    ## Previous state:  recovered
-    ## Random number:  0.09353805
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.169791
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  43
     ## Previous state:  succeptible
-    ## Random number:  0.7041869
+    ## Random number:  0.4040821
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  43
-    ## Previous state:  succeptible
-    ## Random number:  0.4668188
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.1643673
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  43
-    ## Previous state:  succeptible
-    ## Random number:  0.4730452
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.260289
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  43
     ## Previous state:  succeptible
-    ## Random number:  0.5839482
+    ## Random number:  0.1333527
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  43
     ## Previous state:  recovered
-    ## Random number:  0.1775587
+    ## Random number:  0.8720033
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  43
     ## Previous state:  succeptible
-    ## Random number:  0.5871784
+    ## Random number:  0.2852928
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  43
-    ## Previous state:  succeptible
-    ## Random number:  0.1522105
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.512154
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  43
     ## Previous state:  succeptible
-    ## Random number:  0.1179575
+    ## Random number:  0.3821533
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  43
-    ## Previous state:  recovered
-    ## Random number:  0.601326
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.1635749
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  43
-    ## Previous state:  recovered
-    ## Random number:  0.6643892
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.5459762
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  43
     ## Previous state:  succeptible
-    ## Random number:  0.6376733
+    ## Random number:  0.06479286
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  43
-    ## Previous state:  recovered
-    ## Random number:  0.5532959
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.8098044
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  43
     ## Previous state:  succeptible
-    ## Random number:  0.6714423
+    ## Random number:  0.8860837
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  43
     ## Previous state:  succeptible
-    ## Random number:  0.5551668
+    ## Random number:  0.7316456
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  43
-    ## Previous state:  succeptible
-    ## Random number:  0.8556144
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.4578338
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  44
-    ## Previous state:  dead
-    ## Random number:  0.5250749
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.4111213
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  44
     ## Previous state:  succeptible
-    ## Random number:  0.4452594
+    ## Random number:  0.9109442
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  44
-    ## Previous state:  succeptible
-    ## Random number:  0.9930185
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.5606893
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  44
     ## Previous state:  succeptible
-    ## Random number:  0.4159869
+    ## Random number:  0.0629825
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  44
-    ## Previous state:  recovered
-    ## Random number:  0.3323535
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.2360765
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  44
     ## Previous state:  succeptible
-    ## Random number:  0.04578857
+    ## Random number:  0.7516498
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  44
-    ## Previous state:  succeptible
-    ## Random number:  0.7752549
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.7282504
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  44
-    ## Previous state:  succeptible
-    ## Random number:  0.6501317
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.6439717
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  44
     ## Previous state:  succeptible
-    ## Random number:  0.9477787
+    ## Random number:  0.2034465
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  44
     ## Previous state:  recovered
-    ## Random number:  0.4386012
+    ## Random number:  0.1770027
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  44
     ## Previous state:  succeptible
-    ## Random number:  0.4004533
+    ## Random number:  0.8819069
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  44
-    ## Previous state:  succeptible
-    ## Random number:  0.3940625
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.9341297
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  44
     ## Previous state:  succeptible
-    ## Random number:  0.940477
+    ## Random number:  0.6793663
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  44
-    ## Previous state:  recovered
-    ## Random number:  0.330405
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.3126442
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  44
-    ## Previous state:  recovered
-    ## Random number:  0.1186962
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.943505
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  44
     ## Previous state:  succeptible
-    ## Random number:  0.8116436
+    ## Random number:  0.492137
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  44
-    ## Previous state:  recovered
-    ## Random number:  0.2870451
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.6457705
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  44
     ## Previous state:  succeptible
-    ## Random number:  0.2072981
+    ## Random number:  0.6859757
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  44
     ## Previous state:  succeptible
-    ## Random number:  0.234302
+    ## Random number:  0.5485611
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  44
-    ## Previous state:  succeptible
-    ## Random number:  0.8943306
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.7206086
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  45
-    ## Previous state:  dead
-    ## Random number:  0.3090207
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.6561203
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  45
     ## Previous state:  succeptible
-    ## Random number:  0.2181926
+    ## Random number:  0.1324194
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  45
-    ## Previous state:  succeptible
-    ## Random number:  0.5267422
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.5611698
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  45
     ## Previous state:  succeptible
-    ## Random number:  0.4226379
+    ## Random number:  0.4350365
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  45
-    ## Previous state:  recovered
-    ## Random number:  0.1251311
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.9966376
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  45
     ## Previous state:  succeptible
-    ## Random number:  0.3535171
+    ## Random number:  0.9327613
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  45
-    ## Previous state:  succeptible
-    ## Random number:  0.1297202
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.2322766
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  45
-    ## Previous state:  succeptible
-    ## Random number:  0.1939872
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.7565022
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  45
     ## Previous state:  succeptible
-    ## Random number:  0.9347715
+    ## Random number:  0.1027992
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  45
     ## Previous state:  recovered
-    ## Random number:  0.7733834
+    ## Random number:  0.9171934
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  45
     ## Previous state:  succeptible
-    ## Random number:  0.07300955
+    ## Random number:  0.1122922
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  45
-    ## Previous state:  succeptible
-    ## Random number:  0.1872243
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.3376372
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  45
     ## Previous state:  succeptible
-    ## Random number:  0.4679008
+    ## Random number:  0.8753052
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  45
-    ## Previous state:  recovered
-    ## Random number:  0.2566848
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.4296596
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  45
-    ## Previous state:  recovered
-    ## Random number:  0.3846819
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.8689083
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  45
     ## Previous state:  succeptible
-    ## Random number:  0.122778
+    ## Random number:  0.581617
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  45
-    ## Previous state:  recovered
-    ## Random number:  0.4015875
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.9423968
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  45
     ## Previous state:  succeptible
-    ## Random number:  0.6503032
+    ## Random number:  0.1823557
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  45
     ## Previous state:  succeptible
-    ## Random number:  0.1196883
+    ## Random number:  0.9799252
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  45
-    ## Previous state:  succeptible
-    ## Random number:  0.8705886
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.2619917
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  46
-    ## Previous state:  dead
-    ## Random number:  0.8283726
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.6477424
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  46
     ## Previous state:  succeptible
-    ## Random number:  0.2024209
+    ## Random number:  0.9468413
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  46
-    ## Previous state:  succeptible
-    ## Random number:  0.3669295
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.1674287
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  46
     ## Previous state:  succeptible
-    ## Random number:  0.6096411
+    ## Random number:  0.03445676
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  46
-    ## Previous state:  recovered
-    ## Random number:  0.1729011
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.2242753
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  46
     ## Previous state:  succeptible
-    ## Random number:  0.03421403
+    ## Random number:  0.7573606
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  46
-    ## Previous state:  succeptible
-    ## Random number:  0.7155594
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.5229142
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  46
-    ## Previous state:  succeptible
-    ## Random number:  0.207268
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.6289886
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  46
     ## Previous state:  succeptible
-    ## Random number:  0.8165234
+    ## Random number:  0.1471263
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  46
     ## Previous state:  recovered
-    ## Random number:  0.09735443
+    ## Random number:  0.5239402
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  46
     ## Previous state:  succeptible
-    ## Random number:  0.5543543
+    ## Random number:  0.2867978
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  46
-    ## Previous state:  succeptible
-    ## Random number:  0.308039
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.2315818
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  46
     ## Previous state:  succeptible
-    ## Random number:  0.1552314
+    ## Random number:  0.9871704
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  46
-    ## Previous state:  recovered
-    ## Random number:  0.9464505
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.3526734
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  46
-    ## Previous state:  recovered
-    ## Random number:  0.504631
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.8963822
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  46
     ## Previous state:  succeptible
-    ## Random number:  0.345846
+    ## Random number:  0.460501
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  46
-    ## Previous state:  recovered
-    ## Random number:  0.5489255
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.564283
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  46
     ## Previous state:  succeptible
-    ## Random number:  0.7811169
+    ## Random number:  0.8680591
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  46
     ## Previous state:  succeptible
-    ## Random number:  0.2345586
+    ## Random number:  0.5524444
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  46
-    ## Previous state:  succeptible
-    ## Random number:  0.7915076
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.4315889
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  47
-    ## Previous state:  dead
-    ## Random number:  0.4942999
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.9701354
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  47
     ## Previous state:  succeptible
-    ## Random number:  0.347388
+    ## Random number:  0.2459891
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  47
-    ## Previous state:  succeptible
-    ## Random number:  0.1353325
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.1462357
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  47
     ## Previous state:  succeptible
-    ## Random number:  0.174362
+    ## Random number:  0.9494933
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  47
-    ## Previous state:  recovered
-    ## Random number:  0.08119607
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.05093337
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  47
     ## Previous state:  succeptible
-    ## Random number:  0.05608457
+    ## Random number:  0.1310418
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  47
-    ## Previous state:  succeptible
-    ## Random number:  0.3476853
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.3873071
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  47
-    ## Previous state:  succeptible
-    ## Random number:  0.3760623
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.4561506
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  47
     ## Previous state:  succeptible
-    ## Random number:  0.5382166
+    ## Random number:  0.850741
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  47
     ## Previous state:  recovered
-    ## Random number:  0.7521007
+    ## Random number:  0.6380559
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  47
     ## Previous state:  succeptible
-    ## Random number:  0.144152
+    ## Random number:  0.3718635
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  47
-    ## Previous state:  succeptible
-    ## Random number:  0.8601651
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.4404086
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  47
     ## Previous state:  succeptible
-    ## Random number:  0.4156179
+    ## Random number:  0.9234587
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  47
-    ## Previous state:  recovered
-    ## Random number:  0.9877879
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.202343
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  47
-    ## Previous state:  recovered
-    ## Random number:  0.7784383
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.05034152
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  47
     ## Previous state:  succeptible
-    ## Random number:  0.7145918
+    ## Random number:  0.8842161
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  47
-    ## Previous state:  recovered
-    ## Random number:  0.8537139
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.1226097
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  47
     ## Previous state:  succeptible
-    ## Random number:  0.8997489
+    ## Random number:  0.2406563
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  47
     ## Previous state:  succeptible
-    ## Random number:  0.1095408
+    ## Random number:  0.2053614
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  47
-    ## Previous state:  succeptible
-    ## Random number:  0.01421663
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.7154591
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  48
-    ## Previous state:  dead
-    ## Random number:  0.2029214
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.4534439
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  48
     ## Previous state:  succeptible
-    ## Random number:  0.1250557
+    ## Random number:  0.9490596
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  48
-    ## Previous state:  succeptible
-    ## Random number:  0.02683319
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.4457079
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  48
     ## Previous state:  succeptible
-    ## Random number:  0.03498545
+    ## Random number:  0.1619484
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  48
-    ## Previous state:  recovered
-    ## Random number:  0.2691868
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.01941878
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  48
     ## Previous state:  succeptible
-    ## Random number:  0.788283
+    ## Random number:  0.993117
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  48
-    ## Previous state:  succeptible
-    ## Random number:  0.03687503
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.4040662
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  48
-    ## Previous state:  succeptible
-    ## Random number:  0.889395
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.5390171
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  48
     ## Previous state:  succeptible
-    ## Random number:  0.767817
+    ## Random number:  0.9543556
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  48
     ## Previous state:  recovered
-    ## Random number:  0.0003930042
+    ## Random number:  0.5594619
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  48
     ## Previous state:  succeptible
-    ## Random number:  0.1003251
+    ## Random number:  0.6878679
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  48
-    ## Previous state:  succeptible
-    ## Random number:  0.4554074
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.7988343
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  48
     ## Previous state:  succeptible
-    ## Random number:  0.8630901
+    ## Random number:  0.3357368
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  48
-    ## Previous state:  recovered
-    ## Random number:  0.4906961
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.8094914
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  48
-    ## Previous state:  recovered
-    ## Random number:  0.5129971
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.4499239
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  48
     ## Previous state:  succeptible
-    ## Random number:  0.6461405
+    ## Random number:  0.9410746
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  48
-    ## Previous state:  recovered
-    ## Random number:  0.0738736
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.310993
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  48
     ## Previous state:  succeptible
-    ## Random number:  0.1456707
+    ## Random number:  0.1322316
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  48
     ## Previous state:  succeptible
-    ## Random number:  0.9455736
+    ## Random number:  0.4185843
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  48
-    ## Previous state:  succeptible
-    ## Random number:  0.1832385
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.2472901
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  49
-    ## Previous state:  dead
-    ## Random number:  0.8969782
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.09891174
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  49
     ## Previous state:  succeptible
-    ## Random number:  0.67519
+    ## Random number:  0.9955273
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  49
-    ## Previous state:  succeptible
-    ## Random number:  0.928918
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.1588823
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  49
     ## Previous state:  succeptible
-    ## Random number:  0.2877588
+    ## Random number:  0.697369
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  49
-    ## Previous state:  recovered
-    ## Random number:  0.6438238
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.6939923
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  49
     ## Previous state:  succeptible
-    ## Random number:  0.719629
+    ## Random number:  0.9452271
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  49
-    ## Previous state:  succeptible
-    ## Random number:  0.2889718
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.5925407
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  49
-    ## Previous state:  succeptible
-    ## Random number:  0.3202672
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.5098855
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  49
     ## Previous state:  succeptible
-    ## Random number:  0.6907312
+    ## Random number:  0.104049
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  49
     ## Previous state:  recovered
-    ## Random number:  0.6679639
+    ## Random number:  0.5288235
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  49
     ## Previous state:  succeptible
-    ## Random number:  0.7441127
+    ## Random number:  0.007225059
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  49
-    ## Previous state:  succeptible
-    ## Random number:  0.5058835
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.9687566
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  49
     ## Previous state:  succeptible
-    ## Random number:  0.8935625
+    ## Random number:  0.07043535
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  49
-    ## Previous state:  recovered
-    ## Random number:  0.1312042
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.6992966
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  49
-    ## Previous state:  recovered
-    ## Random number:  0.3856039
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.9800685
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  49
     ## Previous state:  succeptible
-    ## Random number:  0.9777946
+    ## Random number:  0.8329648
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  49
-    ## Previous state:  recovered
-    ## Random number:  0.8025311
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.9665263
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  49
     ## Previous state:  succeptible
-    ## Random number:  0.8580984
+    ## Random number:  0.3986173
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  49
     ## Previous state:  succeptible
-    ## Random number:  0.399049
+    ## Random number:  0.7227185
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  49
-    ## Previous state:  succeptible
-    ## Random number:  0.7520365
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.1404413
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  50
-    ## Previous state:  dead
-    ## Random number:  0.915354
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.322349
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  50
     ## Previous state:  succeptible
-    ## Random number:  0.6771185
+    ## Random number:  0.5253237
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  50
-    ## Previous state:  succeptible
-    ## Random number:  0.6134733
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.7845184
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  50
     ## Previous state:  succeptible
-    ## Random number:  0.8991922
+    ## Random number:  0.7937766
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  50
-    ## Previous state:  recovered
-    ## Random number:  0.787517
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.3914162
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  50
     ## Previous state:  succeptible
-    ## Random number:  0.396298
+    ## Random number:  0.04004376
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  50
-    ## Previous state:  succeptible
-    ## Random number:  0.02222
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.185087
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  50
-    ## Previous state:  succeptible
-    ## Random number:  0.2225561
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.646964
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  50
     ## Previous state:  succeptible
-    ## Random number:  0.1234328
+    ## Random number:  0.8702771
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  50
     ## Previous state:  recovered
-    ## Random number:  0.2886068
+    ## Random number:  0.8836772
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  50
     ## Previous state:  succeptible
-    ## Random number:  0.7201036
+    ## Random number:  0.4147559
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  50
-    ## Previous state:  succeptible
-    ## Random number:  0.9846675
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.2590151
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  50
     ## Previous state:  succeptible
-    ## Random number:  0.5585201
+    ## Random number:  0.2959032
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  50
-    ## Previous state:  recovered
-    ## Random number:  0.7829953
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.2656404
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  50
-    ## Previous state:  recovered
-    ## Random number:  0.6337737
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.4667265
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  50
     ## Previous state:  succeptible
-    ## Random number:  0.9370023
+    ## Random number:  0.2094054
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  50
-    ## Previous state:  recovered
-    ## Random number:  0.2127671
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.8910805
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  50
     ## Previous state:  succeptible
-    ## Random number:  0.2069412
+    ## Random number:  0.4156112
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  50
     ## Previous state:  succeptible
-    ## Random number:  0.1214226
+    ## Random number:  0.1052757
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  50
-    ## Previous state:  succeptible
-    ## Random number:  0.1576066
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.9460929
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  51
-    ## Previous state:  dead
-    ## Random number:  0.3857165
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.9476558
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  51
     ## Previous state:  succeptible
-    ## Random number:  0.6457073
+    ## Random number:  0.02215654
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  51
-    ## Previous state:  succeptible
-    ## Random number:  0.1170813
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.9970257
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  51
     ## Previous state:  succeptible
-    ## Random number:  0.7484995
+    ## Random number:  0.1676742
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  51
-    ## Previous state:  recovered
-    ## Random number:  0.003181948
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.08378423
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  51
     ## Previous state:  succeptible
-    ## Random number:  0.3910924
+    ## Random number:  0.9104747
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  51
-    ## Previous state:  succeptible
-    ## Random number:  0.373276
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.8538743
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  51
-    ## Previous state:  succeptible
-    ## Random number:  0.8051925
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.9589413
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  51
     ## Previous state:  succeptible
-    ## Random number:  0.2592515
+    ## Random number:  0.2603492
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  51
     ## Previous state:  recovered
-    ## Random number:  0.8236462
+    ## Random number:  0.4377823
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  51
     ## Previous state:  succeptible
-    ## Random number:  0.09450883
+    ## Random number:  0.4146261
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  51
-    ## Previous state:  succeptible
-    ## Random number:  0.6999756
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.9972973
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  51
     ## Previous state:  succeptible
-    ## Random number:  0.1099639
+    ## Random number:  0.2230795
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  51
-    ## Previous state:  recovered
-    ## Random number:  0.6792062
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.1748252
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  51
-    ## Previous state:  recovered
-    ## Random number:  0.36412
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.6252249
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  51
     ## Previous state:  succeptible
-    ## Random number:  0.1833752
+    ## Random number:  0.2826937
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  51
-    ## Previous state:  recovered
-    ## Random number:  0.7263031
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.6692243
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  51
     ## Previous state:  succeptible
-    ## Random number:  0.06115699
+    ## Random number:  0.9311587
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  51
     ## Previous state:  succeptible
-    ## Random number:  0.8940723
+    ## Random number:  0.2656003
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  51
-    ## Previous state:  succeptible
-    ## Random number:  0.0258021
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.1230829
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  52
-    ## Previous state:  dead
-    ## Random number:  0.680946
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.9316499
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  52
     ## Previous state:  succeptible
-    ## Random number:  0.9256074
+    ## Random number:  0.7085384
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  52
-    ## Previous state:  succeptible
-    ## Random number:  0.8828392
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.7805378
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  52
     ## Previous state:  succeptible
-    ## Random number:  0.06795877
+    ## Random number:  0.8382364
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  52
-    ## Previous state:  recovered
-    ## Random number:  0.3278099
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.5614704
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  52
     ## Previous state:  succeptible
-    ## Random number:  0.4183893
+    ## Random number:  0.8410351
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  52
-    ## Previous state:  succeptible
-    ## Random number:  0.1037227
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.21344
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  52
-    ## Previous state:  succeptible
-    ## Random number:  0.7062681
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.398826
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  52
     ## Previous state:  succeptible
-    ## Random number:  0.7795309
+    ## Random number:  0.5156476
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  52
     ## Previous state:  recovered
-    ## Random number:  0.6463681
+    ## Random number:  0.8896122
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  52
     ## Previous state:  succeptible
-    ## Random number:  0.5556319
+    ## Random number:  0.3033137
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  52
-    ## Previous state:  succeptible
-    ## Random number:  0.9519723
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.3280144
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  52
     ## Previous state:  succeptible
-    ## Random number:  0.5954591
+    ## Random number:  0.2515776
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  52
-    ## Previous state:  recovered
-    ## Random number:  0.7141057
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.07261375
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  52
-    ## Previous state:  recovered
-    ## Random number:  0.1585971
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.8838161
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  52
     ## Previous state:  succeptible
-    ## Random number:  0.3554957
+    ## Random number:  0.2591243
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  52
-    ## Previous state:  recovered
-    ## Random number:  0.09957734
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.6096866
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  52
     ## Previous state:  succeptible
-    ## Random number:  0.7653302
+    ## Random number:  0.8389728
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  52
     ## Previous state:  succeptible
-    ## Random number:  0.1940116
+    ## Random number:  0.6771195
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  52
-    ## Previous state:  succeptible
-    ## Random number:  0.5192103
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.1449418
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  53
-    ## Previous state:  dead
-    ## Random number:  0.8676429
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.739441
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  53
     ## Previous state:  succeptible
-    ## Random number:  0.6726569
+    ## Random number:  0.7127269
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  53
-    ## Previous state:  succeptible
-    ## Random number:  0.9657433
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.8510563
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  53
     ## Previous state:  succeptible
-    ## Random number:  0.5253139
+    ## Random number:  0.5505233
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  53
-    ## Previous state:  recovered
-    ## Random number:  0.4208473
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.0004962126
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  53
     ## Previous state:  succeptible
-    ## Random number:  0.5942359
+    ## Random number:  0.8903376
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  53
-    ## Previous state:  succeptible
-    ## Random number:  0.09183928
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.3526814
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  53
-    ## Previous state:  succeptible
-    ## Random number:  0.6193587
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.931438
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  53
     ## Previous state:  succeptible
-    ## Random number:  0.2005928
+    ## Random number:  0.6776902
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  53
     ## Previous state:  recovered
-    ## Random number:  0.8856343
+    ## Random number:  0.3911414
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  53
     ## Previous state:  succeptible
-    ## Random number:  0.4595957
+    ## Random number:  0.4108352
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  53
-    ## Previous state:  succeptible
-    ## Random number:  0.8917109
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.9099447
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  53
     ## Previous state:  succeptible
-    ## Random number:  0.8701067
+    ## Random number:  0.614145
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  53
-    ## Previous state:  recovered
-    ## Random number:  0.5036245
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.4262084
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  53
-    ## Previous state:  recovered
-    ## Random number:  0.8572257
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.1904246
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  53
     ## Previous state:  succeptible
-    ## Random number:  0.2753527
+    ## Random number:  0.2141115
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  53
-    ## Previous state:  recovered
-    ## Random number:  0.9921705
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.3998587
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  53
     ## Previous state:  succeptible
-    ## Random number:  0.05684975
+    ## Random number:  0.1826228
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  53
     ## Previous state:  succeptible
-    ## Random number:  0.1634418
+    ## Random number:  0.6450997
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  53
-    ## Previous state:  succeptible
-    ## Random number:  0.9255004
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.3146735
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  54
-    ## Previous state:  dead
-    ## Random number:  0.2320652
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.2027657
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  54
     ## Previous state:  succeptible
-    ## Random number:  0.1979618
+    ## Random number:  0.4443287
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  54
-    ## Previous state:  succeptible
-    ## Random number:  0.5352654
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.9837144
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  54
     ## Previous state:  succeptible
-    ## Random number:  0.02665158
+    ## Random number:  0.9382158
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  54
-    ## Previous state:  recovered
-    ## Random number:  0.404403
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.835106
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  54
     ## Previous state:  succeptible
-    ## Random number:  0.944458
+    ## Random number:  0.1603031
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  54
-    ## Previous state:  succeptible
-    ## Random number:  0.5268335
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.1533408
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  54
-    ## Previous state:  succeptible
-    ## Random number:  0.004964484
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.7115209
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  54
     ## Previous state:  succeptible
-    ## Random number:  0.2068589
+    ## Random number:  0.5836018
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  54
     ## Previous state:  recovered
-    ## Random number:  0.8310615
+    ## Random number:  0.08844002
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  54
     ## Previous state:  succeptible
-    ## Random number:  0.968191
+    ## Random number:  0.08033522
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  54
-    ## Previous state:  succeptible
-    ## Random number:  0.9742197
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.4931771
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  54
     ## Previous state:  succeptible
-    ## Random number:  0.6977651
+    ## Random number:  0.9280527
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  54
-    ## Previous state:  recovered
-    ## Random number:  0.7979625
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.5927252
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  54
-    ## Previous state:  recovered
-    ## Random number:  0.5076999
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.9253523
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  54
     ## Previous state:  succeptible
-    ## Random number:  0.2537697
+    ## Random number:  0.8706451
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  54
-    ## Previous state:  recovered
-    ## Random number:  0.3221246
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.08134064
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  54
     ## Previous state:  succeptible
-    ## Random number:  0.1060974
+    ## Random number:  0.06347094
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  54
     ## Previous state:  succeptible
-    ## Random number:  0.9214149
+    ## Random number:  0.4941344
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  54
-    ## Previous state:  succeptible
-    ## Random number:  0.08027015
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.792366
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  55
-    ## Previous state:  dead
-    ## Random number:  0.2195657
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.8087389
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  55
     ## Previous state:  succeptible
-    ## Random number:  0.2166525
+    ## Random number:  0.3387634
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  55
-    ## Previous state:  succeptible
-    ## Random number:  0.7902719
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.2907684
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  55
     ## Previous state:  succeptible
-    ## Random number:  0.6142064
+    ## Random number:  0.5193765
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  55
-    ## Previous state:  recovered
-    ## Random number:  0.05667152
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.7439053
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  55
     ## Previous state:  succeptible
-    ## Random number:  0.4985043
+    ## Random number:  0.03431445
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  55
-    ## Previous state:  succeptible
-    ## Random number:  0.883228
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.8800621
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  55
-    ## Previous state:  succeptible
-    ## Random number:  0.9066981
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.808829
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  55
     ## Previous state:  succeptible
-    ## Random number:  0.916998
+    ## Random number:  0.7535769
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  55
     ## Previous state:  recovered
-    ## Random number:  0.1722227
+    ## Random number:  0.4869732
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  55
     ## Previous state:  succeptible
-    ## Random number:  0.6271045
+    ## Random number:  0.1710338
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  55
-    ## Previous state:  succeptible
-    ## Random number:  0.5702274
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.8339295
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  55
     ## Previous state:  succeptible
-    ## Random number:  0.3339878
+    ## Random number:  0.8639244
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  55
-    ## Previous state:  recovered
-    ## Random number:  0.6058563
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.9156725
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  55
-    ## Previous state:  recovered
-    ## Random number:  0.3120143
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.731316
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  55
     ## Previous state:  succeptible
-    ## Random number:  0.136825
+    ## Random number:  0.8833592
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  55
-    ## Previous state:  recovered
-    ## Random number:  0.5130896
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.731222
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  55
     ## Previous state:  succeptible
-    ## Random number:  0.3226132
+    ## Random number:  0.6195052
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  55
     ## Previous state:  succeptible
-    ## Random number:  0.4877142
+    ## Random number:  0.5632636
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  55
-    ## Previous state:  succeptible
-    ## Random number:  0.3896837
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.06034389
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  56
-    ## Previous state:  dead
-    ## Random number:  0.8089427
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.02413829
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  56
     ## Previous state:  succeptible
-    ## Random number:  0.9512167
+    ## Random number:  0.359955
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  56
-    ## Previous state:  succeptible
-    ## Random number:  0.4726585
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.1248354
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  56
     ## Previous state:  succeptible
-    ## Random number:  0.08056699
+    ## Random number:  0.8607593
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  56
-    ## Previous state:  recovered
-    ## Random number:  0.05545922
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.9027331
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  56
     ## Previous state:  succeptible
-    ## Random number:  0.6171958
+    ## Random number:  0.9245157
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  56
-    ## Previous state:  succeptible
-    ## Random number:  0.5687428
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.9308715
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  56
-    ## Previous state:  succeptible
-    ## Random number:  0.4402251
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.6885489
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  56
     ## Previous state:  succeptible
-    ## Random number:  0.753631
+    ## Random number:  0.9359083
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  56
     ## Previous state:  recovered
-    ## Random number:  0.408627
+    ## Random number:  0.8904851
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  56
     ## Previous state:  succeptible
-    ## Random number:  0.4424521
+    ## Random number:  0.3974161
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  56
-    ## Previous state:  succeptible
-    ## Random number:  0.3374706
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.7151684
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  56
     ## Previous state:  succeptible
-    ## Random number:  0.7416486
+    ## Random number:  0.4948316
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  56
-    ## Previous state:  recovered
-    ## Random number:  0.7579679
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.02389112
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  56
-    ## Previous state:  recovered
-    ## Random number:  0.7188423
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.6941067
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  56
     ## Previous state:  succeptible
-    ## Random number:  0.2369338
+    ## Random number:  0.7053986
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  56
-    ## Previous state:  recovered
-    ## Random number:  0.5513471
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.3586393
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  56
     ## Previous state:  succeptible
-    ## Random number:  0.3640998
+    ## Random number:  0.4819358
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  56
     ## Previous state:  succeptible
-    ## Random number:  0.1073268
+    ## Random number:  0.1852777
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  56
-    ## Previous state:  succeptible
-    ## Random number:  0.668592
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.4604168
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  57
-    ## Previous state:  dead
-    ## Random number:  0.820681
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.4436381
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  57
     ## Previous state:  succeptible
-    ## Random number:  0.07268315
+    ## Random number:  0.1986755
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  57
-    ## Previous state:  succeptible
-    ## Random number:  0.358834
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.9191397
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  57
     ## Previous state:  succeptible
-    ## Random number:  0.1880111
+    ## Random number:  0.08227133
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  57
-    ## Previous state:  recovered
-    ## Random number:  0.6310713
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.000503045
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  57
     ## Previous state:  succeptible
-    ## Random number:  0.03113558
+    ## Random number:  0.01969463
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  57
-    ## Previous state:  succeptible
-    ## Random number:  0.01049309
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.5518575
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  57
-    ## Previous state:  succeptible
-    ## Random number:  0.01285892
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.155537
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  57
     ## Previous state:  succeptible
-    ## Random number:  0.03530031
+    ## Random number:  0.4255848
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  57
     ## Previous state:  recovered
-    ## Random number:  0.7679938
+    ## Random number:  0.5508607
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  57
     ## Previous state:  succeptible
-    ## Random number:  0.7385182
+    ## Random number:  0.682469
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  57
-    ## Previous state:  succeptible
-    ## Random number:  0.282833
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.6837945
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  57
     ## Previous state:  succeptible
-    ## Random number:  0.7930218
+    ## Random number:  0.08806614
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  57
-    ## Previous state:  recovered
-    ## Random number:  0.5421996
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.3779454
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  57
-    ## Previous state:  recovered
-    ## Random number:  0.2098312
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.5752769
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  57
     ## Previous state:  succeptible
-    ## Random number:  0.04043877
+    ## Random number:  0.02715004
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  57
-    ## Previous state:  recovered
-    ## Random number:  0.5907417
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.1886885
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  57
     ## Previous state:  succeptible
-    ## Random number:  0.9343453
+    ## Random number:  0.7929647
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  57
     ## Previous state:  succeptible
-    ## Random number:  0.7480654
+    ## Random number:  0.3080101
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  57
-    ## Previous state:  succeptible
-    ## Random number:  0.1936103
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.11177
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  58
-    ## Previous state:  dead
-    ## Random number:  0.9729454
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.8169052
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  58
     ## Previous state:  succeptible
-    ## Random number:  0.4026086
+    ## Random number:  0.1384762
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  58
-    ## Previous state:  succeptible
-    ## Random number:  0.7064205
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.07526441
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  58
     ## Previous state:  succeptible
-    ## Random number:  0.03496658
+    ## Random number:  0.6517607
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  58
-    ## Previous state:  recovered
-    ## Random number:  0.1184654
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.3303197
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  58
     ## Previous state:  succeptible
-    ## Random number:  0.6955543
+    ## Random number:  0.5158843
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  58
-    ## Previous state:  succeptible
-    ## Random number:  0.693507
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.433984
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  58
-    ## Previous state:  succeptible
-    ## Random number:  0.8622683
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.9041243
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  58
     ## Previous state:  succeptible
-    ## Random number:  0.8898919
+    ## Random number:  0.4999912
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  58
     ## Previous state:  recovered
-    ## Random number:  0.2882787
+    ## Random number:  0.6235266
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  58
     ## Previous state:  succeptible
-    ## Random number:  0.7467503
+    ## Random number:  0.4894047
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  58
-    ## Previous state:  succeptible
-    ## Random number:  0.762542
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.05378369
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  58
     ## Previous state:  succeptible
-    ## Random number:  0.8840868
+    ## Random number:  0.5777396
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  58
-    ## Previous state:  recovered
-    ## Random number:  0.3649307
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.7866312
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  58
-    ## Previous state:  recovered
-    ## Random number:  0.7208187
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.3519535
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  58
     ## Previous state:  succeptible
-    ## Random number:  0.1246718
+    ## Random number:  0.373531
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  58
-    ## Previous state:  recovered
-    ## Random number:  0.6548372
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.2848194
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  58
     ## Previous state:  succeptible
-    ## Random number:  0.6308889
+    ## Random number:  0.4145154
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  58
     ## Previous state:  succeptible
-    ## Random number:  0.1883743
+    ## Random number:  0.2751677
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  58
-    ## Previous state:  succeptible
-    ## Random number:  0.3693809
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.2475483
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  59
-    ## Previous state:  dead
-    ## Random number:  0.1327271
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.8851283
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  59
     ## Previous state:  succeptible
-    ## Random number:  0.3583955
+    ## Random number:  0.1910231
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  59
-    ## Previous state:  succeptible
-    ## Random number:  0.9499763
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.7265017
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  59
     ## Previous state:  succeptible
-    ## Random number:  0.2876331
+    ## Random number:  0.3879503
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  59
-    ## Previous state:  recovered
-    ## Random number:  0.7609018
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.3586579
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  59
     ## Previous state:  succeptible
-    ## Random number:  0.6165001
+    ## Random number:  0.7520915
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  59
-    ## Previous state:  succeptible
-    ## Random number:  0.7833671
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.2844079
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  59
-    ## Previous state:  succeptible
-    ## Random number:  0.8967288
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.8550567
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  59
     ## Previous state:  succeptible
-    ## Random number:  0.001503514
+    ## Random number:  0.4825402
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  59
     ## Previous state:  recovered
-    ## Random number:  0.008157182
+    ## Random number:  0.5264337
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  59
     ## Previous state:  succeptible
-    ## Random number:  0.01900896
+    ## Random number:  0.6538205
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  59
-    ## Previous state:  succeptible
-    ## Random number:  0.7756504
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.9243603
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  59
     ## Previous state:  succeptible
-    ## Random number:  0.8715761
+    ## Random number:  0.9872217
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  59
-    ## Previous state:  recovered
-    ## Random number:  0.5378827
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.6173026
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  59
-    ## Previous state:  recovered
-    ## Random number:  0.002366986
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.7070228
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  59
     ## Previous state:  succeptible
-    ## Random number:  0.2027785
+    ## Random number:  0.6929006
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  59
-    ## Previous state:  recovered
-    ## Random number:  0.50542
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.5123377
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  59
     ## Previous state:  succeptible
-    ## Random number:  0.4744955
+    ## Random number:  0.532949
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  59
     ## Previous state:  succeptible
-    ## Random number:  0.4249183
+    ## Random number:  0.5254411
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  59
-    ## Previous state:  succeptible
-    ## Random number:  0.7289745
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.5737229
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  60
-    ## Previous state:  dead
-    ## Random number:  0.7694309
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.2096104
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  60
     ## Previous state:  succeptible
-    ## Random number:  0.8921063
+    ## Random number:  0.4172524
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  60
-    ## Previous state:  succeptible
-    ## Random number:  0.6449552
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.8079716
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  60
     ## Previous state:  succeptible
-    ## Random number:  0.7847235
+    ## Random number:  0.3943766
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  60
-    ## Previous state:  recovered
-    ## Random number:  0.6067218
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.2350606
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  60
     ## Previous state:  succeptible
-    ## Random number:  0.5540333
+    ## Random number:  0.9490529
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  60
-    ## Previous state:  succeptible
-    ## Random number:  0.7263935
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.9675004
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  60
-    ## Previous state:  succeptible
-    ## Random number:  0.8779004
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.6428999
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  60
     ## Previous state:  succeptible
-    ## Random number:  0.2841344
+    ## Random number:  0.1002838
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  60
     ## Previous state:  recovered
-    ## Random number:  0.3197663
+    ## Random number:  0.7817933
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  60
     ## Previous state:  succeptible
-    ## Random number:  0.9605331
+    ## Random number:  0.5606213
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  60
-    ## Previous state:  succeptible
-    ## Random number:  0.3275301
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.8235581
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  60
     ## Previous state:  succeptible
-    ## Random number:  0.9962079
+    ## Random number:  0.5738329
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  60
-    ## Previous state:  recovered
-    ## Random number:  0.7126006
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.8585713
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  60
-    ## Previous state:  recovered
-    ## Random number:  0.03106265
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.873035
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  60
     ## Previous state:  succeptible
-    ## Random number:  0.9510342
+    ## Random number:  0.0479234
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  60
-    ## Previous state:  recovered
-    ## Random number:  0.4159694
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.6249865
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  60
     ## Previous state:  succeptible
-    ## Random number:  0.9350394
+    ## Random number:  0.7018531
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  60
     ## Previous state:  succeptible
-    ## Random number:  0.04924101
+    ## Random number:  0.5358597
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  60
-    ## Previous state:  succeptible
-    ## Random number:  0.5282883
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.07018028
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  61
-    ## Previous state:  dead
-    ## Random number:  0.08602305
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.5379923
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  61
     ## Previous state:  succeptible
-    ## Random number:  0.08354016
+    ## Random number:  0.07244329
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  61
-    ## Previous state:  succeptible
-    ## Random number:  0.6715067
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.3606486
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  61
     ## Previous state:  succeptible
-    ## Random number:  0.4234975
+    ## Random number:  0.7524836
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  61
-    ## Previous state:  recovered
-    ## Random number:  0.3788919
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.4221776
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  61
     ## Previous state:  succeptible
-    ## Random number:  0.5419132
+    ## Random number:  0.5773195
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  61
-    ## Previous state:  succeptible
-    ## Random number:  0.3820448
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.219243
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  61
-    ## Previous state:  succeptible
-    ## Random number:  0.1201612
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.4441226
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  61
     ## Previous state:  succeptible
-    ## Random number:  0.8204906
+    ## Random number:  0.1980905
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  61
     ## Previous state:  recovered
-    ## Random number:  0.2103357
+    ## Random number:  0.5673644
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  61
     ## Previous state:  succeptible
-    ## Random number:  0.4044646
+    ## Random number:  0.1589513
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  61
-    ## Previous state:  succeptible
-    ## Random number:  0.8334022
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.9966847
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  61
     ## Previous state:  succeptible
-    ## Random number:  0.7097586
+    ## Random number:  0.8080187
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  61
-    ## Previous state:  recovered
-    ## Random number:  0.4153699
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.6738709
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  61
-    ## Previous state:  recovered
-    ## Random number:  0.3478983
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.0166972
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  61
     ## Previous state:  succeptible
-    ## Random number:  0.4071845
+    ## Random number:  0.5854409
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  61
-    ## Previous state:  recovered
-    ## Random number:  0.731762
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.1679551
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  61
     ## Previous state:  succeptible
-    ## Random number:  0.2567159
+    ## Random number:  0.8832194
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  61
     ## Previous state:  succeptible
-    ## Random number:  0.4010411
+    ## Random number:  0.1754708
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  61
-    ## Previous state:  succeptible
-    ## Random number:  0.9232457
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.1479974
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  62
-    ## Previous state:  dead
-    ## Random number:  0.8744004
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.3131525
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  62
     ## Previous state:  succeptible
-    ## Random number:  0.6239889
+    ## Random number:  0.434179
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  62
-    ## Previous state:  succeptible
-    ## Random number:  0.9387288
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.2609155
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  62
     ## Previous state:  succeptible
-    ## Random number:  0.2893942
+    ## Random number:  0.6015718
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  62
-    ## Previous state:  recovered
-    ## Random number:  0.7631909
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.00760935
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  62
     ## Previous state:  succeptible
-    ## Random number:  0.4395854
+    ## Random number:  0.6853432
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  62
-    ## Previous state:  succeptible
-    ## Random number:  0.7531276
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.2902903
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  62
-    ## Previous state:  succeptible
-    ## Random number:  0.3663598
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.6350594
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  62
     ## Previous state:  succeptible
-    ## Random number:  0.1201548
+    ## Random number:  0.8106976
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  62
     ## Previous state:  recovered
-    ## Random number:  0.7538622
+    ## Random number:  0.3790421
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  62
     ## Previous state:  succeptible
-    ## Random number:  0.5461537
+    ## Random number:  0.9688195
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  62
-    ## Previous state:  succeptible
-    ## Random number:  0.01989742
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.6136562
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  62
     ## Previous state:  succeptible
-    ## Random number:  0.6547894
+    ## Random number:  0.9813308
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  62
-    ## Previous state:  recovered
-    ## Random number:  0.2228947
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.292221
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  62
-    ## Previous state:  recovered
-    ## Random number:  0.5894094
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.5882271
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  62
     ## Previous state:  succeptible
-    ## Random number:  0.3002753
+    ## Random number:  0.3494461
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  62
-    ## Previous state:  recovered
-    ## Random number:  0.4738948
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.2226595
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  62
     ## Previous state:  succeptible
-    ## Random number:  0.412503
+    ## Random number:  0.2601033
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  62
     ## Previous state:  succeptible
-    ## Random number:  0.7938027
+    ## Random number:  0.6205475
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  62
-    ## Previous state:  succeptible
-    ## Random number:  0.6621012
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.110547
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  63
-    ## Previous state:  dead
-    ## Random number:  0.9982942
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.1869181
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  63
     ## Previous state:  succeptible
-    ## Random number:  0.9820962
+    ## Random number:  0.2449845
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  63
-    ## Previous state:  succeptible
-    ## Random number:  0.7310528
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.310645
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  63
     ## Previous state:  succeptible
-    ## Random number:  0.05229638
+    ## Random number:  0.6984943
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  63
-    ## Previous state:  recovered
-    ## Random number:  0.1549959
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.6107895
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  63
     ## Previous state:  succeptible
-    ## Random number:  0.07723646
+    ## Random number:  0.6983653
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  63
-    ## Previous state:  succeptible
-    ## Random number:  0.7564544
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.7527639
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  63
-    ## Previous state:  succeptible
-    ## Random number:  0.358848
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.8150651
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  63
     ## Previous state:  succeptible
-    ## Random number:  0.4437477
+    ## Random number:  0.6087711
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  63
     ## Previous state:  recovered
-    ## Random number:  0.01020986
+    ## Random number:  0.1929166
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  63
     ## Previous state:  succeptible
-    ## Random number:  0.6202971
+    ## Random number:  0.321217
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  63
-    ## Previous state:  succeptible
-    ## Random number:  0.1636661
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.7273954
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  63
     ## Previous state:  succeptible
-    ## Random number:  0.3199009
+    ## Random number:  0.647516
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  63
-    ## Previous state:  recovered
-    ## Random number:  0.8292594
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.2580459
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  63
-    ## Previous state:  recovered
-    ## Random number:  0.9810525
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.2312188
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  63
     ## Previous state:  succeptible
-    ## Random number:  0.2380546
+    ## Random number:  0.2044906
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  63
-    ## Previous state:  recovered
-    ## Random number:  0.09691273
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.1924955
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  63
     ## Previous state:  succeptible
-    ## Random number:  0.5604995
+    ## Random number:  0.9091904
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  63
     ## Previous state:  succeptible
-    ## Random number:  0.4130269
+    ## Random number:  0.9333019
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  63
-    ## Previous state:  succeptible
-    ## Random number:  0.8377763
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.6869684
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  64
-    ## Previous state:  dead
-    ## Random number:  0.3512037
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.4096369
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  64
     ## Previous state:  succeptible
-    ## Random number:  0.547313
+    ## Random number:  0.00536598
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  64
-    ## Previous state:  succeptible
-    ## Random number:  0.0155916
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.6176597
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  64
     ## Previous state:  succeptible
-    ## Random number:  0.3261911
+    ## Random number:  0.7269752
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  64
-    ## Previous state:  recovered
-    ## Random number:  0.9514472
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.6323048
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  64
     ## Previous state:  succeptible
-    ## Random number:  0.2056308
+    ## Random number:  0.1959196
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  64
-    ## Previous state:  succeptible
-    ## Random number:  0.5882187
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.1453097
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  64
-    ## Previous state:  succeptible
-    ## Random number:  0.2280632
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.06869583
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  64
     ## Previous state:  succeptible
-    ## Random number:  0.4448545
+    ## Random number:  0.3438475
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  64
     ## Previous state:  recovered
-    ## Random number:  0.4275763
+    ## Random number:  0.330624
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  64
     ## Previous state:  succeptible
-    ## Random number:  0.5917865
+    ## Random number:  0.9015432
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  64
-    ## Previous state:  succeptible
-    ## Random number:  0.6109905
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.1642386
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  64
     ## Previous state:  succeptible
-    ## Random number:  0.6426016
+    ## Random number:  0.843419
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  64
-    ## Previous state:  recovered
-    ## Random number:  0.2865293
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.9297704
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  64
-    ## Previous state:  recovered
-    ## Random number:  0.4751946
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.2277975
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  64
     ## Previous state:  succeptible
-    ## Random number:  0.8551596
+    ## Random number:  0.2519018
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  64
-    ## Previous state:  recovered
-    ## Random number:  0.6398664
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.9895886
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  64
     ## Previous state:  succeptible
-    ## Random number:  0.9034262
+    ## Random number:  0.5056378
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  64
     ## Previous state:  succeptible
-    ## Random number:  0.3625994
+    ## Random number:  0.5800315
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  64
-    ## Previous state:  succeptible
-    ## Random number:  0.7337939
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.8608554
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  65
-    ## Previous state:  dead
-    ## Random number:  0.4804477
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.432409
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  65
     ## Previous state:  succeptible
-    ## Random number:  0.6272702
+    ## Random number:  0.936976
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  65
-    ## Previous state:  succeptible
-    ## Random number:  0.5460501
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.5078464
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  65
     ## Previous state:  succeptible
-    ## Random number:  0.230058
+    ## Random number:  0.634379
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  65
-    ## Previous state:  recovered
-    ## Random number:  0.8074407
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.2802771
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  65
     ## Previous state:  succeptible
-    ## Random number:  0.9713849
+    ## Random number:  0.7188599
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  65
-    ## Previous state:  succeptible
-    ## Random number:  0.05612864
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.03813508
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  65
-    ## Previous state:  succeptible
-    ## Random number:  0.6796606
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.8395745
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  65
     ## Previous state:  succeptible
-    ## Random number:  0.848298
+    ## Random number:  0.6551475
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  65
     ## Previous state:  recovered
-    ## Random number:  0.7590576
+    ## Random number:  0.8142364
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  65
     ## Previous state:  succeptible
-    ## Random number:  0.8778217
+    ## Random number:  0.6537238
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  65
-    ## Previous state:  succeptible
-    ## Random number:  0.9721716
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.7792335
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  65
     ## Previous state:  succeptible
-    ## Random number:  0.4017466
+    ## Random number:  0.9754476
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  65
-    ## Previous state:  recovered
-    ## Random number:  0.1638682
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.01404138
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  65
-    ## Previous state:  recovered
-    ## Random number:  0.7906374
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.3941709
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  65
     ## Previous state:  succeptible
-    ## Random number:  0.9472829
+    ## Random number:  0.5401367
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  65
-    ## Previous state:  recovered
-    ## Random number:  0.9381483
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.6889863
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  65
     ## Previous state:  succeptible
-    ## Random number:  0.812566
+    ## Random number:  0.01441943
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  65
     ## Previous state:  succeptible
-    ## Random number:  0.2874369
+    ## Random number:  0.05729218
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  65
-    ## Previous state:  succeptible
-    ## Random number:  0.6388412
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.2807818
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  66
-    ## Previous state:  dead
-    ## Random number:  0.8921989
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.08430162
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  66
     ## Previous state:  succeptible
-    ## Random number:  0.312729
+    ## Random number:  0.3808951
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  66
-    ## Previous state:  succeptible
-    ## Random number:  0.1219991
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.7562154
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  66
     ## Previous state:  succeptible
-    ## Random number:  0.2819849
+    ## Random number:  0.7293958
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  66
-    ## Previous state:  recovered
-    ## Random number:  0.8803548
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.02716253
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  66
     ## Previous state:  succeptible
-    ## Random number:  0.4207892
+    ## Random number:  0.08938376
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  66
-    ## Previous state:  succeptible
-    ## Random number:  0.6861818
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.2974284
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  66
-    ## Previous state:  succeptible
-    ## Random number:  0.4924581
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.860939
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  66
     ## Previous state:  succeptible
-    ## Random number:  0.5167294
+    ## Random number:  0.6679706
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  66
     ## Previous state:  recovered
-    ## Random number:  0.971029
+    ## Random number:  0.4523463
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  66
     ## Previous state:  succeptible
-    ## Random number:  0.8192133
+    ## Random number:  0.3658577
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  66
-    ## Previous state:  succeptible
-    ## Random number:  0.1134362
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.4930835
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  66
     ## Previous state:  succeptible
-    ## Random number:  0.5628873
+    ## Random number:  0.7068547
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  66
-    ## Previous state:  recovered
-    ## Random number:  0.7869403
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.6235854
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  66
-    ## Previous state:  recovered
-    ## Random number:  0.174051
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.2374939
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  66
     ## Previous state:  succeptible
-    ## Random number:  0.03582318
+    ## Random number:  0.6655564
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  66
-    ## Previous state:  recovered
-    ## Random number:  0.5373335
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.7918642
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  66
     ## Previous state:  succeptible
-    ## Random number:  0.1894779
+    ## Random number:  0.6925337
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  66
     ## Previous state:  succeptible
-    ## Random number:  0.9791958
+    ## Random number:  0.9794861
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  66
-    ## Previous state:  succeptible
-    ## Random number:  0.3483419
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.1308316
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  67
-    ## Previous state:  dead
-    ## Random number:  0.9715152
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.4214833
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  67
     ## Previous state:  succeptible
-    ## Random number:  0.7310962
+    ## Random number:  0.1068636
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  67
-    ## Previous state:  succeptible
-    ## Random number:  0.7596188
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.695066
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  67
     ## Previous state:  succeptible
-    ## Random number:  0.2739691
+    ## Random number:  0.2698564
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  67
-    ## Previous state:  recovered
-    ## Random number:  0.3825696
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.3736875
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  67
     ## Previous state:  succeptible
-    ## Random number:  0.7055135
+    ## Random number:  0.4011994
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  67
-    ## Previous state:  succeptible
-    ## Random number:  0.6545289
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.5885012
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  67
-    ## Previous state:  succeptible
-    ## Random number:  0.06404346
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.4591317
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  67
     ## Previous state:  succeptible
-    ## Random number:  0.2221057
+    ## Random number:  0.1946003
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  67
     ## Previous state:  recovered
-    ## Random number:  0.8279355
+    ## Random number:  0.7076139
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  67
     ## Previous state:  succeptible
-    ## Random number:  0.1167105
+    ## Random number:  0.3434814
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  67
-    ## Previous state:  succeptible
-    ## Random number:  0.9094565
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.2363412
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  67
     ## Previous state:  succeptible
-    ## Random number:  0.8613571
+    ## Random number:  0.9825931
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  67
-    ## Previous state:  recovered
-    ## Random number:  0.410736
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.6574665
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  67
-    ## Previous state:  recovered
-    ## Random number:  0.04731298
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.1008162
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  67
     ## Previous state:  succeptible
-    ## Random number:  0.06739165
+    ## Random number:  0.2444117
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  67
-    ## Previous state:  recovered
-    ## Random number:  0.002043368
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.2777578
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  67
     ## Previous state:  succeptible
-    ## Random number:  0.4917549
+    ## Random number:  0.09671329
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  67
     ## Previous state:  succeptible
-    ## Random number:  0.9351338
+    ## Random number:  0.08985358
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  67
-    ## Previous state:  succeptible
-    ## Random number:  0.7712845
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.9611016
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  68
-    ## Previous state:  dead
-    ## Random number:  0.7292945
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.4201042
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  68
     ## Previous state:  succeptible
-    ## Random number:  0.04637163
+    ## Random number:  0.7283409
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  68
-    ## Previous state:  succeptible
-    ## Random number:  0.3066366
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.7835851
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  68
     ## Previous state:  succeptible
-    ## Random number:  0.1682611
+    ## Random number:  0.6501838
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  68
-    ## Previous state:  recovered
-    ## Random number:  0.4939474
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.01286635
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  68
     ## Previous state:  succeptible
-    ## Random number:  0.8664705
+    ## Random number:  0.1567963
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  68
-    ## Previous state:  succeptible
-    ## Random number:  0.07956113
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.920059
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  68
-    ## Previous state:  succeptible
-    ## Random number:  0.9312415
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.4385323
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  68
     ## Previous state:  succeptible
-    ## Random number:  0.4693259
+    ## Random number:  0.2178678
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  68
     ## Previous state:  recovered
-    ## Random number:  0.6825787
+    ## Random number:  0.1775794
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  68
     ## Previous state:  succeptible
-    ## Random number:  0.00365404
+    ## Random number:  0.664272
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  68
-    ## Previous state:  succeptible
-    ## Random number:  0.94602
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.9311908
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  68
     ## Previous state:  succeptible
-    ## Random number:  0.8622621
+    ## Random number:  0.5983847
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  68
-    ## Previous state:  recovered
-    ## Random number:  0.7324222
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.3570047
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  68
-    ## Previous state:  recovered
-    ## Random number:  0.8395482
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.4165377
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  68
     ## Previous state:  succeptible
-    ## Random number:  0.2812005
+    ## Random number:  0.7162512
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  68
-    ## Previous state:  recovered
-    ## Random number:  0.2625177
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.4022288
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  68
     ## Previous state:  succeptible
-    ## Random number:  0.6392067
+    ## Random number:  0.9644097
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  68
     ## Previous state:  succeptible
-    ## Random number:  0.6847784
+    ## Random number:  0.5358412
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  68
-    ## Previous state:  succeptible
-    ## Random number:  0.1295705
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.1091488
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  69
-    ## Previous state:  dead
-    ## Random number:  0.0003041585
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.05472969
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  69
     ## Previous state:  succeptible
-    ## Random number:  0.4804444
+    ## Random number:  0.906826
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  69
-    ## Previous state:  succeptible
-    ## Random number:  0.4164904
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.3252121
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  69
     ## Previous state:  succeptible
-    ## Random number:  0.1062295
+    ## Random number:  0.7855183
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  69
-    ## Previous state:  recovered
-    ## Random number:  0.8534478
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.1549707
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  69
     ## Previous state:  succeptible
-    ## Random number:  0.09053395
+    ## Random number:  0.7770866
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  69
-    ## Previous state:  succeptible
-    ## Random number:  0.7742495
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.5529646
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  69
-    ## Previous state:  succeptible
-    ## Random number:  0.9545599
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.9074728
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  69
     ## Previous state:  succeptible
-    ## Random number:  0.1666889
+    ## Random number:  0.1566108
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  69
     ## Previous state:  recovered
-    ## Random number:  0.9569755
+    ## Random number:  0.2845933
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  69
     ## Previous state:  succeptible
-    ## Random number:  0.02693023
+    ## Random number:  0.3755425
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  69
-    ## Previous state:  succeptible
-    ## Random number:  0.6861889
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.869963
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  69
     ## Previous state:  succeptible
-    ## Random number:  0.5129436
+    ## Random number:  0.4869565
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  69
-    ## Previous state:  recovered
-    ## Random number:  0.1287026
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.05368399
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  69
-    ## Previous state:  recovered
-    ## Random number:  0.3846083
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.1497001
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  69
     ## Previous state:  succeptible
-    ## Random number:  0.9236069
+    ## Random number:  0.09338276
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  69
-    ## Previous state:  recovered
-    ## Random number:  0.002019744
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.3961239
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  69
     ## Previous state:  succeptible
-    ## Random number:  0.8993737
+    ## Random number:  0.3408921
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  69
     ## Previous state:  succeptible
-    ## Random number:  0.009224874
+    ## Random number:  0.3719416
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  69
-    ## Previous state:  succeptible
-    ## Random number:  0.8021789
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.7493618
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  70
-    ## Previous state:  dead
-    ## Random number:  0.146412
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.06004556
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  70
     ## Previous state:  succeptible
-    ## Random number:  0.9870092
+    ## Random number:  0.4337538
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  70
-    ## Previous state:  succeptible
-    ## Random number:  0.9336491
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.03917673
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  70
     ## Previous state:  succeptible
-    ## Random number:  0.5637805
+    ## Random number:  0.3271574
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  70
-    ## Previous state:  recovered
-    ## Random number:  0.8677179
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.7470638
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  70
     ## Previous state:  succeptible
-    ## Random number:  0.6974253
+    ## Random number:  0.3232833
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  70
-    ## Previous state:  succeptible
-    ## Random number:  0.1819551
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.4538952
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  70
-    ## Previous state:  succeptible
-    ## Random number:  0.483295
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.7203584
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  70
     ## Previous state:  succeptible
-    ## Random number:  0.8905735
+    ## Random number:  0.5824914
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  70
     ## Previous state:  recovered
-    ## Random number:  0.7411095
+    ## Random number:  0.7424531
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  70
     ## Previous state:  succeptible
-    ## Random number:  0.7811765
+    ## Random number:  0.7010187
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  70
-    ## Previous state:  succeptible
-    ## Random number:  0.8782243
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.5268708
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  70
     ## Previous state:  succeptible
-    ## Random number:  0.8927622
+    ## Random number:  0.4443536
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  70
-    ## Previous state:  recovered
-    ## Random number:  0.9294947
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.9165738
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  70
-    ## Previous state:  recovered
-    ## Random number:  0.2739544
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.8412178
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  70
     ## Previous state:  succeptible
-    ## Random number:  0.3854908
+    ## Random number:  0.1291043
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  70
-    ## Previous state:  recovered
-    ## Random number:  0.866321
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.7845908
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  70
     ## Previous state:  succeptible
-    ## Random number:  0.526835
+    ## Random number:  0.1070624
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  70
     ## Previous state:  succeptible
-    ## Random number:  0.02554816
+    ## Random number:  0.710927
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  70
-    ## Previous state:  succeptible
-    ## Random number:  0.0253703
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.9070639
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  71
-    ## Previous state:  dead
-    ## Random number:  0.3247416
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.1428696
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  71
     ## Previous state:  succeptible
-    ## Random number:  0.2032279
+    ## Random number:  0.7582955
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  71
-    ## Previous state:  succeptible
-    ## Random number:  0.562789
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.9536329
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  71
     ## Previous state:  succeptible
-    ## Random number:  0.5057389
+    ## Random number:  0.6810786
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  71
-    ## Previous state:  recovered
-    ## Random number:  0.04839995
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.2295724
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  71
     ## Previous state:  succeptible
-    ## Random number:  0.9533225
+    ## Random number:  0.5557656
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  71
-    ## Previous state:  succeptible
-    ## Random number:  0.01891192
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.6289777
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  71
-    ## Previous state:  succeptible
-    ## Random number:  0.1613359
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.6398128
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  71
     ## Previous state:  succeptible
-    ## Random number:  0.1604116
+    ## Random number:  0.2185329
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  71
     ## Previous state:  recovered
-    ## Random number:  0.05659698
+    ## Random number:  0.8161043
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  71
     ## Previous state:  succeptible
-    ## Random number:  0.6294063
+    ## Random number:  0.0070357
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  71
-    ## Previous state:  succeptible
-    ## Random number:  0.018972
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.9123042
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  71
     ## Previous state:  succeptible
-    ## Random number:  0.1435511
+    ## Random number:  0.6424863
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  71
-    ## Previous state:  recovered
-    ## Random number:  0.6445895
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.6977091
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  71
-    ## Previous state:  recovered
-    ## Random number:  0.1329998
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.6484324
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  71
     ## Previous state:  succeptible
-    ## Random number:  0.09153608
+    ## Random number:  0.9338877
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  71
-    ## Previous state:  recovered
-    ## Random number:  0.7091683
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.2311812
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  71
     ## Previous state:  succeptible
-    ## Random number:  0.2329482
+    ## Random number:  0.8088845
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  71
     ## Previous state:  succeptible
-    ## Random number:  0.4264351
+    ## Random number:  0.7751056
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  71
-    ## Previous state:  succeptible
-    ## Random number:  0.5978119
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.4637586
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  72
-    ## Previous state:  dead
-    ## Random number:  0.706983
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.5956839
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  72
     ## Previous state:  succeptible
-    ## Random number:  0.8052088
+    ## Random number:  0.1094168
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  72
-    ## Previous state:  succeptible
-    ## Random number:  0.3998044
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.03589373
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  72
     ## Previous state:  succeptible
-    ## Random number:  0.4753414
+    ## Random number:  0.408989
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  72
-    ## Previous state:  recovered
-    ## Random number:  0.7891331
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.02550938
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  72
     ## Previous state:  succeptible
-    ## Random number:  0.3100309
+    ## Random number:  0.944566
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  72
-    ## Previous state:  succeptible
-    ## Random number:  0.04848697
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.1173843
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  72
-    ## Previous state:  succeptible
-    ## Random number:  0.7194594
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.4686945
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  72
     ## Previous state:  succeptible
-    ## Random number:  0.06057797
+    ## Random number:  0.8098583
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  72
     ## Previous state:  recovered
-    ## Random number:  0.1949947
+    ## Random number:  0.5872775
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  72
     ## Previous state:  succeptible
-    ## Random number:  0.1620727
+    ## Random number:  0.02426274
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  72
-    ## Previous state:  succeptible
-    ## Random number:  0.4040483
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.3505112
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  72
     ## Previous state:  succeptible
-    ## Random number:  0.3031214
+    ## Random number:  0.6211436
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  72
-    ## Previous state:  recovered
-    ## Random number:  0.9746922
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.0178202
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  72
-    ## Previous state:  recovered
-    ## Random number:  0.9020543
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.5197927
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  72
     ## Previous state:  succeptible
-    ## Random number:  0.8286252
+    ## Random number:  0.8902892
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  72
-    ## Previous state:  recovered
-    ## Random number:  0.378377
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.3950116
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  72
     ## Previous state:  succeptible
-    ## Random number:  0.7718203
+    ## Random number:  0.1692699
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  72
     ## Previous state:  succeptible
-    ## Random number:  0.5014012
+    ## Random number:  0.1570068
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  72
-    ## Previous state:  succeptible
-    ## Random number:  0.7331671
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.5602683
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  73
-    ## Previous state:  dead
-    ## Random number:  0.7342104
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.4081321
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  73
     ## Previous state:  succeptible
-    ## Random number:  0.5503557
+    ## Random number:  0.4768352
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  73
-    ## Previous state:  succeptible
-    ## Random number:  0.5398538
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.08009658
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  73
     ## Previous state:  succeptible
-    ## Random number:  0.5865792
+    ## Random number:  0.8318064
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  73
-    ## Previous state:  recovered
-    ## Random number:  0.8254471
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.38857
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  73
     ## Previous state:  succeptible
-    ## Random number:  0.2434787
+    ## Random number:  0.6436005
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  73
-    ## Previous state:  succeptible
-    ## Random number:  0.8092687
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.8438404
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  73
-    ## Previous state:  succeptible
-    ## Random number:  0.1739862
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.8193502
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  73
     ## Previous state:  succeptible
-    ## Random number:  0.262805
+    ## Random number:  0.980886
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  73
     ## Previous state:  recovered
-    ## Random number:  0.5837517
+    ## Random number:  0.3974051
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  73
     ## Previous state:  succeptible
-    ## Random number:  0.5574103
+    ## Random number:  0.2228698
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  73
-    ## Previous state:  succeptible
-    ## Random number:  0.6870837
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.6369803
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  73
     ## Previous state:  succeptible
-    ## Random number:  0.7275964
+    ## Random number:  0.08247787
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  73
-    ## Previous state:  recovered
-    ## Random number:  0.7958256
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.9105148
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  73
-    ## Previous state:  recovered
-    ## Random number:  0.3946
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.6967442
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  73
     ## Previous state:  succeptible
-    ## Random number:  0.2182282
+    ## Random number:  0.897924
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  73
-    ## Previous state:  recovered
-    ## Random number:  0.1930407
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.3258681
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  73
     ## Previous state:  succeptible
-    ## Random number:  0.154383
+    ## Random number:  0.4567793
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  73
     ## Previous state:  succeptible
-    ## Random number:  0.5554708
+    ## Random number:  0.7172451
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  73
-    ## Previous state:  succeptible
-    ## Random number:  0.3438317
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.6043208
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  74
-    ## Previous state:  dead
-    ## Random number:  0.6315387
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.6656992
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  74
     ## Previous state:  succeptible
-    ## Random number:  0.4647583
+    ## Random number:  0.6925626
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  74
-    ## Previous state:  succeptible
-    ## Random number:  0.8602889
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.3257715
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  74
     ## Previous state:  succeptible
-    ## Random number:  0.7048521
+    ## Random number:  0.6988926
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  74
-    ## Previous state:  recovered
-    ## Random number:  0.4446315
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.2715736
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  74
     ## Previous state:  succeptible
-    ## Random number:  0.5197564
+    ## Random number:  0.09837635
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  74
-    ## Previous state:  succeptible
-    ## Random number:  0.5238709
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.8968491
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  74
-    ## Previous state:  succeptible
-    ## Random number:  0.85076
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.4956558
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  74
     ## Previous state:  succeptible
-    ## Random number:  0.7438113
+    ## Random number:  0.7188558
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  74
     ## Previous state:  recovered
-    ## Random number:  0.05320516
+    ## Random number:  0.9819167
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  74
     ## Previous state:  succeptible
-    ## Random number:  0.01159155
+    ## Random number:  0.05590365
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  74
-    ## Previous state:  succeptible
-    ## Random number:  0.3339963
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.8867321
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  74
     ## Previous state:  succeptible
-    ## Random number:  0.5218088
+    ## Random number:  0.4572333
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  74
-    ## Previous state:  recovered
-    ## Random number:  0.5250987
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.8511312
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  74
-    ## Previous state:  recovered
-    ## Random number:  0.382128
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.7145482
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  74
     ## Previous state:  succeptible
-    ## Random number:  0.4222467
+    ## Random number:  0.7391227
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  74
-    ## Previous state:  recovered
-    ## Random number:  0.1068185
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.1076434
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  74
     ## Previous state:  succeptible
-    ## Random number:  0.9446433
+    ## Random number:  0.4998562
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  74
     ## Previous state:  succeptible
-    ## Random number:  0.7336637
+    ## Random number:  0.3585947
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  74
-    ## Previous state:  succeptible
-    ## Random number:  0.7407151
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.3600859
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  75
-    ## Previous state:  dead
-    ## Random number:  0.4638574
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.278084
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  75
     ## Previous state:  succeptible
-    ## Random number:  0.8521292
+    ## Random number:  0.3259792
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  75
-    ## Previous state:  succeptible
-    ## Random number:  0.2988498
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.1409287
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  75
     ## Previous state:  succeptible
-    ## Random number:  0.777356
+    ## Random number:  0.6141635
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  75
-    ## Previous state:  recovered
-    ## Random number:  0.2177968
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.0856699
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  75
     ## Previous state:  succeptible
-    ## Random number:  0.8091448
+    ## Random number:  0.508182
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  75
-    ## Previous state:  succeptible
-    ## Random number:  0.3509494
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.2187649
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  75
-    ## Previous state:  succeptible
-    ## Random number:  0.2536959
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.5309431
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  75
     ## Previous state:  succeptible
-    ## Random number:  0.9000865
+    ## Random number:  0.628436
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  75
     ## Previous state:  recovered
-    ## Random number:  0.8276918
+    ## Random number:  0.5394772
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  75
     ## Previous state:  succeptible
-    ## Random number:  0.8662945
+    ## Random number:  0.2466916
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  75
-    ## Previous state:  succeptible
-    ## Random number:  0.3391392
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.6871806
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  75
     ## Previous state:  succeptible
-    ## Random number:  0.9984802
+    ## Random number:  0.2415002
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  75
-    ## Previous state:  recovered
-    ## Random number:  0.8154171
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.4325869
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  75
-    ## Previous state:  recovered
-    ## Random number:  0.7666141
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.4288106
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  75
     ## Previous state:  succeptible
-    ## Random number:  0.3515472
+    ## Random number:  0.8303165
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  75
-    ## Previous state:  recovered
-    ## Random number:  0.9477522
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.4232904
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  75
     ## Previous state:  succeptible
-    ## Random number:  0.1143277
+    ## Random number:  0.9551506
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  75
     ## Previous state:  succeptible
-    ## Random number:  0.815916
+    ## Random number:  0.4808985
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  75
-    ## Previous state:  succeptible
-    ## Random number:  0.2686519
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.1606545
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  76
-    ## Previous state:  dead
-    ## Random number:  0.9249901
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.7643159
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  76
     ## Previous state:  succeptible
-    ## Random number:  0.769481
+    ## Random number:  0.3543515
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  76
-    ## Previous state:  succeptible
-    ## Random number:  0.7870442
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.09046027
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  76
     ## Previous state:  succeptible
-    ## Random number:  0.02493319
+    ## Random number:  0.9753229
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  76
-    ## Previous state:  recovered
-    ## Random number:  0.2101134
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.1086697
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  76
     ## Previous state:  succeptible
-    ## Random number:  0.2119256
+    ## Random number:  0.8206657
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  76
-    ## Previous state:  succeptible
-    ## Random number:  0.5872606
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.5349369
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  76
-    ## Previous state:  succeptible
-    ## Random number:  0.08840533
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.2956799
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  76
     ## Previous state:  succeptible
-    ## Random number:  0.7027998
+    ## Random number:  0.7558918
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  76
     ## Previous state:  recovered
-    ## Random number:  0.5748791
+    ## Random number:  0.1330765
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  76
     ## Previous state:  succeptible
-    ## Random number:  0.2789902
+    ## Random number:  0.005790817
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  76
-    ## Previous state:  succeptible
-    ## Random number:  0.8662129
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.1963094
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  76
     ## Previous state:  succeptible
-    ## Random number:  0.6701861
+    ## Random number:  0.7101483
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  76
-    ## Previous state:  recovered
-    ## Random number:  0.4013201
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.8154913
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  76
-    ## Previous state:  recovered
-    ## Random number:  0.4127721
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.6321334
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  76
     ## Previous state:  succeptible
-    ## Random number:  0.3278109
+    ## Random number:  0.3590503
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  76
-    ## Previous state:  recovered
-    ## Random number:  0.7706126
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.4041563
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  76
     ## Previous state:  succeptible
-    ## Random number:  0.181256
+    ## Random number:  0.00796515
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  76
     ## Previous state:  succeptible
-    ## Random number:  0.5696777
+    ## Random number:  0.9149626
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  76
-    ## Previous state:  succeptible
-    ## Random number:  0.6124641
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.4686343
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  77
-    ## Previous state:  dead
-    ## Random number:  0.5540568
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.9202518
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  77
     ## Previous state:  succeptible
-    ## Random number:  0.57868
+    ## Random number:  0.3250577
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  77
-    ## Previous state:  succeptible
-    ## Random number:  0.6749354
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.3324169
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  77
     ## Previous state:  succeptible
-    ## Random number:  0.8220408
+    ## Random number:  0.7469989
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  77
-    ## Previous state:  recovered
-    ## Random number:  0.06069387
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.1129871
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  77
     ## Previous state:  succeptible
-    ## Random number:  0.6362139
+    ## Random number:  0.436303
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  77
-    ## Previous state:  succeptible
-    ## Random number:  0.7485156
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.5318985
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  77
-    ## Previous state:  succeptible
-    ## Random number:  0.3637287
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.2675672
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  77
     ## Previous state:  succeptible
-    ## Random number:  0.6606561
+    ## Random number:  0.2815083
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  77
     ## Previous state:  recovered
-    ## Random number:  0.09339511
+    ## Random number:  0.1348176
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  77
     ## Previous state:  succeptible
-    ## Random number:  0.7418527
+    ## Random number:  0.674599
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  77
-    ## Previous state:  succeptible
-    ## Random number:  0.1530065
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.3426229
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  77
     ## Previous state:  succeptible
-    ## Random number:  0.4981354
+    ## Random number:  0.2755839
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  77
-    ## Previous state:  recovered
-    ## Random number:  0.2416795
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.6837253
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  77
-    ## Previous state:  recovered
-    ## Random number:  0.6583277
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.2416604
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  77
     ## Previous state:  succeptible
-    ## Random number:  0.9812017
+    ## Random number:  0.9141131
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  77
-    ## Previous state:  recovered
-    ## Random number:  0.5490986
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.1062802
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  77
     ## Previous state:  succeptible
-    ## Random number:  0.5548223
+    ## Random number:  0.08056216
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  77
     ## Previous state:  succeptible
-    ## Random number:  0.7296633
+    ## Random number:  0.2288049
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  77
-    ## Previous state:  succeptible
-    ## Random number:  0.9931895
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.7602129
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  78
-    ## Previous state:  dead
-    ## Random number:  0.0143074
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.8629253
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  78
     ## Previous state:  succeptible
-    ## Random number:  0.06460326
+    ## Random number:  0.7827223
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  78
-    ## Previous state:  succeptible
-    ## Random number:  0.7306017
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.5356833
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  78
     ## Previous state:  succeptible
-    ## Random number:  0.2117113
+    ## Random number:  0.5907982
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  78
-    ## Previous state:  recovered
-    ## Random number:  0.6691569
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.7932469
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  78
     ## Previous state:  succeptible
-    ## Random number:  0.8947532
+    ## Random number:  0.09089064
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  78
-    ## Previous state:  succeptible
-    ## Random number:  0.4819856
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.3359589
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  78
-    ## Previous state:  succeptible
-    ## Random number:  0.09068941
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.6280993
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  78
     ## Previous state:  succeptible
-    ## Random number:  0.9820769
+    ## Random number:  0.9681309
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  78
     ## Previous state:  recovered
-    ## Random number:  0.2287686
+    ## Random number:  0.4530775
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  78
     ## Previous state:  succeptible
-    ## Random number:  0.4738943
+    ## Random number:  0.007111088
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  78
-    ## Previous state:  succeptible
-    ## Random number:  0.02391114
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.1505566
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  78
     ## Previous state:  succeptible
-    ## Random number:  0.5070711
+    ## Random number:  0.8856492
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  78
-    ## Previous state:  recovered
-    ## Random number:  0.3822202
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.6227841
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  78
-    ## Previous state:  recovered
-    ## Random number:  0.1017935
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.9529453
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  78
     ## Previous state:  succeptible
-    ## Random number:  0.7622479
+    ## Random number:  0.4058444
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  78
-    ## Previous state:  recovered
-    ## Random number:  0.2404161
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.3143545
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  78
     ## Previous state:  succeptible
-    ## Random number:  0.5968799
+    ## Random number:  0.9890225
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  78
     ## Previous state:  succeptible
-    ## Random number:  0.532439
+    ## Random number:  0.2436574
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  78
-    ## Previous state:  succeptible
-    ## Random number:  0.01821629
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.6900254
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  79
-    ## Previous state:  dead
-    ## Random number:  0.6809909
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.103396
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  79
     ## Previous state:  succeptible
-    ## Random number:  0.0594526
+    ## Random number:  0.5266721
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  79
-    ## Previous state:  succeptible
-    ## Random number:  0.3431995
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.7105908
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  79
     ## Previous state:  succeptible
-    ## Random number:  0.09515439
+    ## Random number:  0.9018093
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  79
-    ## Previous state:  recovered
-    ## Random number:  0.3816982
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.828875
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  79
     ## Previous state:  succeptible
-    ## Random number:  0.01093763
+    ## Random number:  0.6253278
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  79
-    ## Previous state:  succeptible
-    ## Random number:  0.5370408
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.3185275
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  79
-    ## Previous state:  succeptible
-    ## Random number:  0.7483047
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.1982971
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  79
     ## Previous state:  succeptible
-    ## Random number:  0.7203107
+    ## Random number:  0.09014544
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  79
     ## Previous state:  recovered
-    ## Random number:  0.427555
+    ## Random number:  0.9910399
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  79
     ## Previous state:  succeptible
-    ## Random number:  0.5655708
+    ## Random number:  0.2431383
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  79
-    ## Previous state:  succeptible
-    ## Random number:  0.6293235
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.576273
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  79
+    ## Previous state:  succeptible
+    ## Random number:  0.08260066
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  14
+    ## Day:  79
+    ## Previous state:  succeptible
+    ## Random number:  0.8701883
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  15
+    ## Day:  79
+    ## Previous state:  succeptible
+    ## Random number:  0.2363092
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  16
+    ## Day:  79
+    ## Previous state:  succeptible
+    ## Random number:  0.5849683
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  17
+    ## Day:  79
+    ## Previous state:  succeptible
+    ## Random number:  0.880811
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  18
+    ## Day:  79
+    ## Previous state:  succeptible
+    ## Random number:  0.4996845
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  19
+    ## Day:  79
+    ## Previous state:  succeptible
+    ## Random number:  0.8296357
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  20
+    ## Day:  79
+    ## Previous state:  recovered
+    ## Random number:  0.1570528
+    ## New state:  recovered
+    ## 
+    ## Person ID:  1
+    ## Day:  80
+    ## Previous state:  recovered
+    ## Random number:  0.144585
+    ## New state:  recovered
+    ## 
+    ## Person ID:  2
+    ## Day:  80
+    ## Previous state:  succeptible
+    ## Random number:  0.1608952
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  3
+    ## Day:  80
+    ## Previous state:  recovered
+    ## Random number:  0.4570342
+    ## New state:  recovered
+    ## 
+    ## Person ID:  4
+    ## Day:  80
+    ## Previous state:  succeptible
+    ## Random number:  0.5663006
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  5
+    ## Day:  80
+    ## Previous state:  succeptible
+    ## Random number:  0.3127568
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  6
+    ## Day:  80
+    ## Previous state:  succeptible
+    ## Random number:  0.691139
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  7
+    ## Day:  80
+    ## Previous state:  recovered
+    ## Random number:  0.5296613
+    ## New state:  recovered
+    ## 
+    ## Person ID:  8
+    ## Day:  80
+    ## Previous state:  recovered
+    ## Random number:  0.5327299
+    ## New state:  recovered
+    ## 
+    ## Person ID:  9
+    ## Day:  80
+    ## Previous state:  succeptible
+    ## Random number:  0.1040665
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  10
+    ## Day:  80
+    ## Previous state:  recovered
+    ## Random number:  0.7441413
+    ## New state:  recovered
+    ## 
+    ## Person ID:  11
+    ## Day:  80
+    ## Previous state:  succeptible
+    ## Random number:  0.9686
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  12
+    ## Day:  80
+    ## Previous state:  dead
+    ## Random number:  0.7003859
+    ## New state:  dead
+    ## 
+    ## Person ID:  13
+    ## Day:  80
+    ## Previous state:  succeptible
+    ## Random number:  0.5445599
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  14
+    ## Day:  80
+    ## Previous state:  succeptible
+    ## Random number:  0.888933
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  15
+    ## Day:  80
+    ## Previous state:  succeptible
+    ## Random number:  0.4473236
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  16
+    ## Day:  80
+    ## Previous state:  succeptible
+    ## Random number:  0.1676359
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  17
+    ## Day:  80
+    ## Previous state:  succeptible
+    ## Random number:  0.8002019
+    ## New state:  succeptible
+    ## 
+    ## Person ID:  18
+    ## Day:  80
     ## Previous state:  succeptible
     ## Random number:  0.2695685
     ## New state:  succeptible
     ## 
-    ## Person ID:  14
-    ## Day:  79
-    ## Previous state:  recovered
-    ## Random number:  0.4651524
-    ## New state:  recovered
-    ## 
-    ## Person ID:  15
-    ## Day:  79
-    ## Previous state:  recovered
-    ## Random number:  0.3411267
-    ## New state:  recovered
-    ## 
-    ## Person ID:  16
-    ## Day:  79
-    ## Previous state:  succeptible
-    ## Random number:  0.06466726
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  17
-    ## Day:  79
-    ## Previous state:  recovered
-    ## Random number:  0.6707173
-    ## New state:  recovered
-    ## 
-    ## Person ID:  18
-    ## Day:  79
-    ## Previous state:  succeptible
-    ## Random number:  0.7232729
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  19
-    ## Day:  79
-    ## Previous state:  succeptible
-    ## Random number:  0.281954
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  20
-    ## Day:  79
-    ## Previous state:  succeptible
-    ## Random number:  0.352267
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  1
-    ## Day:  80
-    ## Previous state:  dead
-    ## Random number:  0.7352869
-    ## New state:  dead
-    ## 
-    ## Person ID:  2
-    ## Day:  80
-    ## Previous state:  succeptible
-    ## Random number:  0.3901995
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  3
-    ## Day:  80
-    ## Previous state:  succeptible
-    ## Random number:  0.2603538
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  4
-    ## Day:  80
-    ## Previous state:  succeptible
-    ## Random number:  0.2878593
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  5
-    ## Day:  80
-    ## Previous state:  recovered
-    ## Random number:  0.7060339
-    ## New state:  recovered
-    ## 
-    ## Person ID:  6
-    ## Day:  80
-    ## Previous state:  succeptible
-    ## Random number:  0.8713355
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  7
-    ## Day:  80
-    ## Previous state:  succeptible
-    ## Random number:  0.8302532
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  8
-    ## Day:  80
-    ## Previous state:  succeptible
-    ## Random number:  0.6077077
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  9
-    ## Day:  80
-    ## Previous state:  succeptible
-    ## Random number:  0.5045847
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  10
-    ## Day:  80
-    ## Previous state:  recovered
-    ## Random number:  0.09344579
-    ## New state:  recovered
-    ## 
-    ## Person ID:  11
-    ## Day:  80
-    ## Previous state:  succeptible
-    ## Random number:  0.4487345
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  12
-    ## Day:  80
-    ## Previous state:  succeptible
-    ## Random number:  0.784675
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  13
-    ## Day:  80
-    ## Previous state:  succeptible
-    ## Random number:  0.9123341
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  14
-    ## Day:  80
-    ## Previous state:  recovered
-    ## Random number:  0.4925667
-    ## New state:  recovered
-    ## 
-    ## Person ID:  15
-    ## Day:  80
-    ## Previous state:  recovered
-    ## Random number:  0.6579801
-    ## New state:  recovered
-    ## 
-    ## Person ID:  16
-    ## Day:  80
-    ## Previous state:  succeptible
-    ## Random number:  0.5597216
-    ## New state:  succeptible
-    ## 
-    ## Person ID:  17
-    ## Day:  80
-    ## Previous state:  recovered
-    ## Random number:  0.7160748
-    ## New state:  recovered
-    ## 
-    ## Person ID:  18
-    ## Day:  80
-    ## Previous state:  succeptible
-    ## Random number:  0.1800797
-    ## New state:  succeptible
-    ## 
     ## Person ID:  19
     ## Day:  80
     ## Previous state:  succeptible
-    ## Random number:  0.4671335
+    ## Random number:  0.7440989
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  80
-    ## Previous state:  succeptible
-    ## Random number:  0.7515773
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.831561
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  81
-    ## Previous state:  dead
-    ## Random number:  0.2480126
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.8638104
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  81
     ## Previous state:  succeptible
-    ## Random number:  0.6365553
+    ## Random number:  0.09033823
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  81
-    ## Previous state:  succeptible
-    ## Random number:  0.3110602
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.06414296
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  81
     ## Previous state:  succeptible
-    ## Random number:  0.4688677
+    ## Random number:  0.1640205
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  81
-    ## Previous state:  recovered
-    ## Random number:  0.1516425
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.496529
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  81
     ## Previous state:  succeptible
-    ## Random number:  0.7802113
+    ## Random number:  0.02267454
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  81
-    ## Previous state:  succeptible
-    ## Random number:  0.2359645
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.7595411
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  81
-    ## Previous state:  succeptible
-    ## Random number:  0.4299668
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.7684733
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  81
     ## Previous state:  succeptible
-    ## Random number:  0.834358
+    ## Random number:  0.1384938
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  81
     ## Previous state:  recovered
-    ## Random number:  0.5214274
+    ## Random number:  0.02467398
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  81
     ## Previous state:  succeptible
-    ## Random number:  0.3706201
+    ## Random number:  0.8444921
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  81
-    ## Previous state:  succeptible
-    ## Random number:  0.1099824
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.0631442
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  81
     ## Previous state:  succeptible
-    ## Random number:  0.4259276
+    ## Random number:  0.9618598
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  81
-    ## Previous state:  recovered
-    ## Random number:  0.7563425
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.2823474
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  81
-    ## Previous state:  recovered
-    ## Random number:  0.8451776
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.585483
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  81
     ## Previous state:  succeptible
-    ## Random number:  0.04747441
+    ## Random number:  0.4241643
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  81
-    ## Previous state:  recovered
-    ## Random number:  0.5601398
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.7509444
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  81
     ## Previous state:  succeptible
-    ## Random number:  0.2483296
+    ## Random number:  0.4680881
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  81
     ## Previous state:  succeptible
-    ## Random number:  0.3438945
+    ## Random number:  0.7901374
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  81
-    ## Previous state:  succeptible
-    ## Random number:  0.3857798
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.938721
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  82
-    ## Previous state:  dead
-    ## Random number:  0.3705086
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.4432035
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  82
     ## Previous state:  succeptible
-    ## Random number:  0.9124957
+    ## Random number:  0.4328884
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  82
-    ## Previous state:  succeptible
-    ## Random number:  0.6131212
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.6754486
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  82
     ## Previous state:  succeptible
-    ## Random number:  0.3807834
+    ## Random number:  0.03035572
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  82
-    ## Previous state:  recovered
-    ## Random number:  0.3295764
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.3189295
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  82
     ## Previous state:  succeptible
-    ## Random number:  0.8313344
+    ## Random number:  0.01009295
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  82
-    ## Previous state:  succeptible
-    ## Random number:  0.9784503
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.9645179
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  82
-    ## Previous state:  succeptible
-    ## Random number:  0.2252031
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.2042986
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  82
     ## Previous state:  succeptible
-    ## Random number:  0.1330598
+    ## Random number:  0.7272708
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  82
     ## Previous state:  recovered
-    ## Random number:  0.6698678
+    ## Random number:  0.03776105
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  82
     ## Previous state:  succeptible
-    ## Random number:  0.3026556
+    ## Random number:  0.6601231
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  82
-    ## Previous state:  succeptible
-    ## Random number:  0.7914834
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.06258332
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  82
     ## Previous state:  succeptible
-    ## Random number:  0.2333319
+    ## Random number:  0.4988539
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  82
-    ## Previous state:  recovered
-    ## Random number:  0.1025105
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.8354567
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  82
-    ## Previous state:  recovered
-    ## Random number:  0.8323718
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.7361496
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  82
     ## Previous state:  succeptible
-    ## Random number:  0.4311442
+    ## Random number:  0.1492878
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  82
-    ## Previous state:  recovered
-    ## Random number:  0.220656
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.4456838
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  82
     ## Previous state:  succeptible
-    ## Random number:  0.2975401
+    ## Random number:  0.6719231
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  82
     ## Previous state:  succeptible
-    ## Random number:  0.7991732
+    ## Random number:  0.5553831
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  82
-    ## Previous state:  succeptible
-    ## Random number:  0.7457793
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.207304
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  83
-    ## Previous state:  dead
-    ## Random number:  0.751332
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.4943463
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  83
     ## Previous state:  succeptible
-    ## Random number:  0.3040646
+    ## Random number:  0.1735763
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  83
-    ## Previous state:  succeptible
-    ## Random number:  0.9305006
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.4988381
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  83
     ## Previous state:  succeptible
-    ## Random number:  0.6592368
+    ## Random number:  0.5645813
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  83
-    ## Previous state:  recovered
-    ## Random number:  0.710995
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.7215506
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  83
     ## Previous state:  succeptible
-    ## Random number:  0.458165
+    ## Random number:  0.9752313
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  83
-    ## Previous state:  succeptible
-    ## Random number:  0.1044885
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.6134299
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  83
-    ## Previous state:  succeptible
-    ## Random number:  0.9526098
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.7443344
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  83
     ## Previous state:  succeptible
-    ## Random number:  0.5783491
+    ## Random number:  0.2033783
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  83
     ## Previous state:  recovered
-    ## Random number:  0.2768196
+    ## Random number:  0.585388
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  83
     ## Previous state:  succeptible
-    ## Random number:  0.9381521
+    ## Random number:  0.8454975
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  83
-    ## Previous state:  succeptible
-    ## Random number:  0.3108797
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.5836604
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  83
     ## Previous state:  succeptible
-    ## Random number:  0.8402652
+    ## Random number:  0.5072538
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  83
-    ## Previous state:  recovered
-    ## Random number:  0.3254134
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.7062719
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  83
-    ## Previous state:  recovered
-    ## Random number:  0.9329714
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.3453995
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  83
     ## Previous state:  succeptible
-    ## Random number:  0.8237627
+    ## Random number:  0.7954724
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  83
-    ## Previous state:  recovered
-    ## Random number:  0.1533812
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.5426896
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  83
     ## Previous state:  succeptible
-    ## Random number:  0.201567
+    ## Random number:  0.0337222
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  83
     ## Previous state:  succeptible
-    ## Random number:  0.6292361
+    ## Random number:  0.6492061
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  83
-    ## Previous state:  succeptible
-    ## Random number:  0.4087124
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.9638778
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  84
-    ## Previous state:  dead
-    ## Random number:  0.9642922
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.05855333
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  84
     ## Previous state:  succeptible
-    ## Random number:  0.8538368
+    ## Random number:  0.09162608
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  84
-    ## Previous state:  succeptible
-    ## Random number:  0.2912706
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.4318166
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  84
     ## Previous state:  succeptible
-    ## Random number:  0.1089885
+    ## Random number:  0.3274864
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  84
-    ## Previous state:  recovered
-    ## Random number:  0.9884622
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.3172713
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  84
     ## Previous state:  succeptible
-    ## Random number:  0.5187287
+    ## Random number:  0.1517978
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  84
-    ## Previous state:  succeptible
-    ## Random number:  0.3734192
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.5364931
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  84
-    ## Previous state:  succeptible
-    ## Random number:  0.990534
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.2100942
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  84
     ## Previous state:  succeptible
-    ## Random number:  0.1130581
+    ## Random number:  0.4235929
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  84
     ## Previous state:  recovered
-    ## Random number:  0.52116
+    ## Random number:  0.4566761
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  84
     ## Previous state:  succeptible
-    ## Random number:  0.424491
+    ## Random number:  0.6498443
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  84
-    ## Previous state:  succeptible
-    ## Random number:  0.3916647
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.4442742
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  84
     ## Previous state:  succeptible
-    ## Random number:  0.4271949
+    ## Random number:  0.1833286
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  84
-    ## Previous state:  recovered
-    ## Random number:  0.3372794
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.03145017
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  84
-    ## Previous state:  recovered
-    ## Random number:  0.6430537
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.5106215
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  84
     ## Previous state:  succeptible
-    ## Random number:  0.9703687
+    ## Random number:  0.6776669
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  84
-    ## Previous state:  recovered
-    ## Random number:  0.3667529
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.3713235
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  84
     ## Previous state:  succeptible
-    ## Random number:  0.4526198
+    ## Random number:  0.3122931
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  84
     ## Previous state:  succeptible
-    ## Random number:  0.8188983
+    ## Random number:  0.8178015
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  84
-    ## Previous state:  succeptible
-    ## Random number:  0.7550467
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.6721496
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  85
-    ## Previous state:  dead
-    ## Random number:  0.8968758
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.3144233
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  85
     ## Previous state:  succeptible
-    ## Random number:  0.3743114
+    ## Random number:  0.4898502
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  85
-    ## Previous state:  succeptible
-    ## Random number:  0.7669175
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.3199293
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  85
     ## Previous state:  succeptible
-    ## Random number:  0.5019312
+    ## Random number:  0.3173905
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  85
-    ## Previous state:  recovered
-    ## Random number:  0.6454769
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.6421562
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  85
     ## Previous state:  succeptible
-    ## Random number:  0.226833
+    ## Random number:  0.8104862
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  85
-    ## Previous state:  succeptible
-    ## Random number:  0.1043725
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.6736409
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  85
-    ## Previous state:  succeptible
-    ## Random number:  0.06594728
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.9560394
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  85
     ## Previous state:  succeptible
-    ## Random number:  0.2484276
+    ## Random number:  0.5192613
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  85
     ## Previous state:  recovered
-    ## Random number:  0.6838585
+    ## Random number:  0.5357631
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  85
     ## Previous state:  succeptible
-    ## Random number:  0.2784168
+    ## Random number:  0.6200332
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  85
-    ## Previous state:  succeptible
-    ## Random number:  0.3637845
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.9264289
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  85
     ## Previous state:  succeptible
-    ## Random number:  0.005921949
+    ## Random number:  0.4554406
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  85
-    ## Previous state:  recovered
-    ## Random number:  0.2934051
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.2058335
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  85
-    ## Previous state:  recovered
-    ## Random number:  0.9641
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.8663664
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  85
     ## Previous state:  succeptible
-    ## Random number:  0.01305069
+    ## Random number:  0.3811781
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  85
-    ## Previous state:  recovered
-    ## Random number:  0.5754416
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.7326891
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  85
     ## Previous state:  succeptible
-    ## Random number:  0.2490554
+    ## Random number:  0.05865018
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  85
     ## Previous state:  succeptible
-    ## Random number:  0.1713243
+    ## Random number:  0.978462
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  85
-    ## Previous state:  succeptible
-    ## Random number:  0.1037111
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.3166129
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  86
-    ## Previous state:  dead
-    ## Random number:  0.2514622
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.08202964
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  86
     ## Previous state:  succeptible
-    ## Random number:  0.5714697
+    ## Random number:  0.9509452
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  86
-    ## Previous state:  succeptible
-    ## Random number:  0.4505939
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.1334299
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  86
     ## Previous state:  succeptible
-    ## Random number:  0.2584366
+    ## Random number:  0.8532444
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  86
-    ## Previous state:  recovered
-    ## Random number:  0.4555587
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.9869291
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  86
     ## Previous state:  succeptible
-    ## Random number:  0.6444715
+    ## Random number:  0.08561477
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  86
-    ## Previous state:  succeptible
-    ## Random number:  0.1225845
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.5543347
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  86
-    ## Previous state:  succeptible
-    ## Random number:  0.7181517
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.9248812
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  86
     ## Previous state:  succeptible
-    ## Random number:  0.2327713
+    ## Random number:  0.3045146
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  86
     ## Previous state:  recovered
-    ## Random number:  0.3657538
+    ## Random number:  0.06654428
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  86
     ## Previous state:  succeptible
-    ## Random number:  0.8729743
+    ## Random number:  0.7122233
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  86
-    ## Previous state:  succeptible
-    ## Random number:  0.3484504
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.4841149
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  86
     ## Previous state:  succeptible
-    ## Random number:  0.4319315
+    ## Random number:  0.6207653
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  86
-    ## Previous state:  recovered
-    ## Random number:  0.5484106
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.4883126
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  86
-    ## Previous state:  recovered
-    ## Random number:  0.03839162
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.5673485
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  86
     ## Previous state:  succeptible
-    ## Random number:  0.5238281
+    ## Random number:  0.5130556
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  86
-    ## Previous state:  recovered
-    ## Random number:  0.2782446
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.6187232
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  86
     ## Previous state:  succeptible
-    ## Random number:  0.4451589
+    ## Random number:  0.4591743
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  86
     ## Previous state:  succeptible
-    ## Random number:  0.4803126
+    ## Random number:  0.9025969
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  86
-    ## Previous state:  succeptible
-    ## Random number:  0.6122188
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.6596192
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  87
-    ## Previous state:  dead
-    ## Random number:  0.03224506
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.8989988
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  87
     ## Previous state:  succeptible
-    ## Random number:  0.9422611
+    ## Random number:  0.4679421
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  87
-    ## Previous state:  succeptible
-    ## Random number:  0.01102823
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.9908849
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  87
     ## Previous state:  succeptible
-    ## Random number:  0.5120402
+    ## Random number:  0.3193814
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  87
-    ## Previous state:  recovered
-    ## Random number:  0.3212534
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.9691769
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  87
     ## Previous state:  succeptible
-    ## Random number:  0.1232625
+    ## Random number:  0.6962292
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  87
-    ## Previous state:  succeptible
-    ## Random number:  0.07277586
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.9556062
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  87
-    ## Previous state:  succeptible
-    ## Random number:  0.3108312
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.2922677
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  87
     ## Previous state:  succeptible
-    ## Random number:  0.5371517
+    ## Random number:  0.4323317
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  87
     ## Previous state:  recovered
-    ## Random number:  0.7429938
+    ## Random number:  0.2690784
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  87
     ## Previous state:  succeptible
-    ## Random number:  0.3576084
+    ## Random number:  0.5570208
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  87
-    ## Previous state:  succeptible
-    ## Random number:  0.3601162
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.2591233
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  87
     ## Previous state:  succeptible
-    ## Random number:  0.9410166
+    ## Random number:  0.3920046
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  87
-    ## Previous state:  recovered
-    ## Random number:  0.6217533
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.2915919
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  87
-    ## Previous state:  recovered
-    ## Random number:  0.2335452
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.2269353
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  87
     ## Previous state:  succeptible
-    ## Random number:  0.8124723
+    ## Random number:  0.03972504
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  87
-    ## Previous state:  recovered
-    ## Random number:  0.3661501
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.3205103
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  87
     ## Previous state:  succeptible
-    ## Random number:  0.4609849
+    ## Random number:  0.09125253
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  87
     ## Previous state:  succeptible
-    ## Random number:  0.2788837
+    ## Random number:  0.836694
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  87
-    ## Previous state:  succeptible
-    ## Random number:  0.6627884
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.1683261
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  88
-    ## Previous state:  dead
-    ## Random number:  0.504075
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.1062997
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  88
     ## Previous state:  succeptible
-    ## Random number:  0.4251725
+    ## Random number:  0.3721269
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  88
-    ## Previous state:  succeptible
-    ## Random number:  0.2279882
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.524386
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  88
     ## Previous state:  succeptible
-    ## Random number:  0.03863575
+    ## Random number:  0.02190226
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  88
-    ## Previous state:  recovered
-    ## Random number:  0.2300007
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.1487346
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  88
     ## Previous state:  succeptible
-    ## Random number:  0.4865981
+    ## Random number:  0.4268702
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  88
-    ## Previous state:  succeptible
-    ## Random number:  0.002501797
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.1353383
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  88
-    ## Previous state:  succeptible
-    ## Random number:  0.8709234
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.7435041
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  88
     ## Previous state:  succeptible
-    ## Random number:  0.4406198
+    ## Random number:  0.07549533
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  88
     ## Previous state:  recovered
-    ## Random number:  0.3423417
+    ## Random number:  0.6196068
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  88
     ## Previous state:  succeptible
-    ## Random number:  0.5330506
+    ## Random number:  0.733123
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  88
-    ## Previous state:  succeptible
-    ## Random number:  0.2459702
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.1858607
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  88
     ## Previous state:  succeptible
-    ## Random number:  0.9189613
+    ## Random number:  0.7548136
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  88
-    ## Previous state:  recovered
-    ## Random number:  0.1139153
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.4180686
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  88
-    ## Previous state:  recovered
-    ## Random number:  0.8697807
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.3463741
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  88
     ## Previous state:  succeptible
-    ## Random number:  0.0890635
+    ## Random number:  0.6063177
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  88
-    ## Previous state:  recovered
-    ## Random number:  0.174714
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.2051487
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  88
     ## Previous state:  succeptible
-    ## Random number:  0.2354006
+    ## Random number:  0.7954835
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  88
     ## Previous state:  succeptible
-    ## Random number:  0.929495
+    ## Random number:  0.6531669
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  88
-    ## Previous state:  succeptible
-    ## Random number:  0.6179239
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.1801558
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  89
-    ## Previous state:  dead
-    ## Random number:  0.3989484
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.4680817
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  89
     ## Previous state:  succeptible
-    ## Random number:  0.3938002
+    ## Random number:  0.0681466
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  89
-    ## Previous state:  succeptible
-    ## Random number:  0.784475
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.4431164
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  89
     ## Previous state:  succeptible
-    ## Random number:  0.4113993
+    ## Random number:  0.4112973
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  89
-    ## Previous state:  recovered
-    ## Random number:  0.06182961
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.04911816
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  89
     ## Previous state:  succeptible
-    ## Random number:  0.9707388
+    ## Random number:  0.3853635
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  89
-    ## Previous state:  succeptible
-    ## Random number:  0.6647338
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.1078134
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  89
-    ## Previous state:  succeptible
-    ## Random number:  0.2003973
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.4324009
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  89
     ## Previous state:  succeptible
-    ## Random number:  0.918431
+    ## Random number:  0.04757774
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  89
     ## Previous state:  recovered
-    ## Random number:  0.375182
+    ## Random number:  0.7825252
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  89
     ## Previous state:  succeptible
-    ## Random number:  0.3387599
+    ## Random number:  0.786896
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  89
-    ## Previous state:  succeptible
-    ## Random number:  0.399297
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.1368492
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  89
     ## Previous state:  succeptible
-    ## Random number:  0.9295156
+    ## Random number:  0.1253414
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  89
-    ## Previous state:  recovered
-    ## Random number:  0.8107164
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.8572126
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  89
-    ## Previous state:  recovered
-    ## Random number:  0.6258402
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.4048433
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  89
     ## Previous state:  succeptible
-    ## Random number:  0.9712967
+    ## Random number:  0.2261218
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  89
-    ## Previous state:  recovered
-    ## Random number:  0.7031396
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.7159399
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  89
     ## Previous state:  succeptible
-    ## Random number:  0.4820936
+    ## Random number:  0.5481117
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  89
     ## Previous state:  succeptible
-    ## Random number:  0.987304
+    ## Random number:  0.6643946
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  89
-    ## Previous state:  succeptible
-    ## Random number:  0.1246941
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.7850049
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  90
-    ## Previous state:  dead
-    ## Random number:  0.3722016
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.5518234
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  90
     ## Previous state:  succeptible
-    ## Random number:  0.4289153
+    ## Random number:  0.9888196
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  90
-    ## Previous state:  succeptible
-    ## Random number:  0.9856244
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.777803
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  90
     ## Previous state:  succeptible
-    ## Random number:  0.494337
+    ## Random number:  0.6472854
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  90
-    ## Previous state:  recovered
-    ## Random number:  0.5882046
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.6678
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  90
     ## Previous state:  succeptible
-    ## Random number:  0.4962388
+    ## Random number:  0.7631156
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  90
-    ## Previous state:  succeptible
-    ## Random number:  0.2556009
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.002445654
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  90
-    ## Previous state:  succeptible
-    ## Random number:  0.1243942
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.1660246
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  90
     ## Previous state:  succeptible
-    ## Random number:  0.9081021
+    ## Random number:  0.593616
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  90
     ## Previous state:  recovered
-    ## Random number:  0.6945056
+    ## Random number:  0.3155149
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  90
     ## Previous state:  succeptible
-    ## Random number:  0.3322414
+    ## Random number:  0.5525998
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  90
-    ## Previous state:  succeptible
-    ## Random number:  0.9298331
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.8724007
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  90
     ## Previous state:  succeptible
-    ## Random number:  0.8024849
+    ## Random number:  0.4463717
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  90
-    ## Previous state:  recovered
-    ## Random number:  0.2459036
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.0583631
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  90
-    ## Previous state:  recovered
-    ## Random number:  0.5120059
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.8382302
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  90
     ## Previous state:  succeptible
-    ## Random number:  0.9740583
+    ## Random number:  0.1784593
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  90
-    ## Previous state:  recovered
-    ## Random number:  0.2206925
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.4107836
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  90
     ## Previous state:  succeptible
-    ## Random number:  0.7572654
+    ## Random number:  0.9306088
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  90
     ## Previous state:  succeptible
-    ## Random number:  0.7228619
+    ## Random number:  0.5497559
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  90
-    ## Previous state:  succeptible
-    ## Random number:  0.5236649
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.8777068
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  91
-    ## Previous state:  dead
-    ## Random number:  0.7180205
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.1567132
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  91
     ## Previous state:  succeptible
-    ## Random number:  0.3638047
+    ## Random number:  0.5288026
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  91
-    ## Previous state:  succeptible
-    ## Random number:  0.2014289
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.7644688
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  91
     ## Previous state:  succeptible
-    ## Random number:  0.4282066
+    ## Random number:  0.3542952
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  91
-    ## Previous state:  recovered
-    ## Random number:  0.9584909
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.2093463
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  91
     ## Previous state:  succeptible
-    ## Random number:  0.6165976
+    ## Random number:  0.4853682
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  91
-    ## Previous state:  succeptible
-    ## Random number:  0.07582319
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.4137822
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  91
-    ## Previous state:  succeptible
-    ## Random number:  0.9823121
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.7633138
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  91
     ## Previous state:  succeptible
-    ## Random number:  0.7821624
+    ## Random number:  0.2231559
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  91
     ## Previous state:  recovered
-    ## Random number:  0.8114512
+    ## Random number:  0.2494626
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  91
     ## Previous state:  succeptible
-    ## Random number:  0.3894457
+    ## Random number:  0.2282018
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  91
-    ## Previous state:  succeptible
-    ## Random number:  0.1630916
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.7564532
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  91
     ## Previous state:  succeptible
-    ## Random number:  0.6552418
+    ## Random number:  0.7042363
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  91
-    ## Previous state:  recovered
-    ## Random number:  0.5693224
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.9748295
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  91
-    ## Previous state:  recovered
-    ## Random number:  0.382042
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.0496255
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  91
     ## Previous state:  succeptible
-    ## Random number:  0.6186306
+    ## Random number:  0.1965209
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  91
-    ## Previous state:  recovered
-    ## Random number:  0.8149179
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.1206163
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  91
     ## Previous state:  succeptible
-    ## Random number:  0.2206598
+    ## Random number:  0.8554692
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  91
     ## Previous state:  succeptible
-    ## Random number:  0.22018
+    ## Random number:  0.6038502
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  91
-    ## Previous state:  succeptible
-    ## Random number:  0.2683225
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.7318973
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  92
-    ## Previous state:  dead
-    ## Random number:  0.6027153
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.06727754
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  92
     ## Previous state:  succeptible
-    ## Random number:  0.08662516
+    ## Random number:  0.501102
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  92
-    ## Previous state:  succeptible
-    ## Random number:  0.1181719
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.6462896
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  92
     ## Previous state:  succeptible
-    ## Random number:  0.9190117
+    ## Random number:  0.625023
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  92
-    ## Previous state:  recovered
-    ## Random number:  0.680752
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.7839142
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  92
     ## Previous state:  succeptible
-    ## Random number:  0.9923604
+    ## Random number:  0.4272156
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  92
-    ## Previous state:  succeptible
-    ## Random number:  0.2192988
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.2720874
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  92
-    ## Previous state:  succeptible
-    ## Random number:  0.7606092
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.6006041
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  92
     ## Previous state:  succeptible
-    ## Random number:  0.03706926
+    ## Random number:  0.6652935
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  92
     ## Previous state:  recovered
-    ## Random number:  0.1080869
+    ## Random number:  0.5839861
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  92
     ## Previous state:  succeptible
-    ## Random number:  0.4073681
+    ## Random number:  0.2508183
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  92
-    ## Previous state:  succeptible
-    ## Random number:  0.1875721
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.9122727
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  92
     ## Previous state:  succeptible
-    ## Random number:  0.04838138
+    ## Random number:  0.2522696
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  92
-    ## Previous state:  recovered
-    ## Random number:  0.1556813
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.9512812
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  92
-    ## Previous state:  recovered
-    ## Random number:  0.2897205
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.9034778
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  92
     ## Previous state:  succeptible
-    ## Random number:  0.6037008
+    ## Random number:  0.8029688
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  92
-    ## Previous state:  recovered
-    ## Random number:  0.4543397
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.2129538
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  92
     ## Previous state:  succeptible
-    ## Random number:  0.2505318
+    ## Random number:  0.8051306
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  92
     ## Previous state:  succeptible
-    ## Random number:  0.162398
+    ## Random number:  0.5817741
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  92
-    ## Previous state:  succeptible
-    ## Random number:  0.4363696
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.2527877
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  93
-    ## Previous state:  dead
-    ## Random number:  0.1108822
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.1398724
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  93
     ## Previous state:  succeptible
-    ## Random number:  0.2118743
+    ## Random number:  0.3904138
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  93
-    ## Previous state:  succeptible
-    ## Random number:  0.8827384
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.7580312
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  93
     ## Previous state:  succeptible
-    ## Random number:  0.5462706
+    ## Random number:  0.2566825
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  93
-    ## Previous state:  recovered
-    ## Random number:  0.3221317
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.06243454
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  93
     ## Previous state:  succeptible
-    ## Random number:  0.4528438
+    ## Random number:  0.4462633
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  93
-    ## Previous state:  succeptible
-    ## Random number:  0.07983613
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.8691637
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  93
-    ## Previous state:  succeptible
-    ## Random number:  0.6884099
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.3322567
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  93
     ## Previous state:  succeptible
-    ## Random number:  0.6585746
+    ## Random number:  0.08160093
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  93
     ## Previous state:  recovered
-    ## Random number:  0.4574785
+    ## Random number:  0.8516317
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  93
     ## Previous state:  succeptible
-    ## Random number:  0.7117469
+    ## Random number:  0.8003757
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  93
-    ## Previous state:  succeptible
-    ## Random number:  0.4725696
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.759183
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  93
     ## Previous state:  succeptible
-    ## Random number:  0.4797198
+    ## Random number:  0.5292865
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  93
-    ## Previous state:  recovered
-    ## Random number:  0.001453
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.6490181
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  93
-    ## Previous state:  recovered
-    ## Random number:  0.3681924
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.3962251
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  93
     ## Previous state:  succeptible
-    ## Random number:  0.2609624
+    ## Random number:  0.1787452
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  93
-    ## Previous state:  recovered
-    ## Random number:  0.1802467
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.2190985
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  93
     ## Previous state:  succeptible
-    ## Random number:  0.5163501
+    ## Random number:  0.7608345
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  93
     ## Previous state:  succeptible
-    ## Random number:  0.2287189
+    ## Random number:  0.8053285
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  93
-    ## Previous state:  succeptible
-    ## Random number:  0.7003083
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.6763903
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  94
-    ## Previous state:  dead
-    ## Random number:  0.3774994
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.4390005
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  94
     ## Previous state:  succeptible
-    ## Random number:  0.7246508
+    ## Random number:  0.3574476
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  94
-    ## Previous state:  succeptible
-    ## Random number:  0.007571885
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.6358689
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  94
     ## Previous state:  succeptible
-    ## Random number:  0.7564542
+    ## Random number:  0.6663466
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  94
-    ## Previous state:  recovered
-    ## Random number:  0.07556973
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.4006
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  94
     ## Previous state:  succeptible
-    ## Random number:  0.8872294
+    ## Random number:  0.4255071
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  94
-    ## Previous state:  succeptible
-    ## Random number:  0.09835848
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.5691111
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  94
-    ## Previous state:  succeptible
-    ## Random number:  0.5116225
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.5809235
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  94
     ## Previous state:  succeptible
-    ## Random number:  0.2981718
+    ## Random number:  0.8140878
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  94
     ## Previous state:  recovered
-    ## Random number:  0.3038866
+    ## Random number:  0.4846152
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  94
     ## Previous state:  succeptible
-    ## Random number:  0.1828604
+    ## Random number:  0.969329
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  94
-    ## Previous state:  succeptible
-    ## Random number:  0.08016174
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.01319522
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  94
     ## Previous state:  succeptible
-    ## Random number:  0.7675097
+    ## Random number:  0.03797797
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  94
-    ## Previous state:  recovered
-    ## Random number:  0.1164484
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.227776
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  94
-    ## Previous state:  recovered
-    ## Random number:  0.2818135
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.02938995
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  94
     ## Previous state:  succeptible
-    ## Random number:  0.3496314
+    ## Random number:  0.9931847
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  94
-    ## Previous state:  recovered
-    ## Random number:  0.7307828
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.6229577
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  94
     ## Previous state:  succeptible
-    ## Random number:  0.5356244
+    ## Random number:  0.02470002
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  94
     ## Previous state:  succeptible
-    ## Random number:  0.05424919
+    ## Random number:  0.8419324
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  94
-    ## Previous state:  succeptible
-    ## Random number:  0.6439418
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.005919785
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  95
-    ## Previous state:  dead
-    ## Random number:  0.5287417
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.5274485
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  95
     ## Previous state:  succeptible
-    ## Random number:  0.2523883
+    ## Random number:  0.2029565
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  95
-    ## Previous state:  succeptible
-    ## Random number:  0.7233399
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.994588
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  95
     ## Previous state:  succeptible
-    ## Random number:  0.1369497
+    ## Random number:  0.5940969
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  95
-    ## Previous state:  recovered
-    ## Random number:  0.08632289
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.3990502
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  95
     ## Previous state:  succeptible
-    ## Random number:  0.7113626
+    ## Random number:  0.2590326
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  95
-    ## Previous state:  succeptible
-    ## Random number:  0.3538739
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.4913283
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  95
-    ## Previous state:  succeptible
-    ## Random number:  0.6610284
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.2745601
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  95
     ## Previous state:  succeptible
-    ## Random number:  0.4327921
+    ## Random number:  0.6118016
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  95
     ## Previous state:  recovered
-    ## Random number:  0.5612809
+    ## Random number:  0.186176
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  95
     ## Previous state:  succeptible
-    ## Random number:  0.3831629
+    ## Random number:  0.5190907
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  95
-    ## Previous state:  succeptible
-    ## Random number:  0.9794662
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.8823803
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  95
     ## Previous state:  succeptible
-    ## Random number:  0.3753443
+    ## Random number:  0.9588278
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  95
-    ## Previous state:  recovered
-    ## Random number:  0.4400429
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.131886
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  95
-    ## Previous state:  recovered
-    ## Random number:  0.1638853
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.8408817
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  95
     ## Previous state:  succeptible
-    ## Random number:  0.6350231
+    ## Random number:  0.1971424
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  95
-    ## Previous state:  recovered
-    ## Random number:  0.6683179
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.4495386
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  95
     ## Previous state:  succeptible
-    ## Random number:  0.4508474
+    ## Random number:  0.5854595
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  95
     ## Previous state:  succeptible
-    ## Random number:  0.07893839
+    ## Random number:  0.6340682
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  95
-    ## Previous state:  succeptible
-    ## Random number:  0.468156
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.8426499
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  96
-    ## Previous state:  dead
-    ## Random number:  0.7023471
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.3994956
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  96
     ## Previous state:  succeptible
-    ## Random number:  0.9279094
+    ## Random number:  0.5915203
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  96
-    ## Previous state:  succeptible
-    ## Random number:  0.4771313
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.07020121
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  96
     ## Previous state:  succeptible
-    ## Random number:  0.1114812
+    ## Random number:  0.4733357
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  96
-    ## Previous state:  recovered
-    ## Random number:  0.7992985
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.121121
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  96
     ## Previous state:  succeptible
-    ## Random number:  0.1611936
+    ## Random number:  0.7288687
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  96
-    ## Previous state:  succeptible
-    ## Random number:  0.6775419
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.5491156
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  96
-    ## Previous state:  succeptible
-    ## Random number:  0.7325122
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.9675471
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  96
     ## Previous state:  succeptible
-    ## Random number:  0.7403829
+    ## Random number:  0.6873069
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  96
     ## Previous state:  recovered
-    ## Random number:  0.959472
+    ## Random number:  0.04205946
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  96
     ## Previous state:  succeptible
-    ## Random number:  0.4549082
+    ## Random number:  0.1660872
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  96
-    ## Previous state:  succeptible
-    ## Random number:  0.3767503
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.4573313
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  96
     ## Previous state:  succeptible
-    ## Random number:  0.995387
+    ## Random number:  0.01008911
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  96
-    ## Previous state:  recovered
-    ## Random number:  0.1219433
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.3037612
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  96
-    ## Previous state:  recovered
-    ## Random number:  0.6959588
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.6699214
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  96
     ## Previous state:  succeptible
-    ## Random number:  0.391515
+    ## Random number:  0.0705559
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  96
-    ## Previous state:  recovered
-    ## Random number:  0.2927421
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.2890676
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  96
     ## Previous state:  succeptible
-    ## Random number:  0.3722235
+    ## Random number:  0.8017372
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  96
     ## Previous state:  succeptible
-    ## Random number:  0.02576652
+    ## Random number:  0.2546334
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  96
-    ## Previous state:  succeptible
-    ## Random number:  0.2720774
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.7469329
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  97
-    ## Previous state:  dead
-    ## Random number:  0.8447692
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.7892247
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  97
     ## Previous state:  succeptible
-    ## Random number:  0.6731055
+    ## Random number:  0.2972158
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  97
-    ## Previous state:  succeptible
-    ## Random number:  0.6346995
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.03291903
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  97
     ## Previous state:  succeptible
-    ## Random number:  0.5739422
+    ## Random number:  0.7508637
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  97
-    ## Previous state:  recovered
-    ## Random number:  0.3843046
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.9850083
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  97
     ## Previous state:  succeptible
-    ## Random number:  0.8779213
+    ## Random number:  0.2070732
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  97
-    ## Previous state:  succeptible
-    ## Random number:  0.7651902
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.9379458
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  97
-    ## Previous state:  succeptible
-    ## Random number:  0.3713498
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.5108457
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  97
     ## Previous state:  succeptible
-    ## Random number:  0.9495113
+    ## Random number:  0.4060115
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  97
     ## Previous state:  recovered
-    ## Random number:  0.4102849
+    ## Random number:  0.4018812
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  97
     ## Previous state:  succeptible
-    ## Random number:  0.1118595
+    ## Random number:  0.3141766
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  97
-    ## Previous state:  succeptible
-    ## Random number:  0.7004532
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.3393669
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  97
     ## Previous state:  succeptible
-    ## Random number:  0.4181585
+    ## Random number:  0.385087
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  97
-    ## Previous state:  recovered
-    ## Random number:  0.4360656
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.3425975
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  97
-    ## Previous state:  recovered
-    ## Random number:  0.3143773
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.8007806
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  97
     ## Previous state:  succeptible
-    ## Random number:  0.9386726
+    ## Random number:  0.6836759
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  97
-    ## Previous state:  recovered
-    ## Random number:  0.003939247
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.2429776
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  97
     ## Previous state:  succeptible
-    ## Random number:  0.2570848
+    ## Random number:  0.2819382
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  97
     ## Previous state:  succeptible
-    ## Random number:  0.4385012
+    ## Random number:  0.2993826
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  97
-    ## Previous state:  succeptible
-    ## Random number:  0.4062087
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.267272
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  98
-    ## Previous state:  dead
-    ## Random number:  0.2041169
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.6711694
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  98
     ## Previous state:  succeptible
-    ## Random number:  0.7922525
+    ## Random number:  0.8150517
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  98
-    ## Previous state:  succeptible
-    ## Random number:  0.08936575
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.2753532
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  98
     ## Previous state:  succeptible
-    ## Random number:  0.02081146
+    ## Random number:  0.5157146
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  98
-    ## Previous state:  recovered
-    ## Random number:  0.400495
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.9417305
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  98
     ## Previous state:  succeptible
-    ## Random number:  0.8189291
+    ## Random number:  0.6081183
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  98
-    ## Previous state:  succeptible
-    ## Random number:  0.4798226
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.9998123
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  98
-    ## Previous state:  succeptible
-    ## Random number:  0.1229983
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.6025047
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  98
     ## Previous state:  succeptible
-    ## Random number:  0.8044214
+    ## Random number:  0.6134824
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  98
     ## Previous state:  recovered
-    ## Random number:  0.3907608
+    ## Random number:  0.0476286
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  98
     ## Previous state:  succeptible
-    ## Random number:  0.05755923
+    ## Random number:  0.9682715
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  98
-    ## Previous state:  succeptible
-    ## Random number:  0.2668895
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.132992
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  98
     ## Previous state:  succeptible
-    ## Random number:  0.1158386
+    ## Random number:  0.150134
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  98
-    ## Previous state:  recovered
-    ## Random number:  0.1918248
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.3264873
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  98
-    ## Previous state:  recovered
-    ## Random number:  0.4543717
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.100638
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  98
     ## Previous state:  succeptible
-    ## Random number:  0.6780122
+    ## Random number:  0.7990264
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  98
-    ## Previous state:  recovered
-    ## Random number:  0.7065343
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.4494772
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  98
     ## Previous state:  succeptible
-    ## Random number:  0.7175006
+    ## Random number:  0.1583748
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  98
     ## Previous state:  succeptible
-    ## Random number:  0.01814137
+    ## Random number:  0.4858158
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  98
-    ## Previous state:  succeptible
-    ## Random number:  0.9200237
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.465632
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  99
-    ## Previous state:  dead
-    ## Random number:  0.123507
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.5925825
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  99
     ## Previous state:  succeptible
-    ## Random number:  0.7376726
+    ## Random number:  0.6454872
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  99
-    ## Previous state:  succeptible
-    ## Random number:  0.2744252
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.4532411
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  99
     ## Previous state:  succeptible
-    ## Random number:  0.1476973
+    ## Random number:  0.9215187
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  99
-    ## Previous state:  recovered
-    ## Random number:  0.6093669
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.1911897
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  99
     ## Previous state:  succeptible
-    ## Random number:  0.6503868
+    ## Random number:  0.9983923
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  99
-    ## Previous state:  succeptible
-    ## Random number:  0.5366684
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.3954297
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  99
-    ## Previous state:  succeptible
-    ## Random number:  0.9580392
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.0694032
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  99
     ## Previous state:  succeptible
-    ## Random number:  0.3169815
+    ## Random number:  0.4555972
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  99
     ## Previous state:  recovered
-    ## Random number:  0.06245776
+    ## Random number:  0.9996689
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  99
     ## Previous state:  succeptible
-    ## Random number:  0.6818508
+    ## Random number:  0.2313481
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  99
-    ## Previous state:  succeptible
-    ## Random number:  0.1868865
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.2354175
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  99
     ## Previous state:  succeptible
-    ## Random number:  0.1047715
+    ## Random number:  0.8147109
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  99
-    ## Previous state:  recovered
-    ## Random number:  0.1188855
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.8311649
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  99
-    ## Previous state:  recovered
-    ## Random number:  0.1799747
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.5269788
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  99
     ## Previous state:  succeptible
-    ## Random number:  0.5154391
+    ## Random number:  0.9233124
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  99
-    ## Previous state:  recovered
-    ## Random number:  0.7499282
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.05433818
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  99
     ## Previous state:  succeptible
-    ## Random number:  0.4062499
+    ## Random number:  0.7531349
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  99
     ## Previous state:  succeptible
-    ## Random number:  0.5151859
+    ## Random number:  0.5856396
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  99
-    ## Previous state:  succeptible
-    ## Random number:  0.5550948
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.9134509
+    ## New state:  recovered
     ## 
     ## Person ID:  1
     ## Day:  100
-    ## Previous state:  dead
-    ## Random number:  0.6791193
-    ## New state:  dead
+    ## Previous state:  recovered
+    ## Random number:  0.2701074
+    ## New state:  recovered
     ## 
     ## Person ID:  2
     ## Day:  100
     ## Previous state:  succeptible
-    ## Random number:  0.2051997
+    ## Random number:  0.3785917
     ## New state:  succeptible
     ## 
     ## Person ID:  3
     ## Day:  100
-    ## Previous state:  succeptible
-    ## Random number:  0.5323589
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.4660643
+    ## New state:  recovered
     ## 
     ## Person ID:  4
     ## Day:  100
     ## Previous state:  succeptible
-    ## Random number:  0.5662553
+    ## Random number:  0.3426395
     ## New state:  succeptible
     ## 
     ## Person ID:  5
     ## Day:  100
-    ## Previous state:  recovered
-    ## Random number:  0.9562898
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.5575457
+    ## New state:  succeptible
     ## 
     ## Person ID:  6
     ## Day:  100
     ## Previous state:  succeptible
-    ## Random number:  0.1848842
+    ## Random number:  0.01559914
     ## New state:  succeptible
     ## 
     ## Person ID:  7
     ## Day:  100
-    ## Previous state:  succeptible
-    ## Random number:  0.5333036
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.4736636
+    ## New state:  recovered
     ## 
     ## Person ID:  8
     ## Day:  100
-    ## Previous state:  succeptible
-    ## Random number:  0.05710871
-    ## New state:  succeptible
+    ## Previous state:  recovered
+    ## Random number:  0.3097446
+    ## New state:  recovered
     ## 
     ## Person ID:  9
     ## Day:  100
     ## Previous state:  succeptible
-    ## Random number:  0.9074955
+    ## Random number:  0.2913344
     ## New state:  succeptible
     ## 
     ## Person ID:  10
     ## Day:  100
     ## Previous state:  recovered
-    ## Random number:  0.06904192
+    ## Random number:  0.0947243
     ## New state:  recovered
     ## 
     ## Person ID:  11
     ## Day:  100
     ## Previous state:  succeptible
-    ## Random number:  0.3379268
+    ## Random number:  0.8912009
     ## New state:  succeptible
     ## 
     ## Person ID:  12
     ## Day:  100
-    ## Previous state:  succeptible
-    ## Random number:  0.05073884
-    ## New state:  succeptible
+    ## Previous state:  dead
+    ## Random number:  0.4230155
+    ## New state:  dead
     ## 
     ## Person ID:  13
     ## Day:  100
     ## Previous state:  succeptible
-    ## Random number:  0.11894
+    ## Random number:  0.7419186
     ## New state:  succeptible
     ## 
     ## Person ID:  14
     ## Day:  100
-    ## Previous state:  recovered
-    ## Random number:  0.1096933
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.3927429
+    ## New state:  succeptible
     ## 
     ## Person ID:  15
     ## Day:  100
-    ## Previous state:  recovered
-    ## Random number:  0.5835339
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.2127808
+    ## New state:  succeptible
     ## 
     ## Person ID:  16
     ## Day:  100
     ## Previous state:  succeptible
-    ## Random number:  0.7478171
+    ## Random number:  0.3195873
     ## New state:  succeptible
     ## 
     ## Person ID:  17
     ## Day:  100
-    ## Previous state:  recovered
-    ## Random number:  0.2674906
-    ## New state:  recovered
+    ## Previous state:  succeptible
+    ## Random number:  0.9374594
+    ## New state:  succeptible
     ## 
     ## Person ID:  18
     ## Day:  100
     ## Previous state:  succeptible
-    ## Random number:  0.3780095
+    ## Random number:  0.4746554
     ## New state:  succeptible
     ## 
     ## Person ID:  19
     ## Day:  100
     ## Previous state:  succeptible
-    ## Random number:  0.2042054
+    ## Random number:  0.2705868
     ## New state:  succeptible
     ## 
     ## Person ID:  20
     ## Day:  100
-    ## Previous state:  succeptible
-    ## Random number:  0.4387532
-    ## New state:  succeptible
-
-``` r
-# remove this later, printing just for debugging
-population
-```
-
-    ## # A tibble: 20 x 101
-    ##    person_ids day_1 day_2 day_3 day_4 day_5 day_6 day_7 day_8 day_9 day_10
-    ##         <int> <chr> <chr> <chr> <chr> <chr> <chr> <chr> <chr> <chr> <chr> 
-    ##  1          1 infe… infe… infe… infe… infe… symp… symp… symp… symp… sympt…
-    ##  2          2 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
-    ##  3          3 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
-    ##  4          4 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
-    ##  5          5 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
-    ##  6          6 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
-    ##  7          7 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
-    ##  8          8 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
-    ##  9          9 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
-    ## 10         10 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
-    ## 11         11 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
-    ## 12         12 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
-    ## 13         13 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
-    ## 14         14 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
-    ## 15         15 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
-    ## 16         16 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
-    ## 17         17 succ… succ… succ… succ… succ… infe… infe… infe… infe… infec…
-    ## 18         18 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
-    ## 19         19 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
-    ## 20         20 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
-    ## # … with 90 more variables: day_11 <chr>, day_12 <chr>, day_13 <chr>,
-    ## #   day_14 <chr>, day_15 <chr>, day_16 <chr>, day_17 <chr>, day_18 <chr>,
-    ## #   day_19 <chr>, day_20 <chr>, day_21 <chr>, day_22 <chr>, day_23 <chr>,
-    ## #   day_24 <chr>, day_25 <chr>, day_26 <chr>, day_27 <chr>, day_28 <chr>,
-    ## #   day_29 <chr>, day_30 <chr>, day_31 <chr>, day_32 <chr>, day_33 <chr>,
-    ## #   day_34 <chr>, day_35 <chr>, day_36 <chr>, day_37 <chr>, day_38 <chr>,
-    ## #   day_39 <chr>, day_40 <chr>, day_41 <chr>, day_42 <chr>, day_43 <chr>,
-    ## #   day_44 <chr>, day_45 <chr>, day_46 <chr>, day_47 <chr>, day_48 <chr>,
-    ## #   day_49 <chr>, day_50 <chr>, day_51 <chr>, day_52 <chr>, day_53 <chr>,
-    ## #   day_54 <chr>, day_55 <chr>, day_56 <chr>, day_57 <chr>, day_58 <chr>,
-    ## #   day_59 <chr>, day_60 <chr>, day_61 <chr>, day_62 <chr>, day_63 <chr>,
-    ## #   day_64 <chr>, day_65 <chr>, day_66 <chr>, day_67 <chr>, day_68 <chr>,
-    ## #   day_69 <chr>, day_70 <chr>, day_71 <chr>, day_72 <chr>, day_73 <chr>,
-    ## #   day_74 <chr>, day_75 <chr>, day_76 <chr>, day_77 <chr>, day_78 <chr>,
-    ## #   day_79 <chr>, day_80 <chr>, day_81 <chr>, day_82 <chr>, day_83 <chr>,
-    ## #   day_84 <chr>, day_85 <chr>, day_86 <chr>, day_87 <chr>, day_88 <chr>,
-    ## #   day_89 <chr>, day_90 <chr>, day_91 <chr>, day_92 <chr>, day_93 <chr>,
-    ## #   day_94 <chr>, day_95 <chr>, day_96 <chr>, day_97 <chr>, day_98 <chr>,
-    ## #   day_99 <chr>, day_100 <chr>
+    ## Previous state:  recovered
+    ## Random number:  0.8441128
+    ## New state:  recovered
 
 ## Visualization
 
@@ -12332,7 +12289,7 @@ population_to_visualize =
 population_to_visualize
 ```
 
-    ## # A tibble: 331 x 3
+    ## # A tibble: 332 x 3
     ## # Groups:   day [100]
     ##      day state                               count
     ##    <dbl> <chr>                               <int>
@@ -12346,7 +12303,7 @@ population_to_visualize
     ##  8     4 succeptible                            19
     ##  9     5 infectious_symptomatic_pre_symptoms     1
     ## 10     5 succeptible                            19
-    ## # … with 321 more rows
+    ## # … with 322 more rows
 
 Graph the person-count of each state in a different color, with days on
 the x-axis.
