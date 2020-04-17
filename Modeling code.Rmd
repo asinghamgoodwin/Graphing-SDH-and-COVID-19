@@ -158,7 +158,8 @@ change_state = function(id, prev_state, day){ #TODO: Fix inputs elsewhere
 
   if (prev_state == INFECTED_ASYMPTOMATIC) {
     # wait 4 days before turning infectious
-    if (population[[str_c("day_", day - time_until_infectious)]][id] == INFECTED_ASYMPTOMATIC) {
+    earlier_state_to_check = population[[str_c("day_", day - time_until_infectious)]][id]
+    if (!is.null(earlier_state_to_check) && earlier_state_to_check == INFECTED_ASYMPTOMATIC) {
       new_state = INFECTIOUS_ASYMPTOMATIC
       
       # infect others according to parameters
@@ -169,14 +170,16 @@ change_state = function(id, prev_state, day){ #TODO: Fix inputs elsewhere
 
   if (prev_state == INFECTIOUS_ASYMPTOMATIC) {
     # wait 4 days before recovering
-    if (population[[str_c("day_", day - asymptomatic_time_from_infectious_to_recovery)]][id] == INFECTED_ASYMPTOMATIC) {
+    earlier_state_to_check = population[[str_c("day_", day - asymptomatic_time_from_infectious_to_recovery)]][id]
+    if (!is.null(earlier_state_to_check) && earlier_state_to_check == INFECTED_ASYMPTOMATIC) {
       new_state = RECOVERED
     }
   }
 
   if (prev_state == INFECTED_SYMPTOMATIC_PRE_SYMPTOMS) {
     # wait 4 days before turning infectious
-    if (population[[str_c("day_", day - time_until_infectious)]][id] == INFECTED_SYMPTOMATIC_PRE_SYMPTOMS) {
+    earlier_state_to_check = population[[str_c("day_", day - time_until_infectious)]][id]
+    if (!is.null(earlier_state_to_check) && earlier_state_to_check == INFECTED_SYMPTOMATIC_PRE_SYMPTOMS) {
       new_state = INFECTIOUS_SYMPTOMATIC_PRE_SYMPTOMS
       
       # infect others according to parameters
@@ -187,7 +190,8 @@ change_state = function(id, prev_state, day){ #TODO: Fix inputs elsewhere
 
   if (prev_state == INFECTIOUS_SYMPTOMATIC_PRE_SYMPTOMS) {
     # wait 1 day before turning symptomatic. severity of illness is based on demographics
-    if (population[[str_c("day_", day - time_infectious_before_symptom_onset)]][id] == INFECTIOUS_SYMPTOMATIC_PRE_SYMPTOMS) {
+    earlier_state_to_check = population[[str_c("day_", day - time_infectious_before_symptom_onset)]][id]
+    if (!is.null(earlier_state_to_check) && earlier_state_to_check == INFECTIOUS_SYMPTOMATIC_PRE_SYMPTOMS) {
       if (rand < 0.2) { # TODO - instead of being a number, rely on a table (to be filled in later)
         new_state = SYMPTOMATIC_NEED_HOSPITAL
       } else { 
@@ -198,7 +202,8 @@ change_state = function(id, prev_state, day){ #TODO: Fix inputs elsewhere
 
   if (prev_state == SYMPTOMATIC_NEED_HOSPITAL) {
     # seek care with 5 day delay or don't, depending on demographics
-    if (population[[str_c("day_", day - time_until_seeking_care)]][id] == SYMPTOMATIC_NEED_HOSPITAL) {
+    earlier_state_to_check = population[[str_c("day_", day - time_until_seeking_care)]][id]
+    if (!is.null(earlier_state_to_check) && earlier_state_to_check == SYMPTOMATIC_NEED_HOSPITAL) {
       if (rand < 0.3) { # TODO - instead of being a number, rely on a table or function (to be filled in later)
         new_state = NEED_HOSPITAL_DONT_SEEK_CARE
       } else {
@@ -209,7 +214,8 @@ change_state = function(id, prev_state, day){ #TODO: Fix inputs elsewhere
 
   if (prev_state == SYMPTOMATIC_DONT_NEED_HOSPITAL) {
     # wait 4 days then recover
-    if (population[[str_c("day_", day - time_from_symptom_onset_to_recovery)]][id] == SYMPTOMATIC_DONT_NEED_HOSPITAL) {
+    earlier_state_to_check = population[[str_c("day_", day - time_from_symptom_onset_to_recovery)]][id]
+    if (!is.null(earlier_state_to_check) && earlier_state_to_check == SYMPTOMATIC_DONT_NEED_HOSPITAL) {
       new_state = RECOVERED
     }
   }
@@ -231,7 +237,8 @@ change_state = function(id, prev_state, day){ #TODO: Fix inputs elsewhere
 
   if (prev_state == GET_HOSPITAL_CARE) {
     # after 10 days in bed, probabalistically die or recover
-    if (population[[str_c("day_", day - time_in_hospital_bed)]][id] == GET_HOSPITAL_CARE) {
+    earlier_state_to_check = population[[str_c("day_", day - time_in_hospital_bed)]][id]
+    if (!is.null(earlier_state_to_check) && earlier_state_to_check == GET_HOSPITAL_CARE) {
       if (rand < 0.5) { # TODO - instead of being a number, rely on a table or function (to be filled in later)
         new_state = DEAD
       } else {
@@ -243,7 +250,8 @@ change_state = function(id, prev_state, day){ #TODO: Fix inputs elsewhere
 
   if (prev_state == DONT_GET_NEEDED_CARE) {
     # die after 10 days
-    if (population[[str_c("day_", day - time_until_death_if_no_care)]][id] == DONT_GET_NEEDED_CARE) {
+    earlier_state_to_check = population[[str_c("day_", day - time_until_death_if_no_care)]][id]
+    if (!is.null(earlier_state_to_check) && earlier_state_to_check == DONT_GET_NEEDED_CARE) {
       new_state = DEAD
     }
   }
