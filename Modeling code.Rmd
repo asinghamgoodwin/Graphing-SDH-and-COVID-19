@@ -34,24 +34,25 @@ basic_reproductive_number = 2.4
 symptomatic_reproductive_number = basic_reproductive_number*(6/5)
 asymptomatic_reproductive_number = basic_reproductive_number*(3/5)
 
-time_until_infectious = 4.5 # This is figured from the incubation period, and rounded down from 4.6 so I can do steps in half-days.
+time_until_infectious = 4 # This is figured from the incubation period, and rounded down from 4.6 so I can do steps in full days.
 
 # For the asymptomatic types
 asymptomatic_time_from_infectious_to_recovery = 4 # This is figured from the generation time (confusing). Should this be longer??
 
 # For the symptomatic types
-time_infectious_before_symptom_onset = 0.5
-time_from_symptom_onset_to_recovery = 3.5
+time_infectious_before_symptom_onset = 1
+time_from_symptom_onset_to_recovery = 4
 
 time_until_seeking_care = 5 # This is the number of days after symptom onset that people seek hospital care if they need it, on average
-time_in_hospital_bed = 10.5
+time_in_hospital_bed = 10
 time_until_death_if_no_care = 10
 
 ```
 
 These numbers come from NYC open data.
 ```{r}
-hospital_bed_capacity = 100 #TODO - fill in with real number later
+initial_hospital_bed_capacity = 100 #TODO - fill in with real number later
+hospital_beds_available = initial_hospital_bed_capacity
 
 # TODO - fill in distributions of: age, health status/underlying conditions, "essential" jobs, poverty levels, incarcerated, homeless, detained immigrants, insurance coverage 
 ```
@@ -156,45 +157,95 @@ change_state = function(id, prev_state, day){ #TODO: Fix inputs elsewhere
   }
 
   if (prev_state == INFECTED_ASYMPTOMATIC) {
-    # WAIT 4.5 days before turning infectious
+    # wait 4 days before turning infectious
+    if (population[[str_c("day_", day - time_until_infectious)]][id] == INFECTED_ASYMPTOMATIC) {
+      new_state = INFECTIOUS_ASYMPTOMATIC
+      
+      # infect others according to parameters
+      # TODO - finish this section (infect how many people? on what days?)
+      infect_someone(day + 1)
+    }
   }
 
   if (prev_state == INFECTIOUS_ASYMPTOMATIC) {
-    # WAIT 4 days before recovering
-    # INFECT OTHERS according to parameters
+    # wait 4 days before recovering
+    if (population[[str_c("day_", day - asymptomatic_time_from_infectious_to_recovery)]][id] == INFECTED_ASYMPTOMATIC) {
+      new_state = RECOVERED
+    }
   }
 
   if (prev_state == INFECTED_SYMPTOMATIC_PRE_SYMPTOMS) {
-    # WAIT 4.5 days before turning infectious
+    # wait 4 days before turning infectious
+    if (population[[str_c("day_", day - time_until_infectious)]][id] == INFECTED_SYMPTOMATIC_PRE_SYMPTOMS) {
+      new_state = INFECTIOUS_SYMPTOMATIC_PRE_SYMPTOMS
+      
+      # infect others according to parameters
+      # TODO - finish this section (infect how many people? on what days?)
+      infect_someone(day + 1)
+    }
   }
 
   if (prev_state == INFECTIOUS_SYMPTOMATIC_PRE_SYMPTOMS) {
-    # WAIT .5 days before turning symptomatic 
-    # INFECT OTHERS according to parameters
+    # wait 1 day before turning symptomatic. severity of illness is based on demographics
+    if (population[[str_c("day_", day - time_infectious_before_symptom_onset)]][id] == INFECTIOUS_SYMPTOMATIC_PRE_SYMPTOMS) {
+      if (rand < 0.2) { # TODO - instead of being a number, rely on a table (to be filled in later)
+        new_state = SYMPTOMATIC_NEED_HOSPITAL
+      } else { 
+        new_state = SYMPTOMATIC_DONT_NEED_HOSPITAL
+      }
+    }
   }
 
   if (prev_state == SYMPTOMATIC_NEED_HOSPITAL) {
-    # SEEK CARE with 5 day delay, or don't
+    # seek care with 5 day delay or don't, depending on demographics
+    if (population[[str_c("day_", day - time_until_seeking_care)]][id] == SYMPTOMATIC_NEED_HOSPITAL) {
+      if (rand < 0.3) { # TODO - instead of being a number, rely on a table or function (to be filled in later)
+        new_state = NEED_HOSPITAL_DONT_SEEK_CARE
+      } else {
+        new_state = NEED_HOSPITAL_SEEK_CARE
+      }
+    }
   }
 
   if (prev_state == SYMPTOMATIC_DONT_NEED_HOSPITAL) {
-    # WAIT 3.5 days then recover
+    # wait 4 days then recover
+    if (population[[str_c("day_", day - time_from_symptom_onset_to_recovery)]][id] == SYMPTOMATIC_DONT_NEED_HOSPITAL) {
+      new_state = RECOVERED
+    }
   }
 
-  if (prev_state == NEED_HOSPITAL_SEEK_CARE) {
-    # immediately either get care or don't
+  if (prev_state == NEED_HOSPITAL_SEEK_CARE) { ## IS THIS REDUNDANT/1 step delayed? PUT INTO SYMPTOMATIC_NEED_HOSPITAL?
+    # immediately either get care or don't, depending on bed availability
+    if (hospital_beds_available > 0) {
+      hospital_beds_available = hospital_beds_available - 1
+      new_state = GET_HOSPITAL_CARE
+    } else {
+      new_state = DONT_GET_NEEDED_CARE
+    }
   }
 
-  if (prev_state == NEED_HOSPITAL_DONT_SEEK_CARE) {
-    # immediately transition to don't get care (maybe delete this state if it's redundant??)
+  if (prev_state == NEED_HOSPITAL_DONT_SEEK_CARE) { ## IS THIS REDUNDANT/1 step delayed? PUT INTO SYMPTOMATIC_NEED_HOSPITAL?
+    # immediately transition to don't get care
+    new_state = DONT_GET_NEEDED_CARE
   }
 
   if (prev_state == GET_HOSPITAL_CARE) {
-    # probabalistically die or recover, after 10.5 days in bed
+    # after 10 days in bed, probabalistically die or recover
+    if (population[[str_c("day_", day - time_in_hospital_bed)]][id] == GET_HOSPITAL_CARE) {
+      if (rand < 0.5) { # TODO - instead of being a number, rely on a table or function (to be filled in later)
+        new_state = DEAD
+      } else {
+        new_state = RECOVERED
+      }
+      hospital_beds_available = hospital_beds_available + 1
+    }
   }
 
   if (prev_state == DONT_GET_NEEDED_CARE) {
     # die after 10 days
+    if (population[[str_c("day_", day - time_until_death_if_no_care)]][id] == DONT_GET_NEEDED_CARE) {
+      new_state = DEAD
+    }
   }
 
   # Take out later, for debugging
