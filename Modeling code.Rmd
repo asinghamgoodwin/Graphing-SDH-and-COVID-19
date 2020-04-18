@@ -91,9 +91,6 @@ INFECTIOUS_SYMPTOMATIC_PRE_SYMPTOMS = "infectious_symptomatic_pre_symptoms"
 SYMPTOMATIC_NEED_HOSPITAL = "symptomatic_need_hospital"
 SYMPTOMATIC_DONT_NEED_HOSPITAL = "symptomatic_dont_need_hospital"
 
-NEED_HOSPITAL_SEEK_CARE = "need_hospital_seek_care"
-NEED_HOSPITAL_DONT_SEEK_CARE = "need_hospital_dont_seek_care"
-
 GET_HOSPITAL_CARE = "get_hospital_care"
 DONT_GET_NEEDED_CARE = "dont_get_needed_care"
 
@@ -135,7 +132,7 @@ infect_someone = function(day){
   succeptibles = which(newly_infected[[day_col]] == 0)
   person_to_infect = sample(succeptibles,1)
   
-  newly_infected[[day_col]][person_to_infect] <<- 1
+  # newly_infected[[day_col]][person_to_infect] <<- 1
   }
 
 # remove this later, printing just for debugging
@@ -147,7 +144,8 @@ newly_infected
 ```{r}
 change_state = function(id, prev_state, day, population){ #TODO: Fix inputs elsewhere
   new_state = prev_state # The default is to stay at the same state. This always happens for RECOVERED or DEAD
-  rand = runif(1) #Question: is it ok to use the same random number for every decision in this function?
+  rand = .1 ## JUST FOR DEBUGGING
+  #rand = runif(1) #Question: is it ok to use the same random number for every decision in this function?
   
   if (prev_state == SUCCEPTIBLE) {
     if (newly_infected[[str_c("day_", day)]][id] == 1) {
@@ -171,7 +169,7 @@ change_state = function(id, prev_state, day, population){ #TODO: Fix inputs else
   if (prev_state == INFECTIOUS_ASYMPTOMATIC) {
     # wait 4 days before recovering
     earlier_state_to_check = population[[str_c("day_", day - asymptomatic_time_from_infectious_to_recovery)]][id]
-    if (!is.null(earlier_state_to_check) && earlier_state_to_check == INFECTED_ASYMPTOMATIC) {
+    if (!is.null(earlier_state_to_check) && earlier_state_to_check == INFECTIOUS_ASYMPTOMATIC) {
       new_state = RECOVERED
     }
   }
@@ -204,10 +202,15 @@ change_state = function(id, prev_state, day, population){ #TODO: Fix inputs else
     # seek care with 5 day delay or don't, depending on demographics
     earlier_state_to_check = population[[str_c("day_", day - time_until_seeking_care)]][id]
     if (!is.null(earlier_state_to_check) && earlier_state_to_check == SYMPTOMATIC_NEED_HOSPITAL) {
-      if (rand < 0.3) { # TODO - instead of being a number, rely on a table or function (to be filled in later)
-        new_state = NEED_HOSPITAL_DONT_SEEK_CARE
-      } else {
-        new_state = NEED_HOSPITAL_SEEK_CARE
+      if (rand < 0.3) { # If they don't seek care: # TODO - instead of being a number, rely on a table or function (to be filled in later)
+        new_state = DONT_GET_NEEDED_CARE
+      } else { # If they do seek care: either get care or don't, depending on bed availability
+        if (hospital_beds_available > 0) {
+          hospital_beds_available = hospital_beds_available - 1
+          new_state = GET_HOSPITAL_CARE
+        } else {
+        new_state = DONT_GET_NEEDED_CARE
+        }
       }
     }
   }
@@ -218,21 +221,6 @@ change_state = function(id, prev_state, day, population){ #TODO: Fix inputs else
     if (!is.null(earlier_state_to_check) && earlier_state_to_check == SYMPTOMATIC_DONT_NEED_HOSPITAL) {
       new_state = RECOVERED
     }
-  }
-
-  if (prev_state == NEED_HOSPITAL_SEEK_CARE) { ## IS THIS REDUNDANT/1 step delayed? PUT INTO SYMPTOMATIC_NEED_HOSPITAL?
-    # immediately either get care or don't, depending on bed availability
-    if (hospital_beds_available > 0) {
-      hospital_beds_available = hospital_beds_available - 1
-      new_state = GET_HOSPITAL_CARE
-    } else {
-      new_state = DONT_GET_NEEDED_CARE
-    }
-  }
-
-  if (prev_state == NEED_HOSPITAL_DONT_SEEK_CARE) { ## IS THIS REDUNDANT/1 step delayed? PUT INTO SYMPTOMATIC_NEED_HOSPITAL?
-    # immediately transition to don't get care
-    new_state = DONT_GET_NEEDED_CARE
   }
 
   if (prev_state == GET_HOSPITAL_CARE) {
@@ -257,11 +245,11 @@ change_state = function(id, prev_state, day, population){ #TODO: Fix inputs else
   }
 
   # Take out later, for debugging
-  cat("\n\nPerson ID: ", id)
-  cat("\nDay: ", day)
-  cat("\nPrevious state: ", prev_state)
-  cat("\nRandom number: ", rand)
-  cat("\nNew state: ", new_state)
+  # cat("\n\nPerson ID: ", id)
+  # cat("\nDay: ", day)
+  # cat("\nPrevious state: ", prev_state)
+  # cat("\nRandom number: ", rand)
+  # cat("\nNew state: ", new_state)
 
   new_state
 }
@@ -281,6 +269,20 @@ create_initial_population_with_one_infected = function(size){
   c(one_infected, others_succeptible)
 }
 
+one_of_each_state = function(size){
+  c(SUCCEPTIBLE,
+    INFECTED_ASYMPTOMATIC,
+    INFECTIOUS_ASYMPTOMATIC,
+    INFECTED_SYMPTOMATIC_PRE_SYMPTOMS,
+    INFECTIOUS_SYMPTOMATIC_PRE_SYMPTOMS,
+    SYMPTOMATIC_NEED_HOSPITAL,
+    SYMPTOMATIC_DONT_NEED_HOSPITAL,
+    GET_HOSPITAL_CARE,
+    DONT_GET_NEEDED_CARE,
+    RECOVERED,
+    DEAD)
+}
+
 # OLD CODE: using factors. Don't delete until I've figured it out.
 # create_initial_population_with_one_infected = function(size){
 #   one_infected = as.factor(c(INFECTED_SYMPTOMATIC_PRE_SYMPTOMS))
@@ -290,16 +292,16 @@ create_initial_population_with_one_infected = function(size){
 # }
 
 # remove this later, printing just for debugging
-create_initial_population_with_one_infected(initial_population_size)
+#create_initial_population_with_one_infected(initial_population_size)
 ```
 
 This is a table with each row representing one person in the population. The first few columns include demographic and other information about a person, and all of the columns labeled `day_n` represent that person's disease state at time n.
 ```{r}
 # TODO: decide what to do about states as factors. Currently I just made everything strings because I couldn't keep things straight.
-run_simulation = function(initial_population_size, total_days) {
+run_simulation = function(initial_population_size, initial_population_function, total_days) {
   population = tibble(
     person_ids = 1:initial_population_size,
-    day_1 = create_initial_population_with_one_infected(initial_population_size)
+    day_1 = initial_population_function(initial_population_size)
   )
   
   for (day in 2:total_days) {
@@ -314,7 +316,10 @@ run_simulation = function(initial_population_size, total_days) {
   population
 }
 
-population = run_simulation(initial_population_size, total_days)
+#population = run_simulation(initial_population_size, create_initial_population_with_one_infected, total_days)
+population = run_simulation(11, one_of_each_state, 30)
+population
+
 ```
 
 
