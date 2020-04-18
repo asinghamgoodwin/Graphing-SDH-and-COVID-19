@@ -22,7 +22,7 @@ day_of_stronger_distancing_directive = 15
 length_of_distancing_directive = 90
 ```
 
-These initial parameters come from my best efforts at parsing the literature, specificially ARTICLE A and ARTICLE B.
+These initial parameters come from my best efforts at parsing the literature, specificially *ARTICLE A and ARTICLE B*.
 ```{r}
 ## BIG TODO: add citations for these numbers
 
@@ -49,7 +49,7 @@ time_until_death_if_no_care = 10
 
 ```
 
-These numbers come from NYC open data.
+These numbers come from *[NYC open data](link) and ARTICLE C*.
 ```{r}
 initial_hospital_bed_capacity = 100 #TODO - fill in with real number later
 hospital_beds_available = initial_hospital_bed_capacity
@@ -59,7 +59,32 @@ hospital_beds_available = initial_hospital_bed_capacity
 
 These numbers come from ARTICLE A, describing the distribution by age of who needs hospital care, and what their mortality rate is.
 ```{r}
-# TODO: fill in from article.
+# This table is taken directly from the article
+ferguson_et_al_table_1 = tibble(
+  age_group_by_decade = 0:8,
+  percent_symptomatic_requiring_hospital = c(.001, .003, .012, .032, .049, .102, .166, .243, .273),
+  percent_hospital_cases_requiring_critical_care = c(.05, .05, .05, .05, .063, .122, .274, .432, .709),
+  infection_fatality_ratio = c(.00002, .00006, .0003, .0008, .0015, .006, .022, .051, .093)
+)
+
+# Here, I simplify their parameters to create a table of probabilities by age group to use in my model.
+# Rather than splitting between people in the hospital who need critical care or not,
+# I count anyone needing hospitalization as needing a bed.
+
+# Rather than using the overall fatality by age group, I assume that the only people who die are people who:
+# ... get infected, have symptoms, are sick enough to require hospital care,
+# ... and either don't get to the hospital, or do but still die.
+
+# To calculate that last probability (dying in the hospital even if you get care),
+# I take the estimate from the article that "50% of those in critical care will die"
+# and multiply that by the probability of requiring critical care for those in the hospital.
+my_severity_by_age =
+  ferguson_et_al_table_1 %>% 
+  rename(., prob_need_bed = percent_symptomatic_requiring_hospital) %>% 
+  mutate(., prob_die_in_hospital = 0.5*percent_hospital_cases_requiring_critical_care) %>% 
+  select(., -percent_hospital_cases_requiring_critical_care, -infection_fatality_ratio)
+
+my_severity_by_age
 ```
 
 And finally, based on some other research and best guesses:
@@ -253,8 +278,6 @@ change_state = function(id, prev_state, day, population){ #TODO: Fix inputs else
 
   new_state
 }
-
-#change_state(2, INFECTED_SYMPTOMATIC_PRE_SYMPTOMS, 3)
 ```
 
 
@@ -327,6 +350,9 @@ population
 
 First, transform the table into a better shape for graphing, by getting the total state counts at each time step.
 ```{r}
+# TODO:
+# 1. combine into infected: all but succeptible, recocered, dead
+# 2. combine into need hospital care: get_hospital_care, dont_get_needed_care
 population_to_visualize =
   pivot_longer(
     population,
@@ -336,7 +362,7 @@ population_to_visualize =
     names_prefix = "day_"
   ) %>% 
   mutate(day = as.numeric(day)) %>% 
-  group_by(day, state) %>% 
+  group_by(day, state) %>%
   summarize(count = n())
 
 ## NOTE:
@@ -350,8 +376,11 @@ population_to_visualize
 
 Graph the person-count of each state in a different color, with days on the x-axis.
 ```{r}
+# TODO:
+# 1. graph straight line for hospital bed capacity
+# 2. add counts and rates for: total dead, total cases, number never sick, total denied care b/c over capacity (not the same as didn't seek care)
 ggplot(population_to_visualize, 
-       aes(x=day, y=count, color=state)) + 
+       aes(x = day, y = count, color = state)) + 
   geom_line()
 ```
 
