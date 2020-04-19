@@ -46,8 +46,8 @@ time_in_hospital_bed = 10
 time_until_death_if_no_care = 10
 ```
 
-These numbers come from *[NYC open data](link) and
-[MODEL](https://columbia.maps.arcgis.com/apps/webappviewer/index.html?id=ade6ba85450c4325a12a5b9c09ba796c)
+These numbers come from
+*[MODEL](https://columbia.maps.arcgis.com/apps/webappviewer/index.html?id=ade6ba85450c4325a12a5b9c09ba796c)
 and its corresponding [scientific
 paper](https://behcolumbia.files.wordpress.com/2020/04/flattening-the-curve-before-it-flattens-us-20200405b.pdf)*.
 
@@ -69,12 +69,28 @@ initial_icu_bed_capacity = initial_population_size *  icu_beds_per_person
 icu_beds_available = round(initial_icu_bed_capacity)
 ```
 
+These come from the *[CENSUS
+WEBSITE](https://data.census.gov/cedsci/table?q=new%20york%20city%20population&g=1600000US3651000&hidePreview=false&tid=ACSDP1Y2018.DP05&vintage=2018&layer=VT_2018_160_00_PY_D1&cid=DP05_0001E)*
+
 ``` r
-# TODO - fill in distributions of: age, health status/underlying conditions, "essential" jobs, poverty levels, incarcerated, homeless, detained immigrants, insurance coverage 
+# TODO - fill in distributions of: age, health status/underlying conditions, "essential" jobs, poverty levels, incarcerated, homeless, detained immigrants, insurance coverage
+
+acs_age_estimates =
+  read_csv("./ACSST1Y2018.S0101_data_with_overlays_2020-04-19T143631.csv") %>% 
+  select(., matches("S0101_C01_0(0[2-9]|1[0-9])E")) %>% 
+  slice(., 2:2) %>% 
+  rename_all(~c('00-04','05-09','10-14','15-19','20-24','25-29','30-34','35-39','40-44',
+                '45-49','50-54','55-59','60-64', '65-69','70-74','75-79','80-84','85+')) %>% 
+  pivot_longer(., everything(), names_to = "age_ranges", values_to = "estimate_numbers") %>% 
+  mutate(., estimate_numbers = as.integer(estimate_numbers)) %>% 
+  mutate(., decade = substring(age_ranges,1,1)) %>% 
+  group_by(., decade) %>% 
+  summarise(., num_people = sum(estimate_numbers)) %>% 
+  mutate(., percent_of_total = num_people/sum(num_people))
 ```
 
-These numbers come from ARTICLE A, describing the distribution by age of
-who needs hospital care, and what their mortality rate is.
+These numbers come from *ARTICLE A*, describing the distribution by age
+of who needs hospital care, and what their mortality rate is.
 
 ``` r
 # This table is taken directly from the article
