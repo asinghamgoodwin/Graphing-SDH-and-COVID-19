@@ -13,7 +13,7 @@ library(tidyverse)
 
 I am arbitrarily choosing XX,XXX people for my simulation. I am also choosing a timeline similar to what we saw in NYC, with *ADD IN DATES AND INFORMATION*.
 ```{r}
-initial_population_size = 20 # TODO - choose bigger number later
+initial_population_size = 10000 # TODO - choose bigger number later
 total_days = 100
 
 # TODO - fill these in with real numbers
@@ -49,11 +49,26 @@ time_until_death_if_no_care = 10
 
 ```
 
-These numbers come from *[NYC open data](link) and ARTICLE C*.
+These numbers come from *[NYC open data](link) and [MODEL](https://columbia.maps.arcgis.com/apps/webappviewer/index.html?id=ade6ba85450c4325a12a5b9c09ba796c) and its corresponding [scientific paper](https://behcolumbia.files.wordpress.com/2020/04/flattening-the-curve-before-it-flattens-us-20200405b.pdf)*.
 ```{r}
-initial_hospital_bed_capacity = 100 #TODO - fill in with real number later
-hospital_beds_available = initial_hospital_bed_capacity
+# Below is the sum of ICU beds in the 5 boroughs that could be made available
+# in a medium patient surge response situation (i.e. by making other hospital beds available),
+# according to the Columbia Severe COVID-19 Risk Mapping tool.
 
+# This number is corroborated by a recent news article (3528 vs. 3500): https://www.businessinsider.com/coronavirus-nyc-more-than-doubled-its-icu-capacity-in-weeks-2020-4
+total_nyc_icu_beds_medium_surge_response = 200 + 594 + 276 + 524 + 1934
+
+total_nyc_population = 8398748 # https://www.census.gov/quickfacts/newyorkcitynewyork (2018 estimate)
+
+icu_beds_per_person = total_nyc_icu_beds_medium_surge_response / total_nyc_population
+
+initial_icu_bed_capacity = initial_population_size *  icu_beds_per_person
+
+# This is the part that will be used in my model. It will decrease as people in the model use hospital beds.
+icu_beds_available = round(initial_icu_bed_capacity)
+```
+
+```{r}
 # TODO - fill in distributions of: age, health status/underlying conditions, "essential" jobs, poverty levels, incarcerated, homeless, detained immigrants, insurance coverage 
 ```
 
@@ -78,13 +93,12 @@ ferguson_et_al_table_1 = tibble(
 # To calculate that last probability (dying in the hospital even if you get care),
 # I take the estimate from the article that "50% of those in critical care will die"
 # and multiply that by the probability of requiring critical care for those in the hospital.
-my_severity_by_age =
+severity_by_age =
   ferguson_et_al_table_1 %>% 
-  rename(., prob_need_bed = percent_symptomatic_requiring_hospital) %>% 
-  mutate(., prob_die_in_hospital = 0.5*percent_hospital_cases_requiring_critical_care) %>% 
-  select(., -percent_hospital_cases_requiring_critical_care, -infection_fatality_ratio)
-
-my_severity_by_age
+  mutate(., prob_die_in_icu = 0.5*percent_hospital_cases_requiring_critical_care) %>% 
+  rename(., prob_need_any_hospital = percent_symptomatic_requiring_hospital,
+         prob_need_icu_bed = percent_hospital_cases_requiring_critical_care) %>% 
+  select(., -infection_fatality_ratio)
 ```
 
 And finally, based on some other research and best guesses:
@@ -113,10 +127,12 @@ INFECTIOUS_ASYMPTOMATIC = "infectious_asymptomatic"
 INFECTED_SYMPTOMATIC_PRE_SYMPTOMS = "infected_symptomatic_pre_symptoms"
 INFECTIOUS_SYMPTOMATIC_PRE_SYMPTOMS = "infectious_symptomatic_pre_symptoms"
 
-SYMPTOMATIC_NEED_HOSPITAL = "symptomatic_need_hospital"
+SYMPTOMATIC_NEED_REGULAR_HOSPITAL = "symptomatic_need_regular_hospital"
+SYMPTOMATIC_NEED_ICU_BED = "symptomatic_need_icu_bed"
 SYMPTOMATIC_DONT_NEED_HOSPITAL = "symptomatic_dont_need_hospital"
 
-GET_HOSPITAL_CARE = "get_hospital_care"
+GET_REGULAR_HOSPITAL_CARE = "get_regular_hospital_care"
+GET_ICU_BED = "get_icu_bed"
 DONT_GET_NEEDED_CARE = "dont_get_needed_care"
 
 RECOVERED = "recovered"
@@ -169,7 +185,7 @@ newly_infected
 ```{r}
 change_state = function(id, prev_state, day, population){ #TODO: Fix inputs elsewhere
   new_state = prev_state # The default is to stay at the same state. This always happens for RECOVERED or DEAD
-  rand = .1 ## JUST FOR DEBUGGING
+  rand = .9 ## JUST FOR DEBUGGING
   #rand = runif(1) #Question: is it ok to use the same random number for every decision in this function?
   
   if (prev_state == SUCCEPTIBLE) {
@@ -215,27 +231,43 @@ change_state = function(id, prev_state, day, population){ #TODO: Fix inputs else
     # wait 1 day before turning symptomatic. severity of illness is based on demographics
     earlier_state_to_check = population[[str_c("day_", day - time_infectious_before_symptom_onset)]][id]
     if (!is.null(earlier_state_to_check) && earlier_state_to_check == INFECTIOUS_SYMPTOMATIC_PRE_SYMPTOMS) {
-      if (rand < 0.2) { # TODO - instead of being a number, rely on a table (to be filled in later)
-        new_state = SYMPTOMATIC_NEED_HOSPITAL
+      if (rand < 0.2) { # TODO - instead of being a number, rely on a table: severity_by_age$prob_need_hospital
+        if (rand < 0.1) { # for this random number, maybe do .2*.1? severity_by_age$prob_need_icu
+          new_state = SYMPTOMATIC_NEED_ICU_BED
+        } else {
+          new_state = SYMPTOMATIC_NEED_REGULAR_HOSPITAL
+        }
       } else { 
         new_state = SYMPTOMATIC_DONT_NEED_HOSPITAL
       }
     }
   }
 
-  if (prev_state == SYMPTOMATIC_NEED_HOSPITAL) {
+  if (prev_state == SYMPTOMATIC_NEED_ICU_BED) {
     # seek care with 5 day delay or don't, depending on demographics
     earlier_state_to_check = population[[str_c("day_", day - time_until_seeking_care)]][id]
-    if (!is.null(earlier_state_to_check) && earlier_state_to_check == SYMPTOMATIC_NEED_HOSPITAL) {
+    if (!is.null(earlier_state_to_check) && earlier_state_to_check == SYMPTOMATIC_NEED_ICU_BED) {
       if (rand < 0.3) { # If they don't seek care: # TODO - instead of being a number, rely on a table or function (to be filled in later)
         new_state = DONT_GET_NEEDED_CARE
       } else { # If they do seek care: either get care or don't, depending on bed availability
-        if (hospital_beds_available > 0) {
-          hospital_beds_available = hospital_beds_available - 1
-          new_state = GET_HOSPITAL_CARE
+        if (icu_beds_available > 0) {
+          icu_beds_available = icu_beds_available - 1
+          new_state = GET_ICU_BED
         } else {
-        new_state = DONT_GET_NEEDED_CARE
+          new_state = DONT_GET_NEEDED_CARE
         }
+      }
+    }
+  }
+
+  if (prev_state == SYMPTOMATIC_NEED_REGULAR_HOSPITAL) {
+    # seek care with 5 day delay or don't, depending on demographics
+    earlier_state_to_check = population[[str_c("day_", day - time_until_seeking_care)]][id]
+    if (!is.null(earlier_state_to_check) && earlier_state_to_check == SYMPTOMATIC_NEED_REGULAR_HOSPITAL) {
+      if (rand < 0.3) { # If they don't seek care: # TODO - instead of being a number, rely on a table or function (to be filled in later)
+        new_state = DONT_GET_NEEDED_CARE
+      } else {
+        new_state = GET_REGULAR_HOSPITAL_CARE
       }
     }
   }
@@ -248,16 +280,24 @@ change_state = function(id, prev_state, day, population){ #TODO: Fix inputs else
     }
   }
 
-  if (prev_state == GET_HOSPITAL_CARE) {
+  if (prev_state == GET_ICU_BED) {
     # after 10 days in bed, probabalistically die or recover
     earlier_state_to_check = population[[str_c("day_", day - time_in_hospital_bed)]][id]
-    if (!is.null(earlier_state_to_check) && earlier_state_to_check == GET_HOSPITAL_CARE) {
-      if (rand < 0.5) { # TODO - instead of being a number, rely on a table or function (to be filled in later)
+    if (!is.null(earlier_state_to_check) && earlier_state_to_check == GET_ICU_BED) {
+      if (rand < 0.5) { # TODO - instead of being a number, rely on a table: severity_by_age$prob_die_in_ICU
         new_state = DEAD
       } else {
         new_state = RECOVERED
       }
-      hospital_beds_available = hospital_beds_available + 1
+      icu_beds_available = icu_beds_available + 1
+    }
+  }
+  
+  if (prev_state == GET_REGULAR_HOSPITAL_CARE) {
+    # after 10 days in bed, recover
+    earlier_state_to_check = population[[str_c("day_", day - time_in_hospital_bed)]][id]
+    if (!is.null(earlier_state_to_check) && earlier_state_to_check == GET_REGULAR_HOSPITAL_CARE) {
+      new_state = RECOVERED
     }
   }
 
@@ -298,9 +338,11 @@ one_of_each_state = function(size){
     INFECTIOUS_ASYMPTOMATIC,
     INFECTED_SYMPTOMATIC_PRE_SYMPTOMS,
     INFECTIOUS_SYMPTOMATIC_PRE_SYMPTOMS,
-    SYMPTOMATIC_NEED_HOSPITAL,
+    SYMPTOMATIC_NEED_REGULAR_HOSPITAL,
+    SYMPTOMATIC_NEED_ICU_BED,
     SYMPTOMATIC_DONT_NEED_HOSPITAL,
-    GET_HOSPITAL_CARE,
+    GET_REGULAR_HOSPITAL_CARE,
+    GET_ICU_BED,
     DONT_GET_NEEDED_CARE,
     RECOVERED,
     DEAD)
@@ -340,7 +382,7 @@ run_simulation = function(initial_population_size, initial_population_function, 
 }
 
 #population = run_simulation(initial_population_size, create_initial_population_with_one_infected, total_days)
-population = run_simulation(11, one_of_each_state, 30)
+population = run_simulation(13, one_of_each_state, 30)
 population
 
 ```
