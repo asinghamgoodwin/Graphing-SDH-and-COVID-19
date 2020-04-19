@@ -2,11 +2,15 @@ Modeling code
 ================
 2020-03-30
 
-## Initial Parameters
+Introduction… caveats, motivation (fun, learning R, learning about
+disease modeling, practice reading research papers), etc. Who is this
+document for? Link to blog post.
 
-I am arbitrarily choosing XX,XXX people for my simulation. I am also
-choosing a timeline similar to what we saw in NYC, with *ADD IN DATES
-AND INFORMATION*.
+# Initial Parameters
+
+I decided to base the parameters for my simulation off of New York City,
+since that’s where I live. I am also choosing a timeline similar to what
+we saw in NYC, with *ADD IN DATES AND INFORMATION*.
 
 ``` r
 initial_population_size = 10000 # TODO - choose bigger number later
@@ -18,19 +22,15 @@ day_of_stronger_distancing_directive = 15
 length_of_distancing_directive = 90
 ```
 
-These initial parameters come from my best efforts at parsing the
-literature, specificially *ARTICLE A and ARTICLE B*.
+### What’s someone’s chance of getting sick? Of being asymptomatic? How long do they stay sick? How long is an average hospital stay? etc. etc. etc.
+
+These probabilities and timings come from my best efforts at parsing the
+literature, specificially *[ARTICLE A](LINK) and [ARTICLE B](LINK)*.
 
 ``` r
-## BIG TODO: add citations for these numbers
+## BIG TODO: add citations and better explanationsfor these numbers
 
-#probability_symptomatic = 2/3 # Take this out?
 probability_asymptomatic = 1/3
-
-# TODO: break this out into it's own code chunk with explanation? Weighted average, solved equations to get 
-basic_reproductive_number = 2.4
-symptomatic_reproductive_number = basic_reproductive_number*(6/5)
-asymptomatic_reproductive_number = basic_reproductive_number*(3/5)
 
 time_until_infectious = 4 # This is figured from the incubation period, and rounded down from 4.6 so I can do steps in full days.
 
@@ -46,51 +46,21 @@ time_in_hospital_bed = 10
 time_until_death_if_no_care = 10
 ```
 
-These numbers come from
-*[MODEL](https://columbia.maps.arcgis.com/apps/webappviewer/index.html?id=ade6ba85450c4325a12a5b9c09ba796c)
-and its corresponding [scientific
-paper](https://behcolumbia.files.wordpress.com/2020/04/flattening-the-curve-before-it-flattens-us-20200405b.pdf)*.
+R\_0\! It’s not so simple…*TODO: explain (system of equations, how it
+changes)* (also from *[ARTICLE A](LINK)*).
 
 ``` r
-# Below is the sum of ICU beds in the 5 boroughs that could be made available
-# in a medium patient surge response situation (i.e. by making other hospital beds available),
-# according to the Columbia Severe COVID-19 Risk Mapping tool.
-
-# This number is corroborated by a recent news article (3528 vs. 3500): https://www.businessinsider.com/coronavirus-nyc-more-than-doubled-its-icu-capacity-in-weeks-2020-4
-total_nyc_icu_beds_medium_surge_response = 200 + 594 + 276 + 524 + 1934
-
-total_nyc_population = 8398748 # https://www.census.gov/quickfacts/newyorkcitynewyork (2018 estimate)
-
-icu_beds_per_person = total_nyc_icu_beds_medium_surge_response / total_nyc_population
-
-initial_icu_bed_capacity = initial_population_size *  icu_beds_per_person
-
-# This is the part that will be used in my model. It will decrease as people in the model use hospital beds.
-icu_beds_available = round(initial_icu_bed_capacity)
+basic_reproductive_number = 2.4
+symptomatic_reproductive_number = basic_reproductive_number*(6/5)
+asymptomatic_reproductive_number = basic_reproductive_number*(3/5)
 ```
 
-These come from the *[CENSUS
-WEBSITE](https://data.census.gov/cedsci/table?q=new%20york%20city%20population&g=1600000US3651000&hidePreview=false&tid=ACSDP1Y2018.DP05&vintage=2018&layer=VT_2018_160_00_PY_D1&cid=DP05_0001E)*
+The distribution of who needs hospital care by age group, and what their
+mortality rate is. These numbers come from *ARTICLE A*.
 
-``` r
-# TODO - fill in distributions of: age, health status/underlying conditions, "essential" jobs, poverty levels, incarcerated, homeless, detained immigrants, insurance coverage
+<details>
 
-acs_age_estimates =
-  read_csv("./ACSST1Y2018.S0101_data_with_overlays_2020-04-19T143631.csv") %>% 
-  select(., matches("S0101_C01_0(0[2-9]|1[0-9])E")) %>% 
-  slice(., 2:2) %>% 
-  rename_all(~c('00-04','05-09','10-14','15-19','20-24','25-29','30-34','35-39','40-44',
-                '45-49','50-54','55-59','60-64', '65-69','70-74','75-79','80-84','85+')) %>% 
-  pivot_longer(., everything(), names_to = "age_ranges", values_to = "estimate_numbers") %>% 
-  mutate(., estimate_numbers = as.integer(estimate_numbers)) %>% 
-  mutate(., decade = substring(age_ranges,1,1)) %>% 
-  group_by(., decade) %>% 
-  summarise(., num_people = sum(estimate_numbers)) %>% 
-  mutate(., percent_of_total = num_people/sum(num_people))
-```
-
-These numbers come from *ARTICLE A*, describing the distribution by age
-of who needs hospital care, and what their mortality rate is.
+<summary>Click to see how I adjusted/reformatted</summary>
 
 ``` r
 # This table is taken directly from the article
@@ -120,7 +90,28 @@ severity_by_age =
   select(., -infection_fatality_ratio)
 ```
 
-And finally, based on some other research and best guesses:
+</details>
+
+``` r
+# TODO: make this look nicer! Reformat? Better variable names with spaces? Get rid of line numbers?
+severity_by_age
+```
+
+    ## # A tibble: 9 x 4
+    ##   age_group_by_decade prob_need_any_hospital prob_need_icu_bed prob_die_in_icu
+    ##                 <int>                  <dbl>             <dbl>           <dbl>
+    ## 1                   0                  0.001             0.05           0.025 
+    ## 2                   1                  0.003             0.05           0.025 
+    ## 3                   2                  0.012             0.05           0.025 
+    ## 4                   3                  0.032             0.05           0.025 
+    ## 5                   4                  0.049             0.063          0.0315
+    ## 6                   5                  0.102             0.122          0.061 
+    ## 7                   6                  0.166             0.274          0.137 
+    ## 8                   7                  0.243             0.432          0.216 
+    ## 9                   8                  0.273             0.709          0.354
+
+Probabilities of seeking hospital care, and of continuing work despite a
+stay-home directive, based on some other research and best guesses:
 
 ``` r
 # TODO: flesh out this section
@@ -131,7 +122,175 @@ probability_seek_care_uninsured = 0.5
 # TODO: decide on cutoff poverty level for ignoring a stay-home directive
 ```
 
-## States
+### Who lives in NYC? Population demographics and characteristics:
+
+Age distribution in NYC, from the *[CENSUS
+WEBSITE](https://data.census.gov/cedsci/table?q=new%20york%20city%20population&g=1600000US3651000&hidePreview=false&tid=ACSST1Y2018.S0101&vintage=2018&layer=VT_2018_160_00_PY_D1&cid=DP05_0001E)*.
+
+<details>
+
+<summary>Click to see
+code</summary>
+
+``` r
+# TODO - fill in distributions of: age, health status/underlying conditions, "essential" jobs, poverty levels, incarcerated, homeless, detained immigrants, insurance coverage
+
+acs_age_estimates =
+  read_csv("./ACSST1Y2018.S0101_data_with_overlays_2020-04-19T143631.csv")
+
+population_distribution_by_decade =
+  acs_age_estimates %>% 
+  select(., matches("S0101_C01_0(0[2-9]|1[0-9])E")) %>% 
+  slice(., 2:2) %>% 
+  rename_all(~c('00-04','05-09','10-14','15-19','20-24','25-29','30-34','35-39','40-44',
+                '45-49','50-54','55-59','60-64', '65-69','70-74','75-79','80-84','85+')) %>% 
+  pivot_longer(., everything(), names_to = "age_ranges", values_to = "estimate_numbers") %>% 
+  mutate(., estimate_numbers = as.integer(estimate_numbers)) %>% 
+  mutate(., decade = substring(age_ranges,1,1)) %>% 
+  group_by(., decade) %>% 
+  summarise(., num_people = sum(estimate_numbers)) %>% 
+  mutate(., percent_of_total = num_people/sum(num_people))
+```
+
+</details>
+
+``` r
+# TODO: make this display nicer. Take away line numbers, add in total, rename columns
+population_distribution_by_decade
+```
+
+    ## # A tibble: 9 x 3
+    ##   decade num_people percent_of_total
+    ##   <chr>       <int>            <dbl>
+    ## 1 0          987977           0.118 
+    ## 2 1          928860           0.111 
+    ## 3 2         1310104           0.156 
+    ## 4 3         1330850           0.158 
+    ## 5 4         1067863           0.127 
+    ## 6 5         1044798           0.124 
+    ## 7 6          872327           0.104 
+    ## 8 7          537499           0.0640
+    ## 9 8          318470           0.0379
+
+Health status distribution in NYC, from *[WHERE??]()*.
+
+<details>
+
+<summary>Click to see code</summary>
+
+``` r
+#code
+```
+
+</details>
+
+``` r
+#database
+```
+
+Occupation distribution in NYC, with “essential worker” labels, from
+*[WHERE??]()*.
+
+<details>
+
+<summary>Click to see code</summary>
+
+``` r
+#code
+```
+
+</details>
+
+``` r
+#database
+```
+
+Poverty levels in NYC, from *[WHERE??]()*.
+
+<details>
+
+<summary>Click to see code</summary>
+
+``` r
+#code
+```
+
+</details>
+
+``` r
+#database
+```
+
+Percentages of homeless, incarcerated, detained in NYC, from
+*[WHERE??]()*.
+
+<details>
+
+<summary>Click to see code</summary>
+
+``` r
+#code
+```
+
+</details>
+
+``` r
+#database
+```
+
+Health insurance status in NYC, from *[WHERE??]()*.
+
+<details>
+
+<summary>Click to see code</summary>
+
+``` r
+#code
+```
+
+</details>
+
+``` r
+#database
+```
+
+### How many ICU beds are available?
+
+I used the *[Columbia Severe COVID-19 Risk Mapping
+Tool](https://columbia.maps.arcgis.com/apps/webappviewer/index.html?id=ade6ba85450c4325a12a5b9c09ba796c)
+and its corresponding [scientific
+paper](https://behcolumbia.files.wordpress.com/2020/04/flattening-the-curve-before-it-flattens-us-20200405b.pdf)*
+to estimate how many ICU beds would be available at the start of the
+epidemic. I added together the number of ICU beds for each of the 5 NYC
+boroughs that the tool estimated could be made available in a medium
+patient surge response situation (i.e. by turning other hospital beds
+and spaces into ICU beds). This number is corroborated by a recent news
+article, [Converted operating rooms and shuffled patients: How NYC
+scrambled to turn 1,600 ICU beds
+into 3,500…](https://www.businessinsider.com/coronavirus-nyc-more-than-doubled-its-icu-capacity-in-weeks-2020-4)
+(the medium surge response estimate was 3,528).
+
+<details>
+
+<summary>Calculations</summary>
+
+``` r
+total_nyc_icu_beds_medium_surge_response = 200 + 594 + 276 + 524 + 1934
+
+total_nyc_population = sum(population_distribution_by_decade$num_people)
+
+icu_beds_per_person = total_nyc_icu_beds_medium_surge_response / total_nyc_population
+
+initial_simulation_icu_bed_capacity = initial_population_size *  icu_beds_per_person
+
+icu_beds_available = round(initial_simulation_icu_bed_capacity)
+```
+
+</details>
+
+    ## ICU beds available at the start of the simulation:  4
+
+# States and transitions (need better title)
 
 The way I organized my thoughts for this project was to create a state
 diagram (essentially a flow chart) to lay out all of the different
@@ -142,6 +301,10 @@ demographic characteristics, as well as actions taken by others (like
 infecting you).
 
 *TODO: put in an image of my state diagram*
+
+<details>
+
+<summary>State variables</summary>
 
 ``` r
 SUCCEPTIBLE = "succeptible"
@@ -164,14 +327,27 @@ RECOVERED = "recovered"
 DEAD = "dead"
 ```
 
+</details>
+
 I used another state diagram to map out who is staying at home, and who
 is still out and about.
 
 *TODO: put in an image of my 2nd state diagram*
 
-## Change states on each timestep
+<details>
 
-Helper functions:
+<summary>More code</summary>
+
+``` r
+#code
+```
+
+</details>
+
+### Change states on each timestep
+
+I created a set of helper functions: *explain, and break up into smaller
+chunks*
 
 ``` r
 # Set up an empty table with columns for each day in the simulation.
@@ -202,41 +378,17 @@ infect_someone = function(day){
   }
 
 # remove this later, printing just for debugging
-newly_infected
+#newly_infected
 ```
 
-    ## # A tibble: 10,000 x 101
-    ##    person_ids day_1 day_2 day_3 day_4 day_5 day_6 day_7 day_8 day_9 day_10
-    ##         <int> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>  <dbl>
-    ##  1          1     0     0     0     0     0     0     0     0     0      0
-    ##  2          2     0     0     0     0     0     0     0     0     0      0
-    ##  3          3     0     0     0     0     0     0     0     0     0      0
-    ##  4          4     0     0     0     0     0     0     0     0     0      0
-    ##  5          5     0     0     0     0     0     0     0     0     0      0
-    ##  6          6     0     0     0     0     0     0     0     0     0      0
-    ##  7          7     0     0     0     0     0     0     0     0     0      0
-    ##  8          8     0     0     0     0     0     0     0     0     0      0
-    ##  9          9     0     0     0     0     0     0     0     0     0      0
-    ## 10         10     0     0     0     0     0     0     0     0     0      0
-    ## # … with 9,990 more rows, and 90 more variables: day_11 <dbl>, day_12 <dbl>,
-    ## #   day_13 <dbl>, day_14 <dbl>, day_15 <dbl>, day_16 <dbl>, day_17 <dbl>,
-    ## #   day_18 <dbl>, day_19 <dbl>, day_20 <dbl>, day_21 <dbl>, day_22 <dbl>,
-    ## #   day_23 <dbl>, day_24 <dbl>, day_25 <dbl>, day_26 <dbl>, day_27 <dbl>,
-    ## #   day_28 <dbl>, day_29 <dbl>, day_30 <dbl>, day_31 <dbl>, day_32 <dbl>,
-    ## #   day_33 <dbl>, day_34 <dbl>, day_35 <dbl>, day_36 <dbl>, day_37 <dbl>,
-    ## #   day_38 <dbl>, day_39 <dbl>, day_40 <dbl>, day_41 <dbl>, day_42 <dbl>,
-    ## #   day_43 <dbl>, day_44 <dbl>, day_45 <dbl>, day_46 <dbl>, day_47 <dbl>,
-    ## #   day_48 <dbl>, day_49 <dbl>, day_50 <dbl>, day_51 <dbl>, day_52 <dbl>,
-    ## #   day_53 <dbl>, day_54 <dbl>, day_55 <dbl>, day_56 <dbl>, day_57 <dbl>,
-    ## #   day_58 <dbl>, day_59 <dbl>, day_60 <dbl>, day_61 <dbl>, day_62 <dbl>,
-    ## #   day_63 <dbl>, day_64 <dbl>, day_65 <dbl>, day_66 <dbl>, day_67 <dbl>,
-    ## #   day_68 <dbl>, day_69 <dbl>, day_70 <dbl>, day_71 <dbl>, day_72 <dbl>,
-    ## #   day_73 <dbl>, day_74 <dbl>, day_75 <dbl>, day_76 <dbl>, day_77 <dbl>,
-    ## #   day_78 <dbl>, day_79 <dbl>, day_80 <dbl>, day_81 <dbl>, day_82 <dbl>,
-    ## #   day_83 <dbl>, day_84 <dbl>, day_85 <dbl>, day_86 <dbl>, day_87 <dbl>,
-    ## #   day_88 <dbl>, day_89 <dbl>, day_90 <dbl>, day_91 <dbl>, day_92 <dbl>,
-    ## #   day_93 <dbl>, day_94 <dbl>, day_95 <dbl>, day_96 <dbl>, day_97 <dbl>,
-    ## #   day_98 <dbl>, day_99 <dbl>, day_100 <dbl>
+Then, putting that all together, here’s the function to take someone’s
+state yesterday, and transition them to a new state for today. *explain
+better\!*
+
+<details>
+
+<summary>State transition code (I collaped this because it is very
+long)</summary>
 
 ``` r
 change_state = function(id, prev_state, day, population){ #TODO: Fix inputs elsewhere
@@ -376,7 +528,15 @@ change_state = function(id, prev_state, day, population){ #TODO: Fix inputs else
 }
 ```
 
-## Setting up and populating my dataframe
+</details>
+
+# Setting up and populating my dataframe
+
+The simulation starts with one person who is infected and symptomatic,
+chosen randomly from a population that reflects all of the NYC
+demographics (age, occupations, health insurance status, etc.) from the
+section
+above.
 
 ``` r
 # TODO: create the population according to demographic markers, and randomly assign the infected person.
@@ -385,22 +545,6 @@ create_initial_population_with_one_infected = function(size){
   others_succeptible = rep(c(SUCCEPTIBLE), size - 1)
   
   c(one_infected, others_succeptible)
-}
-
-one_of_each_state = function(size){
-  c(SUCCEPTIBLE,
-    INFECTED_ASYMPTOMATIC,
-    INFECTIOUS_ASYMPTOMATIC,
-    INFECTED_SYMPTOMATIC_PRE_SYMPTOMS,
-    INFECTIOUS_SYMPTOMATIC_PRE_SYMPTOMS,
-    SYMPTOMATIC_NEED_REGULAR_HOSPITAL,
-    SYMPTOMATIC_NEED_ICU_BED,
-    SYMPTOMATIC_DONT_NEED_HOSPITAL,
-    GET_REGULAR_HOSPITAL_CARE,
-    GET_ICU_BED,
-    DONT_GET_NEEDED_CARE,
-    RECOVERED,
-    DEAD)
 }
 
 # OLD CODE: using factors. Don't delete until I've figured it out.
@@ -414,6 +558,9 @@ one_of_each_state = function(size){
 # remove this later, printing just for debugging
 #create_initial_population_with_one_infected(initial_population_size)
 ```
+
+Here’s how I represent my population changing states over time: *figure
+out how to display a smaller nicely-formatted version*
 
 This is a table with each row representing one person in the population.
 The first few columns include demographic and other information about a
@@ -443,35 +590,20 @@ run_simulation = function(initial_population_size, initial_population_function, 
 
 #population = run_simulation(initial_population_size, create_initial_population_with_one_infected, total_days)
 population = run_simulation(13, one_of_each_state, 30)
-population
+#population
 ```
 
-    ## # A tibble: 13 x 31
-    ##    person_ids day_1 day_2 day_3 day_4 day_5 day_6 day_7 day_8 day_9 day_10
-    ##         <int> <chr> <chr> <chr> <chr> <chr> <chr> <chr> <chr> <chr> <chr> 
-    ##  1          1 succ… succ… succ… succ… succ… succ… succ… succ… succ… succe…
-    ##  2          2 infe… infe… infe… infe… infe… infe… infe… infe… reco… recov…
-    ##  3          3 infe… infe… infe… infe… reco… reco… reco… reco… reco… recov…
-    ##  4          4 infe… infe… infe… infe… infe… symp… symp… symp… symp… recov…
-    ##  5          5 infe… symp… symp… symp… symp… reco… reco… reco… reco… recov…
-    ##  6          6 symp… symp… symp… symp… symp… get_… get_… get_… get_… get_r…
-    ##  7          7 symp… symp… symp… symp… symp… get_… get_… get_… get_… get_i…
-    ##  8          8 symp… symp… symp… symp… reco… reco… reco… reco… reco… recov…
-    ##  9          9 get_… get_… get_… get_… get_… get_… get_… get_… get_… get_r…
-    ## 10         10 get_… get_… get_… get_… get_… get_… get_… get_… get_… get_i…
-    ## 11         11 dont… dont… dont… dont… dont… dont… dont… dont… dont… dont_…
-    ## 12         12 reco… reco… reco… reco… reco… reco… reco… reco… reco… recov…
-    ## 13         13 dead  dead  dead  dead  dead  dead  dead  dead  dead  dead  
-    ## # … with 20 more variables: day_11 <chr>, day_12 <chr>, day_13 <chr>,
-    ## #   day_14 <chr>, day_15 <chr>, day_16 <chr>, day_17 <chr>, day_18 <chr>,
-    ## #   day_19 <chr>, day_20 <chr>, day_21 <chr>, day_22 <chr>, day_23 <chr>,
-    ## #   day_24 <chr>, day_25 <chr>, day_26 <chr>, day_27 <chr>, day_28 <chr>,
-    ## #   day_29 <chr>, day_30 <chr>
+By the end, we’ve got a table with everyone in the population, all of
+their demographic information, and a record of whether they were sick,
+in the hospital, dead, etc. at each day over the course of the
+simulation. Now it’s time to graph it\!
 
-## Visualization
+# Visualization
 
-First, transform the table into a better shape for graphing, by getting
-the total state counts at each time step.
+I’ve decided that what I want to graph is: *explain*
+
+First, I transform the table into a better shape for graphing, by
+getting the total state counts at each time step.
 
 ``` r
 # TODO:
@@ -495,27 +627,11 @@ population_to_visualize =
 
 
 # remove this later, printing just for debugging
-population_to_visualize
+#population_to_visualize
 ```
 
-    ## # A tibble: 167 x 3
-    ## # Groups:   day [30]
-    ##      day state                               count
-    ##    <dbl> <chr>                               <int>
-    ##  1     1 dead                                    1
-    ##  2     1 dont_get_needed_care                    1
-    ##  3     1 get_icu_bed                             1
-    ##  4     1 get_regular_hospital_care               1
-    ##  5     1 infected_asymptomatic                   1
-    ##  6     1 infected_symptomatic_pre_symptoms       1
-    ##  7     1 infectious_asymptomatic                 1
-    ##  8     1 infectious_symptomatic_pre_symptoms     1
-    ##  9     1 recovered                               1
-    ## 10     1 succeptible                             1
-    ## # … with 157 more rows
-
-Graph the person-count of each state in a different color, with days on
-the x-axis.
+Then, I graph the person-count of each state in a different color, with
+days on the x-axis.
 
 ``` r
 # TODO:
@@ -526,4 +642,29 @@ ggplot(population_to_visualize,
   geom_line()
 ```
 
-![](Modeling-code_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+![](Modeling-code_files/figure-gfm/unnamed-chunk-28-1.png)<!-- -->
+
+# Comparing different possible scenerios
+
+The reason I did all the work to create this simulation in the first
+place was because I wanted a visual answer to the question: **how would
+the course of the epidemic in NYC have looked different if we’d started
+off in a fundamentally more equitable and just society?**
+
+So, taking the X different hypothetical situations I laid out in my
+[blog post](LINK), I ran and visualized the simulation with different
+initial populations.
+
+<details>
+
+<summary>Code for running the simulation X times</summary>
+
+``` r
+#code
+```
+
+</details>
+
+``` r
+#visualization for each one, compiled nicely to sit next to each other
+```
