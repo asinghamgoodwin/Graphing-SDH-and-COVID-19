@@ -49,31 +49,15 @@ time_until_death_if_no_care = 10
 
 ```
 
-These numbers come from *[MODEL](https://columbia.maps.arcgis.com/apps/webappviewer/index.html?id=ade6ba85450c4325a12a5b9c09ba796c) and its corresponding [scientific paper](https://behcolumbia.files.wordpress.com/2020/04/flattening-the-curve-before-it-flattens-us-20200405b.pdf)*.
-```{r}
-# Below is the sum of ICU beds in the 5 boroughs that could be made available
-# in a medium patient surge response situation (i.e. by making other hospital beds available),
-# according to the Columbia Severe COVID-19 Risk Mapping tool.
-
-# This number is corroborated by a recent news article (3528 vs. 3500): https://www.businessinsider.com/coronavirus-nyc-more-than-doubled-its-icu-capacity-in-weeks-2020-4
-total_nyc_icu_beds_medium_surge_response = 200 + 594 + 276 + 524 + 1934
-
-total_nyc_population = 8398748 # https://www.census.gov/quickfacts/newyorkcitynewyork (2018 estimate)
-
-icu_beds_per_person = total_nyc_icu_beds_medium_surge_response / total_nyc_population
-
-initial_icu_bed_capacity = initial_population_size *  icu_beds_per_person
-
-# This is the part that will be used in my model. It will decrease as people in the model use hospital beds.
-icu_beds_available = round(initial_icu_bed_capacity)
-```
-
 These come from the *[CENSUS WEBSITE](https://data.census.gov/cedsci/table?q=new%20york%20city%20population&g=1600000US3651000&hidePreview=false&tid=ACSST1Y2018.S0101&vintage=2018&layer=VT_2018_160_00_PY_D1&cid=DP05_0001E)*
 ```{r, message = FALSE, warning = FALSE}
 # TODO - fill in distributions of: age, health status/underlying conditions, "essential" jobs, poverty levels, incarcerated, homeless, detained immigrants, insurance coverage
 
 acs_age_estimates =
-  read_csv("./ACSST1Y2018.S0101_data_with_overlays_2020-04-19T143631.csv") %>% 
+  read_csv("./ACSST1Y2018.S0101_data_with_overlays_2020-04-19T143631.csv")
+
+population_distribution_by_decade =
+  acs_age_estimates %>% 
   select(., matches("S0101_C01_0(0[2-9]|1[0-9])E")) %>% 
   slice(., 2:2) %>% 
   rename_all(~c('00-04','05-09','10-14','15-19','20-24','25-29','30-34','35-39','40-44',
@@ -84,6 +68,25 @@ acs_age_estimates =
   group_by(., decade) %>% 
   summarise(., num_people = sum(estimate_numbers)) %>% 
   mutate(., percent_of_total = num_people/sum(num_people))
+```
+
+These numbers come from *[MODEL](https://columbia.maps.arcgis.com/apps/webappviewer/index.html?id=ade6ba85450c4325a12a5b9c09ba796c) and its corresponding [scientific paper](https://behcolumbia.files.wordpress.com/2020/04/flattening-the-curve-before-it-flattens-us-20200405b.pdf)*.
+```{r}
+# Below is the sum of ICU beds in the 5 boroughs that could be made available
+# in a medium patient surge response situation (i.e. by making other hospital beds available),
+# according to the Columbia Severe COVID-19 Risk Mapping tool.
+
+# This number is corroborated by a recent news article (3528 vs. 3500): https://www.businessinsider.com/coronavirus-nyc-more-than-doubled-its-icu-capacity-in-weeks-2020-4
+total_nyc_icu_beds_medium_surge_response = 200 + 594 + 276 + 524 + 1934
+
+total_nyc_population = sum(population_distribution_by_decade$num_people)
+
+icu_beds_per_person = total_nyc_icu_beds_medium_surge_response / total_nyc_population
+
+initial_icu_bed_capacity = initial_population_size *  icu_beds_per_person
+
+# This is the part that will be used in my model. It will decrease as people in the model use hospital beds.
+icu_beds_available = round(initial_icu_bed_capacity)
 ```
 
 These numbers come from *ARTICLE A*, describing the distribution by age of who needs hospital care, and what their mortality rate is.
