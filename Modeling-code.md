@@ -110,31 +110,38 @@ severity_by_age
     ## 8                   7                  0.243             0.432          0.216 
     ## 9                   8                  0.273             0.709          0.354
 
-Probabilities of seeking hospital care, and of continuing work despite a
-stay-home directive, based on some other research and best guesses:
+Probability of seeking critical hospital care depending on insurance
+status **[REFERENCE,
+explain](https://www.kff.org/uninsured/issue-brief/key-facts-about-the-uninsured-population/)**:
 
 ``` r
-# TODO: flesh out this section
-
-probability_seek_care_insured = 1
-probability_seek_care_uninsured = 0.5
-
-# TODO: decide on cutoff poverty level for ignoring a stay-home directive
+probability_seek_care_insured = 0.96
+probability_seek_care_uninsured = 0.79
 ```
 
 ### Who lives in NYC? Population demographics and characteristics:
+
+*Note: I’m leaving out a lot of nuance in collecting these numbers\! Of
+course the homeless and incarcerated populations aren’t evenly
+distributed by age, or by insurance status, or by poverty level. And
+they shouldn’t have the same probabilities of getting infected. But I
+believe that if there is estimating error, I’m underestimating (why??).
+Also not taking race or sex or gender into account\! Even though there’s
+evidence of differences on both. (cite). I believe I’m underestimating
+because I’m not taking into account the compounding of factors (like the
+fact that frontline workers are more likely to have larger families (is
+that true?) and therefore expose greater number of people.*
+
+*What else am I leaving out?*
 
 Age distribution in NYC, from the *[CENSUS
 WEBSITE](https://data.census.gov/cedsci/table?q=new%20york%20city%20population&g=1600000US3651000&hidePreview=false&tid=ACSST1Y2018.S0101&vintage=2018&layer=VT_2018_160_00_PY_D1&cid=DP05_0001E)*.
 
 <details>
 
-<summary>Click to see
-code</summary>
+<summary>Click to see code</summary>
 
 ``` r
-# TODO - fill in distributions of: age, health status/underlying conditions, "essential" jobs, poverty levels, incarcerated, homeless, detained immigrants, insurance coverage
-
 acs_age_estimates =
   read_csv("./ACSST1Y2018.S0101_data_with_overlays_2020-04-19T143631.csv")
 
@@ -172,14 +179,52 @@ population_distribution_by_decade
     ## 8 7          537499           0.0640
     ## 9 8          318470           0.0379
 
-Health status distribution in NYC, from *[WHERE??]()*.
+Chronic health condition distribution in NYC, from *[the NYC Department
+of Health’s EpiQuery tool](https://a816-health.nyc.gov/hdi/epiquery/),
+looking at 2017 data for chronic diseases and smoking status*.
 
 <details>
 
 <summary>Click to see code</summary>
 
 ``` r
-#code
+# only for adults
+# maybe don't even have a drop-down for this, and instead just hide the code?
+
+chronic_condition_prevalence = tibble(
+  condition = c("Current asthma", "Diabetes", "Current blood pressure medication", "Current smoker", "Former smoker"),
+  prevalence = c(.04, .12, .75, .13, .19)
+)
+```
+
+</details>
+
+``` r
+chronic_condition_prevalence
+```
+
+    ## # A tibble: 5 x 2
+    ##   condition                         prevalence
+    ##   <chr>                                  <dbl>
+    ## 1 Current asthma                          0.04
+    ## 2 Diabetes                                0.12
+    ## 3 Current blood pressure medication       0.75
+    ## 4 Current smoker                          0.13
+    ## 5 Former smoker                           0.19
+
+Number and distribution of “essential workers” in NYC, from this
+*[excellent report from the comptroller’s
+office](https://comptroller.nyc.gov/reports/new-york-citys-frontline-workers/)*.
+*Explain here the age distribution and what I did*
+
+<details>
+
+<summary>Click to see code</summary>
+
+``` r
+# total number essential workers in NYC: 1038779
+# 8% below poverty level, 24% below 200% of poverty level (so 16% in the middle space)
+# 37% are over the age of 50. Distribute those between 50s and 60s (what split?), and distribute the rest evenly between 20s 30s 40s
 ```
 
 </details>
@@ -188,15 +233,141 @@ Health status distribution in NYC, from *[WHERE??]()*.
 #database
 ```
 
-Occupation distribution in NYC, with “essential worker” labels, from
-*[WHERE??]()*.
+Poverty levels in NYC, and health insurance status from
+*[WHERE??](https://data.census.gov/cedsci/table?q=new%20york%20city%20health&g=1600000US3651000&tid=ACSDT1Y2018.B27016&t=Health&layer=VT_2018_160_00_PY_D1&vintage=2018&hidePreview=true)*.
 
 <details>
 
-<summary>Click to see code</summary>
+<summary>Click to see
+code</summary>
 
 ``` r
-#code
+# I made a couple adjustments here to get the data to fit into the age categories I already have, which are by decade.
+# I am using the "under 19" insurance and poverty levels for decades 0-9 and 10-19.
+# I am using the "19-64" insurance and poverty levels for decades 20s, 30s, 40s, 50s
+# And I'm using the "65+" insurance and poverty levels for the decades 60s, 70s, 80+
+# I thought it would be more "fair"/conservatie for my representation of things,
+# because health insurance rates go way up at 65, so I decided to over-count who has insurance
+# by giving 60-year-olds the higher insurance rate. 
+
+# I'm sure there's a better, quicker way to do this (including just copy-pasting from the online data), but this one really stumped me! It also takes an unusually long time to run this code block... so I'm sure there's something about R that I'm missing.
+acs_poverty_age_insurance =
+  read_csv("./ACSDT1Y2018.B27016_data_with_overlays_2020-04-25T105847.csv")
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   .default = col_character()
+    ## )
+
+    ## See spec(...) for full column specifications.
+
+``` r
+# these are the percent-of-poverty levels provied in the data (represented just by their upper limit)
+poverty_levels_granular = c(.5, .99, 1.37, 1.49, 1.99, 2.49, 2.99, 3.99, 4)
+
+# these are the broader bands I'd like to end up with
+poverty_level_labels = ordered(c("Below 100%", "100-199%", "200-299%", "300-399%", "400% and over"))
+
+# helper function
+get_number_from_question_id = function(id) {
+  zero_padded = str_pad(as.character(id), 3, "left", pad = "0")
+  variable_name = paste(sep = "", "B27016_", zero_padded, "E")
+  number = acs_poverty_age_insurance[[variable_name]][2]
+  as.numeric(number)
+}
+
+blank_table = tibble(
+    poverty_level_granular = numeric(),
+    poverty_level          = factor(),
+    total_people_in_level  = numeric(),
+    under_19               = numeric(),
+    under_19_insured       = numeric(),
+    between_19_64          = numeric(),
+    between_19_64_insured  = numeric(),
+    over_64                = numeric(),
+    over_64_insured        = numeric()
+)
+
+all_poverty_levels = blank_table
+
+for (n in 1:length(poverty_levels_granular)) {
+  base = 2 + (n - 1) * 22 # the poverty level bands start at variable 2, 24, 46, etc.
+  all_poverty_levels = add_row(all_poverty_levels,
+    poverty_level_granular = poverty_levels_granular[n],
+    poverty_level          = poverty_level_labels[floor(poverty_levels_granular[n])+1],
+    total_people_in_level  = get_number_from_question_id(base),
+    under_19               = get_number_from_question_id(base + 1),
+    under_19_insured       = get_number_from_question_id(base + 2),
+    between_19_64          = get_number_from_question_id(base + 8),
+    between_19_64_insured  = get_number_from_question_id(base + 9),
+    over_64                = get_number_from_question_id(base + 15),
+    over_64_insured        = get_number_from_question_id(base + 16)
+  )
+}
+
+all_poverty_levels
+```
+
+    ## # A tibble: 9 x 9
+    ##   poverty_level_g… poverty_level total_people_in… under_19 under_19_insured
+    ##              <dbl> <fct>                    <dbl>    <dbl>            <dbl>
+    ## 1             0.5  Below 100%              635128   196244           191048
+    ## 2             0.99 Below 100%              791500   228166           224801
+    ## 3             1.37 100-199%                569869   163146           159276
+    ## 4             1.49 100-199%                182845    51618            49752
+    ## 5             1.99 100-199%                743798   191838           182727
+    ## 6             2.49 200-299%                623149   147260           142234
+    ## 7             2.99 200-299%                525863   120285           117177
+    ## 8             3.99 300-399%                962683   187742           182678
+    ## 9             4    400% and over          3221255   500934           493303
+    ## # … with 4 more variables: between_19_64 <dbl>, between_19_64_insured <dbl>,
+    ## #   over_64 <dbl>, over_64_insured <dbl>
+
+``` r
+blank_table
+```
+
+    ## # A tibble: 0 x 9
+    ## # … with 9 variables: poverty_level_granular <dbl>, poverty_level <fct>,
+    ## #   total_people_in_level <dbl>, under_19 <dbl>, under_19_insured <dbl>,
+    ## #   between_19_64 <dbl>, between_19_64_insured <dbl>, over_64 <dbl>,
+    ## #   over_64_insured <dbl>
+
+``` r
+collapsed_poverty_levels = 
+  all_poverty_levels %>% 
+  group_by(., poverty_level) %>% 
+  summarise(.,
+    total_people_in_level = sum(total_people_in_level),
+    under_19              = sum(under_19),
+    under_19_insured      = sum(under_19_insured),
+    between_19_64         = sum(between_19_64),
+    between_19_64_insured = sum(between_19_64_insured),
+    over_64               = sum(over_64),
+    over_64_insured       = sum(over_64_insured)
+    ) %>% 
+  arrange(., factor(poverty_level, levels = poverty_level_labels))
+
+collapsed_poverty_levels
+```
+
+    ## # A tibble: 5 x 8
+    ##   poverty_level total_people_in… under_19 under_19_insured between_19_64
+    ##   <fct>                    <dbl>    <dbl>            <dbl>         <dbl>
+    ## 1 Below 100%             1426628   424410           415849        775764
+    ## 2 100-199%               1496512   406602           391755        844890
+    ## 3 200-299%               1149012   267545           259411        713420
+    ## 4 300-399%                962683   187742           182678        643856
+    ## 5 400% and over          3221255   500934           493303       2282117
+    ## # … with 3 more variables: between_19_64_insured <dbl>, over_64 <dbl>,
+    ## #   over_64_insured <dbl>
+
+``` r
+# # go from numbers to proportions
+# age_groups = c("ages 0-18", "ages 19-64", "65 and over")
+# proportion_in_each_poverty_level (hard, categories.... split into more tables? one row for each?)
+# proportion_insured (easy, just one fraction)
 ```
 
 </details>
@@ -205,7 +376,7 @@ Occupation distribution in NYC, with “essential worker” labels, from
 #database
 ```
 
-Poverty levels in NYC, from *[WHERE??]()*.
+Percentages of homeless and incarcerated NYC, from *[WHERE??]()*.
 
 <details>
 
@@ -213,39 +384,10 @@ Poverty levels in NYC, from *[WHERE??]()*.
 
 ``` r
 #code
-```
 
-</details>
+# homeless: 101.5/10000 in NYC according to [2019 report](https://www.whitehouse.gov/wp-content/uploads/2019/09/The-State-of-Homelessness-in-America.pdf)
 
-``` r
-#database
-```
-
-Percentages of homeless, incarcerated, detained in NYC, from
-*[WHERE??]()*.
-
-<details>
-
-<summary>Click to see code</summary>
-
-``` r
-#code
-```
-
-</details>
-
-``` r
-#database
-```
-
-Health insurance status in NYC, from *[WHERE??]()*.
-
-<details>
-
-<summary>Click to see code</summary>
-
-``` r
-#code
+# incarcerated: 20000/nycpopulation [2019 DOC report](https://www1.nyc.gov/assets/doc/downloads/press-release/DOC_At%20a%20Glance-1st6_Months_FY2019_012919.pdf)
 ```
 
 </details>
@@ -387,7 +529,7 @@ better\!*
 
 <details>
 
-<summary>State transition code (I collaped this because it is very
+<summary>State transition code (I collapsed this because it is very
 long)</summary>
 
 ``` r
@@ -600,7 +742,7 @@ simulation. Now it’s time to graph it\!
 
 # Visualization
 
-I’ve decided that what I want to graph is: *explain*
+I decided that what I want to graph is: *explain*
 
 First, I transform the table into a better shape for graphing, by
 getting the total state counts at each time step.
@@ -642,7 +784,7 @@ ggplot(population_to_visualize,
   geom_line()
 ```
 
-![](Modeling-code_files/figure-gfm/unnamed-chunk-28-1.png)<!-- -->
+![](Modeling-code_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
 
 # Comparing different possible scenerios
 
