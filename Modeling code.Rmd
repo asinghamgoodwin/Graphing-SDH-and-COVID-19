@@ -14,14 +14,22 @@ Introduction... caveats, motivation (fun, learning R, learning about disease mod
 
 I decided to base the parameters for my simulation off of New York City, since that's where I live. I am also choosing a timeline similar to what we saw in NYC, with *ADD IN DATES AND INFORMATION*.
 ```{r}
-initial_population_size = 10000 # TODO - choose bigger number later
-total_days = 100
-
-# TODO - fill these in with real numbers
-day_of_first_distancing_guideline = 10
-day_of_stronger_distancing_directive = 15
-length_of_distancing_directive = 90
 total_nyc_population = 8398748
+
+initial_population_size = 10000 # TODO - choose bigger number later
+total_days = 100 # TODO - choose a number that maks sense (when we'd all definitely still be staying home, so no longer than today - march 1)
+
+day_of_first_distancing_guideline = 16
+day_of_stronger_distancing_directive = 23
+length_of_distancing_directive = 90 # do I ever use this? probably not, so remove
+
+## From [wikipedia](https://en.wikipedia.org/wiki/COVID-19_pandemic_in_New_York_(state))
+# March 1: first confirmed case in NYC (although this article things there were already 10,700 cases by then: https://www.nytimes.com/2020/04/23/us/coronavirus-early-outbreaks-cities.html)
+# March 7: state of emergency declared.
+# March 12: gatherings of >500 banned
+# March 16: schools closed
+# Shelter in place started at 8pm on March 22 (counting as March 23, which was a Monday)
+
 ```
 
 ### What's someone's chance of getting sick? Of being asymptomatic? How long do they stay sick? How long is an average hospital stay? etc. etc. etc.
