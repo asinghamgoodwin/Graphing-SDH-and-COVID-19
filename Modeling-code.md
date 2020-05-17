@@ -20,6 +20,7 @@ total_days = 100
 day_of_first_distancing_guideline = 10
 day_of_stronger_distancing_directive = 15
 length_of_distancing_directive = 90
+total_nyc_population = 8398748
 ```
 
 ### What’s someone’s chance of getting sick? Of being asymptomatic? How long do they stay sick? How long is an average hospital stay? etc. etc. etc.
@@ -233,15 +234,16 @@ office](https://comptroller.nyc.gov/reports/new-york-citys-frontline-workers/)*.
 #database
 ```
 
-Poverty levels in NYC, and health insurance status from
-*[WHERE??](https://data.census.gov/cedsci/table?q=new%20york%20city%20health&g=1600000US3651000&tid=ACSDT1Y2018.B27016&t=Health&layer=VT_2018_160_00_PY_D1&vintage=2018&hidePreview=true)*.
+Poverty levels in NYC, and health insurance status from *[the census
+website](https://data.census.gov/cedsci/table?q=new%20york%20city%20health&g=1600000US3651000&tid=ACSDT1Y2018.B27016&t=Health&layer=VT_2018_160_00_PY_D1&vintage=2018&hidePreview=true)*.
 
 <details>
 
-<summary>Click to see
-code</summary>
+<summary>Click to see code</summary>
 
 ``` r
+## TODO: get rid of error, or just don't show it?
+
 # I made a couple adjustments here to get the data to fit into the age categories I already have, which are by decade.
 # I am using the "under 19" insurance and poverty levels for decades 0-9 and 10-19.
 # I am using the "19-64" insurance and poverty levels for decades 20s, 30s, 40s, 50s
@@ -277,7 +279,7 @@ get_number_from_question_id = function(id) {
   as.numeric(number)
 }
 
-blank_table = tibble(
+all_poverty_levels = tibble(
     poverty_level_granular = numeric(),
     poverty_level          = factor(),
     total_people_in_level  = numeric(),
@@ -288,8 +290,6 @@ blank_table = tibble(
     over_64                = numeric(),
     over_64_insured        = numeric()
 )
-
-all_poverty_levels = blank_table
 
 for (n in 1:length(poverty_levels_granular)) {
   base = 2 + (n - 1) * 22 # the poverty level bands start at variable 2, 24, 46, etc.
@@ -306,35 +306,6 @@ for (n in 1:length(poverty_levels_granular)) {
   )
 }
 
-all_poverty_levels
-```
-
-    ## # A tibble: 9 x 9
-    ##   poverty_level_g… poverty_level total_people_in… under_19 under_19_insured
-    ##              <dbl> <fct>                    <dbl>    <dbl>            <dbl>
-    ## 1             0.5  Below 100%              635128   196244           191048
-    ## 2             0.99 Below 100%              791500   228166           224801
-    ## 3             1.37 100-199%                569869   163146           159276
-    ## 4             1.49 100-199%                182845    51618            49752
-    ## 5             1.99 100-199%                743798   191838           182727
-    ## 6             2.49 200-299%                623149   147260           142234
-    ## 7             2.99 200-299%                525863   120285           117177
-    ## 8             3.99 300-399%                962683   187742           182678
-    ## 9             4    400% and over          3221255   500934           493303
-    ## # … with 4 more variables: between_19_64 <dbl>, between_19_64_insured <dbl>,
-    ## #   over_64 <dbl>, over_64_insured <dbl>
-
-``` r
-blank_table
-```
-
-    ## # A tibble: 0 x 9
-    ## # … with 9 variables: poverty_level_granular <dbl>, poverty_level <fct>,
-    ## #   total_people_in_level <dbl>, under_19 <dbl>, under_19_insured <dbl>,
-    ## #   between_19_64 <dbl>, between_19_64_insured <dbl>, over_64 <dbl>,
-    ## #   over_64_insured <dbl>
-
-``` r
 collapsed_poverty_levels = 
   all_poverty_levels %>% 
   group_by(., poverty_level) %>% 
@@ -349,6 +320,15 @@ collapsed_poverty_levels =
     ) %>% 
   arrange(., factor(poverty_level, levels = poverty_level_labels))
 
+# # go from numbers to proportions
+# age_groups = c("ages 0-18", "ages 19-64", "65 and over")
+# proportion_in_each_poverty_level (hard, categories.... split into more tables? one row for each?)
+# proportion_insured (easy, just one fraction)
+```
+
+</details>
+
+``` r
 collapsed_poverty_levels
 ```
 
@@ -363,37 +343,17 @@ collapsed_poverty_levels
     ## # … with 3 more variables: between_19_64_insured <dbl>, over_64 <dbl>,
     ## #   over_64_insured <dbl>
 
-``` r
-# # go from numbers to proportions
-# age_groups = c("ages 0-18", "ages 19-64", "65 and over")
-# proportion_in_each_poverty_level (hard, categories.... split into more tables? one row for each?)
-# proportion_insured (easy, just one fraction)
-```
-
-</details>
+Percentages of homeless and incarcerated people in NYC, from [the 2019
+White House State of Homelessness in America
+report](https://www.whitehouse.gov/wp-content/uploads/2019/09/The-State-of-Homelessness-in-America.pdf),
+and [a 2019 NYC Department of Corrections
+report](https://www1.nyc.gov/assets/doc/downloads/press-release/DOC_At%20a%20Glance-1st6_Months_FY2019_012919.pdf).
 
 ``` r
-#database
-```
+# TODO: explain how I got these numbers
 
-Percentages of homeless and incarcerated NYC, from *[WHERE??]()*.
-
-<details>
-
-<summary>Click to see code</summary>
-
-``` r
-#code
-
-# homeless: 101.5/10000 in NYC according to [2019 report](https://www.whitehouse.gov/wp-content/uploads/2019/09/The-State-of-Homelessness-in-America.pdf)
-
-# incarcerated: 20000/nycpopulation [2019 DOC report](https://www1.nyc.gov/assets/doc/downloads/press-release/DOC_At%20a%20Glance-1st6_Months_FY2019_012919.pdf)
-```
-
-</details>
-
-``` r
-#database
+homelessness_rate = 101.5/10000     # 0.01015
+incarceration_rate = 20000/8398748  # 0.002381307
 ```
 
 ### How many ICU beds are available?
@@ -418,8 +378,6 @@ into 3,500…](https://www.businessinsider.com/coronavirus-nyc-more-than-doubled
 
 ``` r
 total_nyc_icu_beds_medium_surge_response = 200 + 594 + 276 + 524 + 1934
-
-total_nyc_population = sum(population_distribution_by_decade$num_people)
 
 icu_beds_per_person = total_nyc_icu_beds_medium_surge_response / total_nyc_population
 
@@ -478,10 +436,37 @@ is still out and about.
 
 <details>
 
-<summary>More code</summary>
+<summary>More
+code</summary>
 
 ``` r
-#code
+# this is only relevant for people who are not dead, and not in the hospital
+# TODO: take into account age and date of school closure?
+stay_home = function(id, state, day, essential_worker, poverty_level, homeless, incarcerated) {
+  symptomatic_states = c(SYMPTOMATIC_NEED_REGULAR_HOSPITAL,
+                        SYMPTOMATIC_NEED_ICU_BED,
+                        SYMPTOMATIC_DONT_NEED_HOSPITAL,
+                        DONT_GET_NEEDED_CARE)
+  
+  over_200_poverty = c("200-299%", "300-399%", "400% and over")
+
+  if (homeless | incarcerated) {
+    return (FALSE)
+  }
+  if (day < day_of_first_distancing_guideline) {
+    return (FALSE)
+  }
+  else if (between(day, day_of_first_distancing_guideline, day_of_stronger_distancing_directive)) {
+    if ((essential_worker & state %in% symptomatic_states) | (!essential_worker & poverty_level == "400% and over")) {
+      return (TRUE)
+    } else {return (FALSE)}
+  }
+  else { # then we're in a time of stronger distancing directive
+    if ((essential_worker & state %in% symptomatic_states) | (!essential_worker & poverty_level %in% over_200_poverty)) {
+      return (TRUE)
+    } else {return (FALSE)}
+  }
+}
 ```
 
 </details>
@@ -682,24 +667,47 @@ above.
 
 ``` r
 # TODO: create the population according to demographic markers, and randomly assign the infected person.
+# demographics to include: essential_worker, poverty_level, homeless, incarcerated, age_group, health_insurance, comorbidities
 create_initial_population_with_one_infected = function(size){
-  one_infected = c(INFECTED_SYMPTOMATIC_PRE_SYMPTOMS)
-  others_succeptible = rep(c(SUCCEPTIBLE), size - 1)
+  initial_population = tibble(
+    person_ids = 1:size,
+    essential_worker = rep(c(FALSE), size),
+    poverty_level = rep(c("100-199%"), size),
+    homeless = rep(c(FALSE), size),
+    incarcerated = rep(c(FALSE), size),
+    age_group = rep(c(3), size),
+    health_insurance = rep(c(FALSE), size),
+    comorbidities = rep(c(FALSE), size),
+    day_1 = rep(c(SUCCEPTIBLE), size)
+  )
+  initial_population$day_1[sample(1:size, 1)] = INFECTED_SYMPTOMATIC_PRE_SYMPTOMS
+  initial_population
   
-  c(one_infected, others_succeptible)
+  # one_infected = c(INFECTED_SYMPTOMATIC_PRE_SYMPTOMS)
+  # others_succeptible = rep(c(SUCCEPTIBLE), size - 1)
+  # 
+  # c(one_infected, others_succeptible)
 }
 
-# OLD CODE: using factors. Don't delete until I've figured it out.
-# create_initial_population_with_one_infected = function(size){
-#   one_infected = as.factor(c(INFECTED_SYMPTOMATIC_PRE_SYMPTOMS))
-#   others_succeptible = rep(as.factor(c(SUCCEPTIBLE)), size - 1)
-#   
-#   fct_c(one_infected, others_succeptible)
-# }
-
 # remove this later, printing just for debugging
-#create_initial_population_with_one_infected(initial_population_size)
+create_initial_population_with_one_infected(10)
 ```
+
+    ## # A tibble: 10 x 9
+    ##    person_ids essential_worker poverty_level homeless incarcerated age_group
+    ##         <int> <lgl>            <chr>         <lgl>    <lgl>            <dbl>
+    ##  1          1 FALSE            100-199%      FALSE    FALSE                3
+    ##  2          2 FALSE            100-199%      FALSE    FALSE                3
+    ##  3          3 FALSE            100-199%      FALSE    FALSE                3
+    ##  4          4 FALSE            100-199%      FALSE    FALSE                3
+    ##  5          5 FALSE            100-199%      FALSE    FALSE                3
+    ##  6          6 FALSE            100-199%      FALSE    FALSE                3
+    ##  7          7 FALSE            100-199%      FALSE    FALSE                3
+    ##  8          8 FALSE            100-199%      FALSE    FALSE                3
+    ##  9          9 FALSE            100-199%      FALSE    FALSE                3
+    ## 10         10 FALSE            100-199%      FALSE    FALSE                3
+    ## # … with 3 more variables: health_insurance <lgl>, comorbidities <lgl>,
+    ## #   day_1 <chr>
 
 Here’s how I represent my population changing states over time: *figure
 out how to display a smaller nicely-formatted version*
@@ -713,10 +721,12 @@ n.
 ``` r
 # TODO: decide what to do about states as factors. Currently I just made everything strings because I couldn't keep things straight.
 run_simulation = function(initial_population_size, initial_population_function, total_days) {
-  population = tibble(
-    person_ids = 1:initial_population_size,
-    day_1 = initial_population_function(initial_population_size)
-  )
+  # population = tibble(
+  #   person_ids = 1:initial_population_size,
+  #   day_1 = initial_population_function(initial_population_size)
+  # )
+  
+  population = initial_population_function(initial_population_size) # this should give a tibble with cols: ids, demos, day 1 states
   
   for (day in 2:total_days) {
     prev_day = population[[(str_c("day_", day - 1))]]
@@ -730,8 +740,10 @@ run_simulation = function(initial_population_size, initial_population_function, 
   population
 }
 
+# delete later, just for debugging
 #population = run_simulation(initial_population_size, create_initial_population_with_one_infected, total_days)
-population = run_simulation(13, one_of_each_state, 30)
+#population = run_simulation(13, one_of_each_state, 30)
+population = run_simulation(20, create_initial_population_with_one_infected, 5)
 #population
 ```
 
@@ -784,7 +796,7 @@ ggplot(population_to_visualize,
   geom_line()
 ```
 
-![](Modeling-code_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
+![](Modeling-code_files/figure-gfm/unnamed-chunk-25-1.png)<!-- -->
 
 # Comparing different possible scenerios
 
