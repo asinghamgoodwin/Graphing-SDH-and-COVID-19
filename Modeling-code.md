@@ -13,14 +13,21 @@ since that’s where I live. I am also choosing a timeline similar to what
 we saw in NYC, with *ADD IN DATES AND INFORMATION*.
 
 ``` r
-initial_population_size = 10000 # TODO - choose bigger number later
-total_days = 100
-
-# TODO - fill these in with real numbers
-day_of_first_distancing_guideline = 10
-day_of_stronger_distancing_directive = 15
-length_of_distancing_directive = 90
 total_nyc_population = 8398748
+
+initial_population_size = 10000 # TODO - choose bigger number later
+total_days = 100 # TODO - choose a number that maks sense (when we'd all definitely still be staying home, so no longer than today - march 1)
+
+day_of_first_distancing_guideline = 16
+day_of_stronger_distancing_directive = 23
+length_of_distancing_directive = 90 # do I ever use this? probably not, so remove
+
+## From [wikipedia](https://en.wikipedia.org/wiki/COVID-19_pandemic_in_New_York_(state))
+# March 1: first confirmed case in NYC (although this article things there were already 10,700 cases by then: https://www.nytimes.com/2020/04/23/us/coronavirus-early-outbreaks-cities.html)
+# March 7: state of emergency declared.
+# March 12: gatherings of >500 banned
+# March 16: schools closed
+# Shelter in place started at 8pm on March 22 (counting as March 23, which was a Monday)
 ```
 
 ### What’s someone’s chance of getting sick? Of being asymptomatic? How long do they stay sick? How long is an average hospital stay? etc. etc. etc.
@@ -61,7 +68,7 @@ mortality rate is. These numbers come from *ARTICLE A*.
 
 <details>
 
-<summary>Click to see how I adjusted/reformatted</summary>
+<summary>Click to see code</summary>
 
 ``` r
 # This table is taken directly from the article
@@ -93,23 +100,17 @@ severity_by_age =
 
 </details>
 
-``` r
-# TODO: make this look nicer! Reformat? Better variable names with spaces? Get rid of line numbers?
-severity_by_age
-```
-
-    ## # A tibble: 9 x 4
-    ##   age_group_by_decade prob_need_any_hospital prob_need_icu_bed prob_die_in_icu
-    ##                 <int>                  <dbl>             <dbl>           <dbl>
-    ## 1                   0                  0.001             0.05           0.025 
-    ## 2                   1                  0.003             0.05           0.025 
-    ## 3                   2                  0.012             0.05           0.025 
-    ## 4                   3                  0.032             0.05           0.025 
-    ## 5                   4                  0.049             0.063          0.0315
-    ## 6                   5                  0.102             0.122          0.061 
-    ## 7                   6                  0.166             0.274          0.137 
-    ## 8                   7                  0.243             0.432          0.216 
-    ## 9                   8                  0.273             0.709          0.354
+| age\_group\_by\_decade | prob\_need\_any\_hospital | prob\_need\_icu\_bed | prob\_die\_in\_icu |
+| ---------------------: | ------------------------: | -------------------: | -----------------: |
+|                      0 |                     0.001 |                0.050 |             0.0250 |
+|                      1 |                     0.003 |                0.050 |             0.0250 |
+|                      2 |                     0.012 |                0.050 |             0.0250 |
+|                      3 |                     0.032 |                0.050 |             0.0250 |
+|                      4 |                     0.049 |                0.063 |             0.0315 |
+|                      5 |                     0.102 |                0.122 |             0.0610 |
+|                      6 |                     0.166 |                0.274 |             0.1370 |
+|                      7 |                     0.243 |                0.432 |             0.2160 |
+|                      8 |                     0.273 |                0.709 |             0.3545 |
 
 Probability of seeking critical hospital care depending on insurance
 status **[REFERENCE,
@@ -162,23 +163,17 @@ population_distribution_by_decade =
 
 </details>
 
-``` r
-# TODO: make this display nicer. Take away line numbers, add in total, rename columns
-population_distribution_by_decade
-```
-
-    ## # A tibble: 9 x 3
-    ##   decade num_people percent_of_total
-    ##   <chr>       <int>            <dbl>
-    ## 1 0          987977           0.118 
-    ## 2 1          928860           0.111 
-    ## 3 2         1310104           0.156 
-    ## 4 3         1330850           0.158 
-    ## 5 4         1067863           0.127 
-    ## 6 5         1044798           0.124 
-    ## 7 6          872327           0.104 
-    ## 8 7          537499           0.0640
-    ## 9 8          318470           0.0379
+| decade | num\_people | percent\_of\_total |
+| :----- | ----------: | -----------------: |
+| 0      |      987977 |          0.1176338 |
+| 1      |      928860 |          0.1105951 |
+| 2      |     1310104 |          0.1559880 |
+| 3      |     1330850 |          0.1584581 |
+| 4      |     1067863 |          0.1271455 |
+| 5      |     1044798 |          0.1243993 |
+| 6      |      872327 |          0.1038639 |
+| 7      |      537499 |          0.0639975 |
+| 8      |      318470 |          0.0379187 |
 
 Chronic health condition distribution in NYC, from *[the NYC Department
 of Health’s EpiQuery tool](https://a816-health.nyc.gov/hdi/epiquery/),
@@ -200,18 +195,13 @@ chronic_condition_prevalence = tibble(
 
 </details>
 
-``` r
-chronic_condition_prevalence
-```
-
-    ## # A tibble: 5 x 2
-    ##   condition                         prevalence
-    ##   <chr>                                  <dbl>
-    ## 1 Current asthma                          0.04
-    ## 2 Diabetes                                0.12
-    ## 3 Current blood pressure medication       0.75
-    ## 4 Current smoker                          0.13
-    ## 5 Former smoker                           0.19
+| condition                         | prevalence |
+| :-------------------------------- | ---------: |
+| Current asthma                    |       0.04 |
+| Diabetes                          |       0.12 |
+| Current blood pressure medication |       0.75 |
+| Current smoker                    |       0.13 |
+| Former smoker                     |       0.19 |
 
 Number and distribution of “essential workers” in NYC, from this
 *[excellent report from the comptroller’s
@@ -229,10 +219,6 @@ office](https://comptroller.nyc.gov/reports/new-york-citys-frontline-workers/)*.
 ```
 
 </details>
-
-``` r
-#database
-```
 
 Poverty levels in NYC, and health insurance status from *[the census
 website](https://data.census.gov/cedsci/table?q=new%20york%20city%20health&g=1600000US3651000&tid=ACSDT1Y2018.B27016&t=Health&layer=VT_2018_160_00_PY_D1&vintage=2018&hidePreview=true)*.
@@ -320,28 +306,35 @@ collapsed_poverty_levels =
     ) %>% 
   arrange(., factor(poverty_level, levels = poverty_level_labels))
 
-# # go from numbers to proportions
-# age_groups = c("ages 0-18", "ages 19-64", "65 and over")
-# proportion_in_each_poverty_level (hard, categories.... split into more tables? one row for each?)
-# proportion_insured (easy, just one fraction)
+# go from numbers to proportions
+poverty_and_insurance_distribution = collapsed_poverty_levels %>% 
+  mutate(.,
+         percent_of_under_19_insured = under_19_insured / sum(under_19),
+         percent_of_under_19_UNinsured = (under_19 - under_19_insured) / sum(under_19),
+         percent_of_19_to_64_insured = between_19_64_insured / sum(between_19_64),
+         percent_of_19_to_64_UNinsured = (between_19_64 - between_19_64_insured) / sum(between_19_64),
+         percent_of_over_64_insured = over_64_insured / sum(over_64_insured),
+         percent_of_over_64_UNinsured = (over_64 - over_64_insured) / sum(over_64_insured)
+        ) %>% 
+  select(., poverty_level,
+         percent_of_under_19_insured,
+         percent_of_under_19_UNinsured,
+         percent_of_19_to_64_insured,
+         percent_of_19_to_64_UNinsured,
+         percent_of_over_64_insured,
+         percent_of_over_64_UNinsured
+         )
 ```
 
 </details>
 
-``` r
-collapsed_poverty_levels
-```
-
-    ## # A tibble: 5 x 8
-    ##   poverty_level total_people_in… under_19 under_19_insured between_19_64
-    ##   <fct>                    <dbl>    <dbl>            <dbl>         <dbl>
-    ## 1 Below 100%             1426628   424410           415849        775764
-    ## 2 100-199%               1496512   406602           391755        844890
-    ## 3 200-299%               1149012   267545           259411        713420
-    ## 4 300-399%                962683   187742           182678        643856
-    ## 5 400% and over          3221255   500934           493303       2282117
-    ## # … with 3 more variables: between_19_64_insured <dbl>, over_64 <dbl>,
-    ## #   over_64_insured <dbl>
+| poverty\_level | percent\_of\_population | percent\_uninsured |
+| :------------- | ----------------------: | -----------------: |
+| Below 100%     |                   17.28 |               8.28 |
+| 100-199%       |                   18.13 |              10.18 |
+| 200-299%       |                   13.92 |               9.48 |
+| 300-399%       |                   11.66 |               8.96 |
+| 400% and over  |                   39.02 |               4.07 |
 
 Percentages of homeless and incarcerated people in NYC, from [the 2019
 White House State of Homelessness in America
@@ -354,6 +347,15 @@ report](https://www1.nyc.gov/assets/doc/downloads/press-release/DOC_At%20a%20Gla
 
 homelessness_rate = 101.5/10000     # 0.01015
 incarceration_rate = 20000/8398748  # 0.002381307
+
+# income distribution of incarcerated folks, in the population in general, adjusted to 2014 dollars:
+# https://www.prisonpolicy.org/reports/income.html
+# ~60% below 200, ~20% at 200, ~20% at or above 300 -->
+# below 100: 30%
+# 1-200: 30%
+# 2-300: 20%
+# 3-400: 10% 
+# 400+: 10%
 ```
 
 ### How many ICU beds are available?
@@ -429,20 +431,37 @@ DEAD = "dead"
 
 </details>
 
-I used another state diagram to map out who is staying at home, and who
-is still out and about.
-
-*TODO: put in an image of my 2nd state diagram*
+I wrote out a function to figure out who is staying at home and who is
+still out and about. For this, I used my intuition rather than relying
+on research or statistics, because I don’t think any data is available
+(yet) about who actually stayed home when and who didn’t after
+government restrictions were put in place. Overall, here are the
+assumptions I make in my code: 1. Someone who is homeless or
+incarcerated cannot “stay home,” and is always going to be interacting
+with others. 2. Someone in an “essential” job will only stay home if
+they are experiencing COVID-19 symptoms. 3. When NYC schools closed,
+everyone under 20 years old stayed home (I’ve only got ages by decade).
+4. At that time (NYC schools closed, large events cancelled, but no
+other government mandates), people who are living at \>400% of the
+poverty level ([\> $51,040/yr for a 1-person
+household](https://www.medicaidplanningassistance.org/federal-poverty-guidelines/))
+are the only people who can voluntarilly stay home (ex. because their
+jobs allow for work-from-home). People in “essential” jobs continue to
+go to work, unless they are symptomatic. 5. Once New York adopted the
+shelter-in-place/stay-at-home order, people who are living under 200% of
+the poverty level ($25,520/yr) are not generally able to obey the order
+(ex. need to keep working), but do stay home if they are experiencing
+COVID-19 symptoms.
 
 <details>
 
-<summary>More
-code</summary>
+<summary>Code for stay\_home
+function:</summary>
 
 ``` r
 # this is only relevant for people who are not dead, and not in the hospital
 # TODO: take into account age and date of school closure?
-stay_home = function(id, state, day, essential_worker, poverty_level, homeless, incarcerated) {
+stay_home = function(id, state, day, essential_worker, poverty_level, homeless, incarcerated, age_group) {
   symptomatic_states = c(SYMPTOMATIC_NEED_REGULAR_HOSPITAL,
                         SYMPTOMATIC_NEED_ICU_BED,
                         SYMPTOMATIC_DONT_NEED_HOSPITAL,
@@ -457,12 +476,12 @@ stay_home = function(id, state, day, essential_worker, poverty_level, homeless, 
     return (FALSE)
   }
   else if (between(day, day_of_first_distancing_guideline, day_of_stronger_distancing_directive)) {
-    if ((essential_worker & state %in% symptomatic_states) | (!essential_worker & poverty_level == "400% and over")) {
+    if ((essential_worker & state %in% symptomatic_states) | (!essential_worker & poverty_level == "400% and over") | (age_group < 2)) {
       return (TRUE)
     } else {return (FALSE)}
   }
   else { # then we're in a time of stronger distancing directive
-    if ((essential_worker & state %in% symptomatic_states) | (!essential_worker & poverty_level %in% over_200_poverty)) {
+    if ((state %in% symptomatic_states) | (!essential_worker & poverty_level %in% over_200_poverty) | (age_group < 2)) {
       return (TRUE)
     } else {return (FALSE)}
   }
@@ -672,10 +691,10 @@ create_initial_population_with_one_infected = function(size){
   initial_population = tibble(
     person_ids = 1:size,
     essential_worker = rep(c(FALSE), size),
-    poverty_level = rep(c("100-199%"), size),
+    poverty_level = rep(c("300-399%"), size),
     homeless = rep(c(FALSE), size),
     incarcerated = rep(c(FALSE), size),
-    age_group = rep(c(3), size),
+    age_group = rep(c(1), size),
     health_insurance = rep(c(FALSE), size),
     comorbidities = rep(c(FALSE), size),
     day_1 = rep(c(SUCCEPTIBLE), size)
@@ -690,24 +709,19 @@ create_initial_population_with_one_infected = function(size){
 }
 
 # remove this later, printing just for debugging
-create_initial_population_with_one_infected(10)
+# initial_pop = create_initial_population_with_one_infected(10)
+# for (i in 1:nrow(initial_pop)) {
+#   person = initial_pop[i,]
+#   cat(stay_home(id = person$person_ids,
+#             state = person$day_1,
+#             day = 27,
+#             essential_worker = person$essential_worker,
+#             poverty_level = person$poverty_level,
+#             homeless = person$homeless,
+#             incarcerated = person$incarcerated,
+#             age_group = person$age_group))
+# }
 ```
-
-    ## # A tibble: 10 x 9
-    ##    person_ids essential_worker poverty_level homeless incarcerated age_group
-    ##         <int> <lgl>            <chr>         <lgl>    <lgl>            <dbl>
-    ##  1          1 FALSE            100-199%      FALSE    FALSE                3
-    ##  2          2 FALSE            100-199%      FALSE    FALSE                3
-    ##  3          3 FALSE            100-199%      FALSE    FALSE                3
-    ##  4          4 FALSE            100-199%      FALSE    FALSE                3
-    ##  5          5 FALSE            100-199%      FALSE    FALSE                3
-    ##  6          6 FALSE            100-199%      FALSE    FALSE                3
-    ##  7          7 FALSE            100-199%      FALSE    FALSE                3
-    ##  8          8 FALSE            100-199%      FALSE    FALSE                3
-    ##  9          9 FALSE            100-199%      FALSE    FALSE                3
-    ## 10         10 FALSE            100-199%      FALSE    FALSE                3
-    ## # … with 3 more variables: health_insurance <lgl>, comorbidities <lgl>,
-    ## #   day_1 <chr>
 
 Here’s how I represent my population changing states over time: *figure
 out how to display a smaller nicely-formatted version*
